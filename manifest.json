@@ -1,41 +1,29 @@
 {
-    "manifest_version": 3,
-    "name": "NeetCode to GitHub Sync",
-    "version": "1.0",
-    "description": "Automatically push solved NeetCode/LeetCode problems to GitHub.",
-    "permissions": [
-      "storage",
-      "activeTab",
-      "scripting",
-      "webRequest",
-      "webRequestBlocking"
-    ],
-    "host_permissions": [
-      "https://leetcode.com/*",
-      "https://neetcode.io/*",
-      "https://api.github.com/*"
-    ],
-    "background": {
-      "service_worker": "background.js"
-    },
-    "action": {
-      "default_popup": "popup.html",
-      "default_icon": "icon.png"
-    },
-    "content_scripts": [
-      {
-        "matches": [
-          "https://leetcode.com/problems/*/description/*",
-          "https://leetcode.com/problems/*",
-          "https://neetcode.io/problems/*"
-        ],
-        "js": ["content.js"]
-      }
-    ],
-    "icons": {
-      "16": "icon.png",
-      "48": "icon.png",
-      "128": "icon.png"
+  "manifest_version": 3,
+  "name": "LeetCode AutoCommit to GitHub",
+  "version": "1.0.0",
+  "description": "Automatically commits accepted LeetCode solutions to GitHub",
+  "permissions": [
+    "storage",
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://leetcode.com/*",
+    "https://api.github.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "LeetCode GitHub Config"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://leetcode.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
     }
-  }
-  
+  ]
+} 
