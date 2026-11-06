@@ -156,3 +156,13 @@ def test_unavailable_model_rolls_back_then_quarantines_and_marks_failed(incident
     finally:
         with connect_db() as conn:
             conn.execute("DELETE FROM incidentiq_api.failed_events WHERE topic=%s", (record.topic,))
+
+
+def test_alert_resolved_before_worker_arrival_is_not_reopened(incident):
+    with connect_db() as conn:
+        conn.execute("UPDATE incidentiq_api.incidents SET status='RESOLVED' WHERE id=%s", (incident["incidentId"],))
+    assert process_event(incident) is True
+    with connect_db() as conn:
+        assert conn.execute("SELECT status FROM incidentiq_api.incidents WHERE id=%s", (incident["incidentId"],)).fetchone()[0] == "RESOLVED"
+        assert conn.execute("SELECT count(*) FROM incidentiq_api.diagnoses WHERE incident_id=%s", (incident["incidentId"],)).fetchone()[0] == 1
+        assert conn.execute("SELECT count(*) FROM incidentiq_api.incident_retrievals WHERE event_id=%s", (incident["eventId"],)).fetchone()[0] == 5

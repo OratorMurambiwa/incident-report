@@ -1,0 +1,14 @@
+global:
+  resolve_timeout: 1m
+route:
+  receiver: incidentiq
+  group_by: [alertname, job, uri]
+  group_wait: 1s
+  group_interval: 5s
+  repeat_interval: 20s
+receivers:
+  - name: incidentiq
+    webhook_configs:
+      - url: http://api:8080/api/alerts/alertmanager
+        send_resolved: true
+        max_alerts: 100

@@ -1,0 +1,6 @@
+# Opt-in only: never use this override for production configurations.
+services:
+  api:
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      INCIDENTIQ_SIMULATION_ENABLED: "true"

@@ -1,0 +1,40 @@
+groups:
+  - name: incidentiq-detection
+    interval: 5s
+    rules:
+      - alert: IncidentIQHighHttp500Rate
+        expr: |
+          (
+            sum by (job, uri) (rate(http_server_requests_seconds_count{job="incidentiq-api",status="500",uri!~"/actuator.*|/api/incidents.*|/api/alerts.*"}[1m]))
+            / clamp_min(sum by (job, uri) (rate(http_server_requests_seconds_count{job="incidentiq-api",uri!~"/actuator.*|/api/incidents.*|/api/alerts.*"}[1m])), 0.001)
+          ) > 0.2
+          and on (job, uri)
+          sum by (job, uri) (increase(http_server_requests_seconds_count{job="incidentiq-api",status="500",uri!~"/actuator.*|/api/incidents.*|/api/alerts.*"}[1m])) >= 3
+        for: 15s
+        labels:
+          severity: critical
+          service: incidentiq-api
+        annotations:
+          summary: 'HTTP 500 server errors on {{ $labels.uri }}'
+          description: 'More than 20% HTTP 500 responses, with at least three errors in one minute. Investigate application exceptions and dependencies.'
+      - alert: IncidentIQHighP95Latency
+        expr: |
+          histogram_quantile(0.95, sum by (job, uri, le) (rate(http_server_requests_seconds_bucket{job="incidentiq-api",uri!~"/actuator.*|/api/incidents.*|/api/alerts.*"}[1m]))) > 0.5
+          and on (job, uri)
+          sum by (job, uri) (increase(http_server_requests_seconds_count{job="incidentiq-api",uri!~"/actuator.*|/api/incidents.*|/api/alerts.*"}[1m])) >= 3
+        for: 15s
+        labels:
+          severity: warning
+          service: incidentiq-api
+        annotations:
+          summary: 'High p95 HTTP latency on {{ $labels.uri }}'
+          description: 'HTTP p95 exceeds 500 ms for 15 seconds. Inspect resource saturation, query duration and downstream dependencies.'
+      - alert: IncidentIQServiceUnavailable
+        expr: up{job=~"incidentiq-api|incidentiq-worker|incidentiq-alertmanager"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: '{{ $labels.job }}'
+        annotations:
+          summary: 'Service unavailable: {{ $labels.job }}'
+          description: 'Prometheus cannot scrape this service for 30 seconds. Check its process, network and dependencies.'

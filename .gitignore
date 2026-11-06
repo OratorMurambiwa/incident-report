@@ -67,6 +67,7 @@ test-results/
 **/kafka_data/
 **/prometheus_data/
 **/grafana_data/
+**/alertmanager_data/
 *.db
 *.sqlite
 *.sqlite3

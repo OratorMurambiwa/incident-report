@@ -191,3 +191,19 @@ Worker diagnosis successes increment after database commit, and duplicate events
 `verify-monitoring.py` creates synthetic HTTP success/error traffic and one valid Kafka event referencing a nonexistent synthetic incident to exercise failure metrics. It retains the incident/diagnosis and durable quarantine evidence. It verifies both targets, real metric samples, database count agreement, bounded labels, datasource health and numeric data for every dashboard panel. `--no-fixtures` avoids new fixtures but requires recent metric activity for latency checks.
 
 Full verification, including browser rendering, is documented in [monitoring-verification.md](docs/monitoring-verification.md). The optional browser capture helper runs in a temporary Playwright container; it adds no host/application dependency and saves screenshots under ignored .incidentiq-backups/monitoring.
+
+## Automatic incident detection
+
+Prometheus → Alertmanager → `POST /api/alerts/alertmanager` → transactional incident/outbox → Kafka → retrieval/RAG worker → stored diagnosis. Alertmanager is available at http://localhost:9093 with the observability profile. Fingerprints deduplicate active incidents across retries and API restarts. Resolved notifications mark the incident RESOLVED; a delayed worker preserves that status. A new occurrence after resolution creates a new incident. Webhook payloads are validated and retained as untrusted evidence.
+
+Rules detect HTTP 500 rates above 20% with at least three failures in one minute, p95 latency above 500ms with at least three requests, and unavailable API/worker/Alertmanager scrape targets. Error/latency conditions persist 15 seconds; unavailability persists 30 seconds. Internal monitoring, incident and webhook routes are excluded from error/latency alerts to prevent recursion. Thresholds and short repeat intervals are intended for local development.
+
+```bash
+docker compose --profile observability up -d --build --wait
+# Temporarily enables bounded dev simulators and restores the default API afterward:
+python3 scripts/smoke-auto-detection.py
+```
+
+Simulators return 404 by default. Explicit opt-in uses `docker compose -f compose.yaml -f compose.dev.yaml up -d --wait api`; GET `/api/dev/simulate/failure` returns 500 and GET `/api/dev/simulate/latency?delayMs=750` delays up to 2000ms. Both the dev profile and simulation flag are required; prod/production profiles disable them even with the flag. Restore default settings with `docker compose up -d --no-deps --wait api`.
+
+Availability alerts measure exporter reachability. An unavailable API cannot receive its own webhook until recovery; an unavailable Alertmanager cannot deliver until recovery. This single-host setup is not an external watchdog. See [actual verification results](docs/automatic-detection-verification.md).
