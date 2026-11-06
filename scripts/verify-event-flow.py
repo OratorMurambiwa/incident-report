@@ -27,12 +27,12 @@ with urllib.request.urlopen(req, timeout=15) as response:
 for _ in range(60):
     with urllib.request.urlopen("http://127.0.0.1:8080/api/incidents/" + incident["id"], timeout=10) as response:
         received = json.load(response)
-    if received["status"] == "RECEIVED":
+    if received["status"] in ("RECEIVED", "DIAGNOSED"):
         break
     time.sleep(1)
 else:
     raise AssertionError("Worker did not set RECEIVED within 60 seconds")
-print("GET: HTTP 200, status=RECEIVED", flush=True)
+print(f"GET: HTTP 200, status={received['status']}", flush=True)
 
 worker('''
 import json, time

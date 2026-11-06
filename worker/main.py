@@ -1,4 +1,4 @@
-"""Durable, idempotent incident.created consumer. No AI inference is performed."""
+"""Durable, idempotent incident.created consumer. Retrieval-only or local Ollama RAG diagnoses are persisted atomically."""
 from __future__ import annotations
 
 import hashlib
@@ -72,8 +72,9 @@ def validate_event(raw: bytes) -> dict[str, Any]:
         raise InvalidEvent("invalid_event") from error
 
 
-def process_event(event: dict[str, Any], connect: Callable = connect_db, retrieve: Callable | None = None) -> bool:
-    """Receipt insert and status transition commit together. Return False for a replay."""
+def process_event(event: dict[str, Any], connect: Callable = connect_db, retrieve: Callable | None = None,
+                  diagnose: Callable | None = None) -> bool:
+    """Receipt, retrievals, diagnosis and status commit together. Return False for replay."""
     digest = hashlib.sha256(json.dumps(event, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     with connect() as connection:
         with connection.cursor() as cursor:
@@ -90,14 +91,18 @@ def process_event(event: dict[str, Any], connect: Callable = connect_db, retriev
                 return False
             from retrieval import retrieve_incident, persist_retrievals
             documents = (retrieve or retrieve_incident)(event, connection)
+            from diagnosis import generate_diagnosis, persist_diagnosis, MissingEvidence
             if len(documents) != 5:
-                raise RuntimeError("Runbook corpus must supply five retrieval results")
+                raise MissingEvidence("Runbook corpus must supply five retrieval results")
             persist_retrievals(cursor, event, documents)
-            # Never regress an incident that has progressed past RECEIVED.
+            result = (diagnose or generate_diagnosis)(event, documents)
+            persist_diagnosis(cursor, event, result)
+            target_status = "DIAGNOSED" if result["mode"] == "GENERATED" else "RECEIVED"
+            # Do not regress externally advanced/resolved incidents. Failed RAG events may be replayed.
             cursor.execute("""
-                UPDATE incidentiq_api.incidents SET status = 'RECEIVED', updated_at = GREATEST(now(), updated_at)
-                WHERE id = %s AND status = 'PENDING'
-                """, (event["incidentId"],))
+                UPDATE incidentiq_api.incidents SET status = %s, updated_at = GREATEST(now(), updated_at)
+                WHERE id = %s AND status IN ('PENDING', 'FAILED')
+                """, (target_status, event["incidentId"]))
     return True
 
 
@@ -110,6 +115,17 @@ def quarantine(record: Any, error_code: str, attempts: int, connect: Callable = 
                 ON CONFLICT (topic, partition_id, offset_id) DO UPDATE
                 SET attempts = failed_events.attempts + EXCLUDED.attempts, error_code = EXCLUDED.error_code
                 """, (record.topic, record.partition, record.offset, record.value, error_code, attempts))
+            if error_code in {"ModelUnavailable", "InvalidDiagnosis", "MissingEvidence"}:
+                try:
+                    event = validate_event(record.value)
+                except InvalidEvent:
+                    pass
+                else:
+                    cursor.execute("""
+                        UPDATE incidentiq_api.incidents SET status = 'FAILED', updated_at = GREATEST(now(), updated_at)
+                        WHERE id = %s AND status IN ('PENDING', 'ANALYZING')
+                        AND NOT EXISTS (SELECT 1 FROM incidentiq_api.processed_events WHERE event_id = %s)
+                        """, (event["incidentId"], event["eventId"]))
     QUARANTINED.inc()
     LOG.error(json.dumps({"action": "quarantined", "topic": record.topic, "partition": record.partition,
                           "offset": record.offset, "error": error_code, "attempts": attempts}))
@@ -126,7 +142,7 @@ def handle_record(record: Any, consumer: Any, settings: Settings, stopped: threa
             try:
                 changed = process(event)
                 PROCESSED.inc()
-                LOG.info(json.dumps({"action": "received" if changed else "duplicate",
+                LOG.info(json.dumps({"action": "processed" if changed else "duplicate",
                                      "eventId": event["eventId"], "incidentId": event["incidentId"]}))
                 break
             except Exception as error:
@@ -145,6 +161,8 @@ def handle_record(record: Any, consumer: Any, settings: Settings, stopped: threa
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
+    from diagnosis import LlmSettings
+    LlmSettings.from_env()  # Reject unsupported providers/configuration before consuming offsets.
     from model import LocalEmbeddings
     LocalEmbeddings().embed_query("worker startup")
     settings = Settings.from_env()

@@ -1,3 +1,5 @@
+> Historical retrieval milestone. Current diagnosis modes and test results: [rag-verification.md](rag-verification.md).
+
 # Local retrieval verification — 2026-11-05 (America/Chicago)
 
 ## Implemented and preserved

@@ -19,7 +19,7 @@ def request(method, path, expected, body=None):
         response = error
     with response:
         result = json.load(response)
-        assert response.status == expected, (method, path, response.status, result)
+        assert response.status in (expected if isinstance(expected, tuple) else (expected,)), (method, path, response.status, result)
         print(f"{method} {path}: HTTP {response.status}")
         return result, response.headers
 
@@ -35,12 +35,14 @@ assert headers["Location"].endswith("/api/incidents/" + incident_id)
 assert created["createdAt"] and created["updatedAt"]
 print(f"Created incident {incident_id}, status={created['status']}")
 stored, _ = request("GET", "/api/incidents/" + incident_id, 200)
-assert stored["status"] in ("PENDING", "RECEIVED")
+assert stored["status"] in ("PENDING", "RECEIVED", "DIAGNOSED")
 assert {k: v for k, v in stored.items() if k not in ("status", "updatedAt")} == {
     k: v for k, v in created.items() if k not in ("status", "updatedAt")}
 page, _ = request("GET", "/api/incidents?page=0&size=20", 200)
 assert any(row["id"] == incident_id for row in page["content"])
-request("GET", "/api/incidents/" + incident_id + "/diagnosis", 404)
+diagnosis, _ = request("GET", "/api/incidents/" + incident_id + "/diagnosis", (200, 404))
+if "mode" in diagnosis:
+    assert diagnosis["mode"] in ("RETRIEVAL_ONLY", "GENERATED")
 request("GET", "/api/incidents/" + str(uuid.uuid4()), 404)
 request("GET", "/api/incidents/" + str(uuid.uuid4()) + "/diagnosis", 404)
 invalid = dict(payload, service=" ")

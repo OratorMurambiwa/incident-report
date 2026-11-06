@@ -20,6 +20,7 @@ def incident():
                      (payload["incidentId"], "billing", "Timeout", "Details", "HIGH"))
     yield payload
     with connect_db() as conn:
+        conn.execute("DELETE FROM incidentiq_api.diagnoses WHERE incident_id = %s", (payload["incidentId"],))
         conn.execute("DELETE FROM incidentiq_api.processed_events WHERE incident_id = %s", (payload["incidentId"],))
         conn.execute("DELETE FROM incidentiq_api.incidents WHERE id = %s", (payload["incidentId"],))
 
@@ -82,3 +83,66 @@ def test_retrieval_failure_rolls_back_receipt_and_status(incident):
         assert conn.execute("SELECT count(*) FROM incidentiq_api.processed_events WHERE event_id=%s", (incident["eventId"],)).fetchone()[0] == 0
         assert conn.execute("SELECT status FROM incidentiq_api.incidents WHERE id=%s", (incident["incidentId"],)).fetchone()[0] == "PENDING"
         assert conn.execute("SELECT count(*) FROM incidentiq_api.incident_retrievals WHERE event_id=%s", (incident["eventId"],)).fetchone()[0] == 0
+
+
+def test_none_persists_labeled_diagnosis_with_no_generated_sections(incident):
+    process_event(incident)
+    with connect_db() as conn:
+        row = conn.execute("SELECT mode, provider, model, likely_causes, investigation_steps, suggested_remediation, retrieved_evidence, event_id FROM incidentiq_api.diagnoses WHERE incident_id=%s", (incident["incidentId"],)).fetchone()
+    assert row[:3] == ("RETRIEVAL_ONLY", "none", None)
+    assert row[3:6] == ([], [], [])
+    assert len(row[6]) == 5 and str(row[7]) == incident["eventId"]
+
+
+def test_mocked_ollama_persists_structured_diagnosis_and_diagnosed_status(incident):
+    from diagnosis import generate_diagnosis, LlmSettings
+    from test_diagnosis import response
+    def diagnose(event, documents):
+        return generate_diagnosis(event, documents, LlmSettings("ollama", "test-model"), lambda _: json.dumps(response()))
+    # Ensure cited source occurs in the actual retrieved test evidence.
+    incident.update(title="PostgreSQL connection pool exhausted", description="Too many clients SQLSTATE 08006")
+    process_event(incident, diagnose=diagnose)
+    with connect_db() as conn:
+        row = conn.execute("SELECT mode, provider, model, cited_runbooks, likely_causes FROM incidentiq_api.diagnoses WHERE incident_id=%s", (incident["incidentId"],)).fetchone()
+        assert conn.execute("SELECT status FROM incidentiq_api.incidents WHERE id=%s", (incident["incidentId"],)).fetchone()[0] == "DIAGNOSED"
+    assert row[:4] == ("GENERATED", "ollama", "test-model", ["database-failures.md"])
+    assert row[4][0]["sources"] == ["database-failures.md"]
+
+
+def test_duplicate_does_not_regenerate_or_overwrite_diagnosis(incident):
+    from unittest.mock import Mock
+    process_event(incident)
+    with connect_db() as conn:
+        before = conn.execute("SELECT id, mode, retrieved_evidence, created_at FROM incidentiq_api.diagnoses WHERE incident_id=%s", (incident["incidentId"],)).fetchone()
+    llm = Mock(side_effect=AssertionError("duplicate must not regenerate"))
+    assert process_event(incident, diagnose=llm) is False
+    llm.assert_not_called()
+    with connect_db() as conn:
+        after = conn.execute("SELECT id, mode, retrieved_evidence, created_at FROM incidentiq_api.diagnoses WHERE incident_id=%s", (incident["incidentId"],)).fetchone()
+    assert before == after
+
+
+def test_unavailable_model_rolls_back_then_quarantines_and_marks_failed(incident):
+    from unittest.mock import Mock
+    import threading
+    from main import handle_record, Settings
+    from diagnosis import ModelUnavailable
+    generator = Mock(side_effect=ModelUnavailable("missing model"))
+    process = lambda event: process_event(event, diagnose=generator)
+    record = SimpleNamespace(topic="pytest-" + str(uuid4()), partition=0, offset=1, value=json.dumps(incident).encode())
+    consumer = Mock()
+    try:
+        handle_record(record, consumer, Settings(retry_seconds=0), threading.Event(), process=process)
+        assert generator.call_count == 3
+        consumer.commit.assert_called_once()
+        with connect_db() as conn:
+            assert conn.execute("SELECT count(*) FROM incidentiq_api.processed_events WHERE event_id=%s", (incident["eventId"],)).fetchone()[0] == 0
+            assert conn.execute("SELECT count(*) FROM incidentiq_api.incident_retrievals WHERE event_id=%s", (incident["eventId"],)).fetchone()[0] == 0
+            assert conn.execute("SELECT count(*) FROM incidentiq_api.diagnoses WHERE incident_id=%s", (incident["incidentId"],)).fetchone()[0] == 0
+            assert conn.execute("SELECT status FROM incidentiq_api.incidents WHERE id=%s", (incident["incidentId"],)).fetchone()[0] == "FAILED"
+            assert conn.execute("SELECT error_code FROM incidentiq_api.failed_events WHERE topic=%s", (record.topic,)).fetchone()[0] == "ModelUnavailable"
+        # Once configuration is repaired, unchanged manual replay can process a FAILED incident.
+        assert process_event(incident) is True
+    finally:
+        with connect_db() as conn:
+            conn.execute("DELETE FROM incidentiq_api.failed_events WHERE topic=%s", (record.topic,))

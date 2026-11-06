@@ -16,5 +16,5 @@ worker_test_args=(--rm --network "${project}_default"
   -e POSTGRES_DB=incidentiq_api_test -e POSTGRES_USER -e POSTGRES_PASSWORD
   -v "$PWD/runbooks:/runbooks:ro")
 docker run "${worker_test_args[@]}" incidentiq-worker-tests:local python ingest.py /runbooks
-docker run "${worker_test_args[@]}" -e RUN_DATABASE_TESTS=true -e RUN_RETRIEVAL_TESTS=true \
+docker run "${worker_test_args[@]}" -e LLM_PROVIDER=none -e RUN_DATABASE_TESTS=true -e RUN_RETRIEVAL_TESTS=true \
   incidentiq-worker-tests:local python -m pytest -q

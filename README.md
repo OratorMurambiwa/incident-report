@@ -1,6 +1,6 @@
 # IncidentIQ
 
-Local incident monitoring platform with a working Java 21 REST API and PostgreSQL persistence. Incident creation now flows through a transactional outbox and Kafka to a Python worker that records RECEIVED. The worker now retrieves local runbook context with LangChain and pgvector. Diagnosis generation and the live frontend remain future work. No paid or hosted AI service is configured.
+Local incident monitoring platform with a working Java 21 REST API and PostgreSQL persistence. Incident creation now flows through a transactional outbox and Kafka to a Python worker that records RECEIVED. The worker now retrieves local runbook context with LangChain and pgvector. Optional local Ollama RAG diagnosis generation is implemented; default mode is explicitly retrieval-only. The live frontend remains future work. No paid or hosted AI service is configured.
 
 ## Run locally with Docker
 
@@ -42,9 +42,9 @@ curl http://localhost:8080/api/incidents/REPLACE_WITH_UUID/diagnosis
 - `POST /api/incidents`: 201, Location header and full incident DTO including UUID, PENDING status and UTC timestamps.
 - `GET /api/incidents`: 200 with `content`, `page`, `size`, `totalElements`, `totalPages`. Page starts at 0; size defaults to 20 and must be 1–100. Ordered newest first, with UUID as a stable tie breaker.
 - `GET /api/incidents/{id}`: 200 with incident; 404 if missing.
-- `GET /api/incidents/{id}/diagnosis`: 200 with diagnosis UUID, incidentId, summary, recommendations and timestamps. Returns 404 when the incident is missing or its diagnosis is not yet available. No diagnosis generation or write endpoint exists yet.
+- `GET /api/incidents/{id}/diagnosis`: 200 with diagnosis UUID, incidentId, summary, recommendations and timestamps. Returns 404 when the incident is missing or its diagnosis is not yet available. The worker persists retrieval-only or Ollama-generated diagnoses asynchronously; no public diagnosis write endpoint exists.
 
-Creation requires nonblank `service` (max 100), `title` (max 200), `description` (max 10000), and severity `LOW`, `MEDIUM`, `HIGH` or `CRITICAL`. Strings are trimmed. Status is server-owned; client-supplied status and unknown properties are rejected. Stored status values are PENDING, RECEIVED, ANALYZING, RESOLVED and FAILED. Creation returns PENDING; the asynchronous worker changes it to RECEIVED. Invalid JSON, enum values, UUIDs or pagination produce 400. Errors use Problem Detail JSON; field-validation errors include an `errors` map. Database constraint conflicts produce 409, unexpected failures produce a generic 500.
+Creation requires nonblank `service` (max 100), `title` (max 200), `description` (max 10000), and severity `LOW`, `MEDIUM`, `HIGH` or `CRITICAL`. Strings are trimmed. Status is server-owned; client-supplied status and unknown properties are rejected. Stored status values are PENDING, RECEIVED, ANALYZING, DIAGNOSED, RESOLVED and FAILED. Creation returns PENDING. The worker sets RECEIVED for retrieval-only results or DIAGNOSED for a generated diagnosis; DIAGNOSED does not mean RESOLVED. Invalid JSON, enum values, UUIDs or pagination produce 400. Errors use Problem Detail JSON; field-validation errors include an `errors` map. Database constraint conflicts produce 409, unexpected failures produce a generic 500.
 
 ## Persistence and migrations
 
@@ -71,7 +71,7 @@ The multi-stage Dockerfile runs `mvn verify` with Maven 3.9.11 and Java 21, then
 ## Project layout and optional host development
 
 - `api/`: Spring Web, Data JPA, Validation, Flyway, repositories, DTOs, services and controllers.
-- `worker/`: Python 3.12 / Kafka receipt consumer, PostgreSQL idempotency and metrics (local sentence-transformers retrieval; diagnosis generation remains future work).
+- `worker/`: Python 3.12 / Kafka receipt consumer, PostgreSQL idempotency and metrics (local sentence-transformers retrieval; optional local Ollama RAG diagnoses).
 - `frontend/`: React 19 / Vite shell; not connected to the API.
 - `runbooks/`: Markdown sources for future local retrieval.
 - `infra/`: database bootstrap and monitoring configuration.
@@ -80,13 +80,13 @@ The multi-stage Dockerfile runs `mvn verify` with Maven 3.9.11 and Java 21, then
 
 For optional host API development, install Java 21/Maven and export the database variables from .env, then `cd api && mvn spring-boot:run`. Stop the Compose API first to free port 8080. Run the worker through Compose so the pinned CPU packages and model files are available. For the frontend: Node 22.12+ and npm, then `cd frontend && npm install && npm run dev`. No host Python/Node is needed for the API or its JUnit tests.
 
-Optional Prometheus runs at localhost:9090 and Grafana at localhost:3001 (admin/password from .env). API metrics are exposed at /actuator/prometheus. The existing Prometheus host target reaches the published API port; custom API_PORT changes require updating that target. Worker metrics use the internal worker:8001 target. Dashboards and generative diagnosis inference remain unimplemented. Local embedding inference and runbook retrieval are implemented.
+Optional Prometheus runs at localhost:9090 and Grafana at localhost:3001 (admin/password from .env). API metrics are exposed at /actuator/prometheus. The existing Prometheus host target reaches the published API port; custom API_PORT changes require updating that target. Worker metrics use the internal worker:8001 target. Dashboards remain unimplemented. Optional local Ollama diagnosis generation is implemented but live model inference was not available in this verification environment. Local embedding inference and runbook retrieval are implemented.
 
 ## Event delivery and worker
 
 `POST /api/incidents` inserts an `incident.created` event into `incidentiq_api.outbox_events` in the same transaction as the incident. JSON contains schemaVersion=1, eventId, incidentId, service, title, description, severity and an ISO-8601 timestamp. Kafka keys are incident UUIDs. The separate publisher uses Spring Kafka with acks=all and producer idempotence, marks published_at only after acknowledgement and retries unsent rows with persisted exponential backoff (2–256 seconds). Delivery is at least once; a crash after acknowledgement can cause a duplicate.
 
-The Python worker validates the contract, inserts a processed_events receipt keyed by eventId, and transitions PENDING → RECEIVED in one PostgreSQL transaction. Replayed IDs with the same payload do not change status or timestamps. IDs reused with different payloads are rejected. Advanced statuses never regress. Kafka auto-commit is disabled; only the current partition's offset is committed after durable handling.
+The Python worker validates the contract, inserts a processed_events receipt keyed by eventId, and stores retrieval snapshots plus a diagnosis in one PostgreSQL transaction. Its resulting status is RECEIVED for retrieval-only or DIAGNOSED for generated analysis. Replayed IDs with the same payload do not change status or timestamps. IDs reused with different payloads are rejected. Advanced statuses never regress. Kafka auto-commit is disabled; only the current partition's offset is committed after durable handling.
 
 Processing failures receive up to three attempts. Malformed/conflicting events and exhausted processing failures are retained in failed_events before acknowledging their offsets. Original bytes (or NULL for a tombstone), source coordinates and safe error metadata remain available for investigation and explicit replay. A quarantine database failure or offset-commit failure terminates the worker; Docker restarts it, and the uncommitted record is safe to redeliver. A quarantined event has not been successfully processed: monitor the table and worker quarantine counter. No event is automatically discarded or deleted.
 
@@ -100,7 +100,7 @@ python3 scripts/verify-event-flow.py
 docker compose logs --tail=100 publisher worker
 ```
 
-Verification retains synthetic incidents and a malformed-message failure record. See [event-delivery.md](docs/event-delivery.md) for the contract, retries and operations, and [event-verification.md](docs/event-verification.md) for executed results. No AI-generated diagnosis is produced by RECEIVED processing.
+Verification retains synthetic incidents and a malformed-message failure record. See [event-delivery.md](docs/event-delivery.md) for the contract, retries and operations, and [event-verification.md](docs/event-verification.md) for executed results. RECEIVED denotes retrieval-only processing; only GENERATED diagnoses use Ollama, with status DIAGNOSED.
 
 ## Local runbook retrieval
 
@@ -123,7 +123,7 @@ Flyway V4 adds incidentiq_api.runbook_documents, runbook_chunks and incident_ret
 
 For each newly processed event, the worker retrieves five nearest chunks using service/title/description. It saves rank, source filename, chunk UUID, content snapshot, cosine similarity, model/revision and retrieval time together with the receipt and RECEIVED status. A replay does not overwrite retrievals or regenerate embeddings. Retrieval failure rolls back receipt/status/context and enters the existing retry/quarantine path; no successful offset acknowledgement occurs before durable handling. Existing pre-retrieval receipts are not backfilled or reprocessed.
 
-Scores are cosine similarities, not calibrated confidence or proof that a runbook applies. Five chunks can come from the same source file. Long queries are subject to the model's 256-token window; service/title appear before the description. No LLM diagnosis is generated and no new REST endpoint for retrieved context is added in this milestone. Inspect snapshots directly in PostgreSQL:
+Scores are cosine similarities, not calibrated confidence or proof that a runbook applies. Five chunks can come from the same source file. Long queries are subject to the model's 256-token window; service/title appear before the description. Optional Ollama diagnosis generation is described below. Retrieved evidence is returned with the existing diagnosis endpoint. Inspect snapshots directly in PostgreSQL:
 
 ```sql
 SELECT rank, source, similarity, content
@@ -132,3 +132,39 @@ WHERE incident_id = 'REPLACE_WITH_UUID' ORDER BY rank;
 ```
 
 See [retrieval-verification.md](docs/retrieval-verification.md) for actual ingestion, relevance and end-to-end results. Model details: [official model card](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2); retriever interface: [LangChain BaseRetriever](https://reference.langchain.com/python/langchain-core/retrievers/BaseRetriever).
+
+## RAG diagnosis providers
+
+Default `LLM_PROVIDER=none` persists mode `RETRIEVAL_ONLY`, provider `none`, model `null`. Summary/recommendations explicitly say no language model was used. `likelyCauses`, `investigationSteps` and `suggestedRemediation` are empty; the five original excerpts appear only under `retrievedEvidence`, with chunkId/source/similarity. Retrieved content is not presented as AI-generated analysis.
+
+To use an already-running local Ollama server, edit the ignored `.env`:
+
+```dotenv
+LLM_PROVIDER=ollama
+OLLAMA_MODEL=your-installed-local-model
+OLLAMA_BASE_URL=http://host.docker.internal:11434
+OLLAMA_TIMEOUT_SECONDS=30
+```
+
+```bash
+# Existing dependencies must already be running. Recreate only the worker after .env changes:
+docker compose up -d --no-deps --force-recreate worker
+python3 scripts/verify-rag-flow.py --expect-mode GENERATED
+```
+
+The model must already be installed in Ollama; IncidentIQ never pulls it automatically. The server must be reachable from the container. Supported configured endpoint hosts are localhost, 127.0.0.1, ::1, host.docker.internal and ollama (a local Docker service name). Loopback inside a container refers to that container. HTTP proxies, redirects, credential-bearing URLs and nonlocal endpoint names are rejected/disabled. No hosted provider is supported. Request timeout is bounded to 1–30 seconds, with three worker attempts before durable quarantine.
+
+The LangChain LCEL chain uses ChatPromptTemplate → a local Ollama /api/chat adapter → PydanticOutputParser. The client requests JSON-schema output and strictly validates complete JSON before the parser, rejecting partial responses. Schema fields are summary, likely_causes, investigation_steps, suggested_remediation and uncertainty; each list item contains text and a nonempty sources array. Allowed filenames come only from the five retrieved chunks. Unknown citations, including invented Markdown filenames in prose, are rejected; the server derives citedRunbooks from validated item sources. The prompt treats incident/evidence text as untrusted data and does not expose tools or execute remediation. Generated suggestions require human review; syntactic citation checks do not prove that a hypothesis is correct.
+
+Flyway V5 extends the existing diagnoses table and labels pre-existing rows LEGACY without rewriting their original summary/recommendations. The existing GET /api/incidents/{id}/diagnosis now includes mode/provider/model/eventId, likelyCauses, investigationSteps, suggestedRemediation, citedRunbooks, retrievedEvidence and uncertainty, alongside the original fields.
+
+Receipt, five snapshots, diagnosis and incident status commit atomically. Duplicate event IDs return before retrieval/generation; no diagnosis is overwritten. A successful GENERATED result sets DIAGNOSED, never RESOLVED. Retrieval-only sets RECEIVED. Unavailable models, invalid outputs and missing evidence roll back new processing; after bounded retries, the original event is durably quarantined and a still-pending incident is marked FAILED. No silent retrieval-only fallback occurs. Kafka offsets advance only after the successful transaction or durable quarantine transaction. Manual unchanged replay after fixing configuration can recover FAILED incidents. Existing receipts are not backfilled or regenerated automatically.
+
+```bash
+# Restore/default safe mode by setting LLM_PROVIDER=none in .env and recreating the worker.
+./scripts/test-api.sh
+./scripts/test-worker.sh
+python3 scripts/verify-rag-flow.py --expect-mode RETRIEVAL_ONLY
+```
+
+Verified here: 34 Java tests, 68 Python tests, actual retrieval-only HTTP/Kafka/database diagnosis flow and duplicate preservation. Ollama client/generation paths used mocked responses and unavailable-model simulations. **Actual Ollama generation was not tested**: no model was configured and the local endpoint was unreachable. See [rag-verification.md](docs/rag-verification.md) for commands and actual outputs.

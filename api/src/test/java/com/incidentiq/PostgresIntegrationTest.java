@@ -44,7 +44,9 @@ class PostgresIntegrationTest {
         mvc.perform(get("/api/incidents/" + incident.id() + "/diagnosis"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(diagnosis.toString()))
-                .andExpect(jsonPath("$.incidentId").value(incident.id().toString()));
+                .andExpect(jsonPath("$.incidentId").value(incident.id().toString()))
+                .andExpect(jsonPath("$.mode").value("LEGACY"))
+                .andExpect(jsonPath("$.likelyCauses").isEmpty());
     }
 
     @Test
@@ -69,5 +71,37 @@ class PostgresIntegrationTest {
         jdbc.update(sql, UUID.randomUUID(), incident.id(), "First", "Check metrics");
         assertThrows(DataIntegrityViolationException.class,
                 () -> jdbc.update(sql, UUID.randomUUID(), incident.id(), "Second", "Check logs"));
+    }
+
+    @Test
+    void exposesStructuredGeneratedDiagnosis() throws Exception {
+        var incident = service.create(new CreateIncidentRequest("db-test", "Timeout", "Details", Severity.HIGH));
+        incidents.flush();
+        UUID eventId = UUID.randomUUID();
+        jdbc.update("INSERT INTO incidentiq_api.processed_events (event_id, incident_id, payload_hash) VALUES (?, ?, ?)",
+                eventId, incident.id(), "a".repeat(64));
+        jdbc.update("""
+                INSERT INTO incidentiq_api.diagnoses
+                (id, incident_id, summary, recommendations, mode, provider, model, event_id, likely_causes, cited_runbooks)
+                VALUES (?, ?, ?, ?, 'GENERATED', 'ollama', 'test-model', ?, ?::jsonb, ?::jsonb)
+                """, UUID.randomUUID(), incident.id(), "Possible pool exhaustion", "Review pool metrics", eventId,
+                "[{\"text\":\"Possible pool exhaustion\",\"sources\":[\"database-failures.md\"]}]",
+                "[\"database-failures.md\"]");
+        mvc.perform(get("/api/incidents/" + incident.id() + "/diagnosis"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.mode").value("GENERATED"))
+                .andExpect(jsonPath("$.provider").value("ollama"))
+                .andExpect(jsonPath("$.model").value("test-model"))
+                .andExpect(jsonPath("$.eventId").value(eventId.toString()))
+                .andExpect(jsonPath("$.likelyCauses[0].sources[0]").value("database-failures.md"));
+    }
+
+    @Test
+    void rejectsGeneratedDiagnosisWithoutProviderProvenance() {
+        var incident = service.create(new CreateIncidentRequest("db-test", "Timeout", "Details", Severity.HIGH));
+        incidents.flush();
+        assertThrows(DataIntegrityViolationException.class, () -> jdbc.update(
+                "INSERT INTO incidentiq_api.diagnoses (id, incident_id, summary, recommendations, mode) VALUES (?, ?, ?, ?, 'GENERATED')",
+                UUID.randomUUID(), incident.id(), "Summary", "Recommendation"));
     }
 }

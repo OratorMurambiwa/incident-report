@@ -68,6 +68,12 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-incidentiq}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-incidentiq_local_only}
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      LLM_PROVIDER: ${LLM_PROVIDER:-none}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-}
+      OLLAMA_TIMEOUT_SECONDS: ${OLLAMA_TIMEOUT_SECONDS:-30}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       runbook-ingest:
         condition: service_completed_successfully
