@@ -2,15 +2,15 @@
 
 ## Objectives and scope
 
-Build a local AI-powered incident monitoring platform: ingest events, persist incidents, analyze asynchronously, retrieve runbook context, and present evidence-backed recommendations. Keep execution and data local. Do not create remote repositories, deploy cloud resources, or use paid services without explicit authorization. Incident creation/query and diagnosis lookup are implemented. Transactional outbox publication and idempotent Python receipt consumption are implemented. Local embedding inference and runbook retrieval are implemented; optional Ollama structured diagnosis generation is implemented, defaulting to clearly labeled retrieval-only results. The live frontend remains a scaffold. Actual Ollama generation was not verified in the current environment.
+Build a local AI-powered incident monitoring platform: ingest events, persist incidents, analyze asynchronously, retrieve runbook context, and present evidence-backed recommendations. Keep execution and data local. Do not create remote repositories, deploy cloud resources, or use paid services without explicit authorization. Incident creation/query and diagnosis lookup are implemented. Transactional outbox publication and idempotent Python receipt consumption are implemented. Local embedding inference and runbook retrieval are implemented; optional Ollama structured diagnosis generation is implemented, defaulting to clearly labeled retrieval-only results. The React/TypeScript dashboard lists, filters, submits and inspects real incidents and diagnosis evidence. Actual Ollama generation was not verified in the current environment.
 
 ## Architecture
 
-Current flow: Spring Boot API → PostgreSQL incident + outbox → separate Spring Kafka publisher → `incident.created` → Python worker → pgvector top-five runbook context + durable receipt + diagnosis (RETRIEVAL_ONLY/RECEIVED or GENERATED/DIAGNOSED). Future flow extends React → API → Python worker → local generative diagnosis analysis → PostgreSQL and `incidents.analyzed` → API → React. Prometheus scrapes API/worker metrics; Grafana visualizes them. Treat DB/event dual writes with an outbox when implementing ingestion. Consumers must be idempotent, commit offsets after successful persistence, and support bounded retries/dead-letter handling.
+Current flow: React dashboard → Spring Boot API → PostgreSQL incident + outbox → separate Spring Kafka publisher → `incident.created` → Python worker → pgvector top-five runbook context + durable receipt + diagnosis (RETRIEVAL_ONLY/RECEIVED or GENERATED/DIAGNOSED). Future flow extends React → API → Python worker → local generative diagnosis analysis → PostgreSQL and `incidents.analyzed` → API → React. Prometheus scrapes API/worker metrics; Grafana visualizes them. Treat DB/event dual writes with an outbox when implementing ingestion. Consumers must be idempotent, commit offsets after successful persistence, and support bounded retries/dead-letter handling.
 
 ## Technologies and versions
 
-Java 21; Spring Boot 3.5.16 (use its dependency management for Spring Kafka, JDBC and Micrometer); Maven 3.6.3+; Python 3.12; LangChain 0.3.27; PostgreSQL 16; pgvector 0.8.7; Kafka 3.9.1 in single-node KRaft; React 19.1.1; Vite 6.3.5; Node 22.12+; Docker Compose v2; Prometheus 3.5.0; Grafana 12.1.0; Alertmanager 0.28.1. See manifests for remaining Python pins. Verify compatibility before dependency upgrades; generate dependency locks with actual tools, never fabricate them.
+Java 21; Spring Boot 3.5.16 (use its dependency management for Spring Kafka, JDBC and Micrometer); Maven 3.6.3+; Python 3.12; LangChain 0.3.27; PostgreSQL 16; pgvector 0.8.7; Kafka 3.9.1 in single-node KRaft; React 19.1.1; Vite 6.4.5; Node 22.12+; Docker Compose v2; Prometheus 3.5.0; Grafana 12.1.0; Alertmanager 0.28.1. See manifests for remaining Python pins. Verify compatibility before dependency upgrades; generate dependency locks with actual tools, never fabricate them.
 
 ## Directories
 
@@ -44,7 +44,7 @@ Use Java 4-space indentation, constructor injection, explicit DTOs and input val
 - Full event flow and replay/quarantine checks: `python3 scripts/verify-event-flow.py` (requires running Compose, retains synthetic evidence).
 - Worker: Compose builds/tests/runs the Python 3.12 worker; optional host development uses worker/requirements.txt.
 - Worker syntax: `python3 -m compileall worker`
-- Frontend: `cd frontend && npm install && npm run dev`; verify: `npm run build`
+- Frontend: `cd frontend && npm ci && npm run dev`; verify: `npm run build`
 
 Before reporting success, distinguish static checks, dependency resolution, builds and real integration checks. Add meaningful tests for event contracts, retries, persistence and analysis as implemented. Never delete persistent volumes without explicit authorization. See docs/environment.md for known missing tools.
 
@@ -110,3 +110,13 @@ Error and latency rules exclude /actuator.*, /api/incidents.* and /api/alerts.* 
 Simulation requires BOTH the dev profile and incidentiq.simulation.enabled=true; prod/production profiles always disable it. Base Compose leaves simulation disabled. Explicit local opt-in: docker compose -f compose.yaml -f compose.dev.yaml up -d --wait api. Restore with docker compose up -d --no-deps --wait api. Never enable the dev override in production.
 
 Run python3 scripts/smoke-auto-detection.py for real HTTP 500, latency and stopped-worker alert flows, repeat deduplication, resolution, Kafka evidence and stored diagnoses. It temporarily enables development simulation, restarts the worker and restores the base API in finally; retains synthetic evidence, never deletes volumes. Promtool rule tests are infra/prometheus/alerts_test.yml. See docs/automatic-detection-verification.md for executed checks and limitations.
+
+## React dashboard
+
+Frontend uses React 19, strict TypeScript 5.8.3 and Vite 6.4.5 with a generated npm lock. No UI/router/chart libraries. Docker builds with Node 22 and serves static assets through nginx on http://localhost:5173 (FRONTEND_PORT). Same-origin /api requests proxy to api:8080 through Docker DNS, avoiding CORS and browser-visible internal hostnames. Vite host development proxies /api to localhost:8080; API_PROXY_TARGET overrides that local development target. Never put credentials in VITE_* variables or frontend source.
+
+Incident list uses server-side severity/status/service filters plus 20-row pagination. Service search is case-insensitive literal substring matching; % and _ are literal characters. Keep unfiltered API pagination backward compatible. List polls every ten seconds; selected incident and diagnosis poll every five seconds with stale-response protection. Incident detail URLs use ?incident=UUID. Do not fetch all rows just to filter in the browser.
+
+Render untrusted incident/evidence/model text as escaped React text, never raw HTML. Retrieval-only displays original excerpts with an explicit no-language-model label and no generated action sections. GENERATED displays cited causes/investigation/remediation with human-review guidance. Similarity is relevance, never confidence. Legacy diagnoses are explicitly labeled. No remediation execution controls.
+
+Build and unit tests: docker compose build frontend (npm ci, seven Node test cases, strict typecheck, Vite production build). Optional host: cd frontend && npm ci && npm test && npm run build. Start: docker compose up -d --build --wait frontend. Browser E2E: bash scripts/test-dashboard.sh after API/publisher/worker and dependencies are running; browser tooling is isolated in infra/browser, not a runtime dependency. Tests retain synthetic incidents and screenshots under ignored .incidentiq-backups/dashboard. Report UI-only generated/error fixtures separately from actual model inference. See docs/dashboard-verification.md.

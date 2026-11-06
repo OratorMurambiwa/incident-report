@@ -83,3 +83,6 @@ test-results/
 pytorch_model.bin
 *.npy
 *.npz
+
+# Compiled frontend unit tests
+**/.test-build/

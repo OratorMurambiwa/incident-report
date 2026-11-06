@@ -26,6 +26,34 @@ class PostgresIntegrationTest {
     @Autowired MockMvc mvc;
 
     @Test
+    void filtersAcrossAllPagesWithCombinedCriteria() throws Exception {
+        String name = "Filter-" + UUID.randomUUID();
+        var target = service.create(new CreateIncidentRequest(name, "Target", "Details", Severity.CRITICAL));
+        service.create(new CreateIncidentRequest(name, "Other severity", "Details", Severity.LOW));
+        service.create(new CreateIncidentRequest(name + "-extra", "Other status", "Details", Severity.CRITICAL));
+        jdbc.update("UPDATE incidentiq_api.incidents SET status='RESOLVED' WHERE id <> ? AND service LIKE ?", target.id(), name + "%");
+        mvc.perform(get("/api/incidents").param("severity", "CRITICAL").param("status", "PENDING")
+                .param("service", name.toLowerCase()).param("size", "1"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(1))
+                .andExpect(jsonPath("$.content[0].id").value(target.id().toString()));
+    }
+
+    @Test
+    void serviceFilterTreatsWildcardCharactersLiterally() {
+        String name = UUID.randomUUID() + "%_";
+        service.create(new CreateIncidentRequest(name, "Literal", "Details", Severity.HIGH));
+        assertEquals(1, service.listFiltered(0, 20, null, null, name).totalElements());
+        assertEquals(0, service.listFiltered(1, 1, null, null, name).content().size());
+    }
+
+    @Test
+    void rejectsInvalidFilters() throws Exception {
+        mvc.perform(get("/api/incidents").param("severity", "URGENT")).andExpect(status().isBadRequest());
+        mvc.perform(get("/api/incidents").param("status", "UNKNOWN")).andExpect(status().isBadRequest());
+        mvc.perform(get("/api/incidents").param("service", "x".repeat(101))).andExpect(status().isBadRequest());
+    }
+
+    @Test
     void persistsAndReadsIncident() {
         var created = service.create(new CreateIncidentRequest("db-test", "Timeout", "Details", Severity.CRITICAL));
         incidents.flush();

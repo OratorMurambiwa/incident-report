@@ -38,6 +38,13 @@ public class IncidentService {
                 page, size, result.getTotalElements(), result.getTotalPages());
     }
 
+    public IncidentPage listFiltered(int page, int size, Severity severity, IncidentStatus status, String service) {
+        var result = incidents.search(severity, status, service == null || service.isBlank() ? null : service.strip(),
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt", "id")));
+        return new IncidentPage(result.map(IncidentResponse::from).getContent(),
+                page, size, result.getTotalElements(), result.getTotalPages());
+    }
+
     public IncidentResponse get(UUID id) {
         return IncidentResponse.from(find(id));
     }

@@ -1,6 +1,6 @@
 # IncidentIQ
 
-Local incident monitoring platform with a working Java 21 REST API and PostgreSQL persistence. Incident creation now flows through a transactional outbox and Kafka to a Python worker that records RECEIVED. The worker now retrieves local runbook context with LangChain and pgvector. Optional local Ollama RAG diagnosis generation is implemented; default mode is explicitly retrieval-only. The live frontend remains future work. No paid or hosted AI service is configured.
+Local incident monitoring platform with a working Java 21 REST API and PostgreSQL persistence. Incident creation now flows through a transactional outbox and Kafka to a Python worker that records RECEIVED. The worker now retrieves local runbook context with LangChain and pgvector. Optional local Ollama RAG diagnosis generation is implemented; default mode is explicitly retrieval-only. The React/TypeScript dashboard provides live incident filtering, submission and diagnosis evidence. No paid or hosted AI service is configured.
 
 ## Run locally with Docker
 
@@ -72,13 +72,13 @@ The multi-stage Dockerfile runs `mvn verify` with Maven 3.9.11 and Java 21, then
 
 - `api/`: Spring Web, Data JPA, Validation, Flyway, repositories, DTOs, services and controllers.
 - `worker/`: Python 3.12 / Kafka receipt consumer, PostgreSQL idempotency and metrics (local sentence-transformers retrieval; optional local Ollama RAG diagnoses).
-- `frontend/`: React 19 / Vite shell; not connected to the API.
+- `frontend/`: React 19 / TypeScript / Vite dashboard connected through the nginx API proxy.
 - `runbooks/`: Markdown sources for future local retrieval.
 - `infra/`: database bootstrap and monitoring configuration.
 - `scripts/`: environment checks and repeatable testing/startup commands.
 - `docs/`: architecture and verification evidence.
 
-For optional host API development, install Java 21/Maven and export the database variables from .env, then `cd api && mvn spring-boot:run`. Stop the Compose API first to free port 8080. Run the worker through Compose so the pinned CPU packages and model files are available. For the frontend: Node 22.12+ and npm, then `cd frontend && npm install && npm run dev`. No host Python/Node is needed for the API or its JUnit tests.
+For optional host API development, install Java 21/Maven and export the database variables from .env, then `cd api && mvn spring-boot:run`. Stop the Compose API first to free port 8080. Run the worker through Compose so the pinned CPU packages and model files are available. For the frontend: Node 22.12+ and npm, then `cd frontend && npm ci && npm run dev`. No host Python/Node is needed for the Dockerized dashboard, API or tests.
 
 Optional Prometheus runs at localhost:9090 and Grafana at localhost:3001 (admin/password from .env). API metrics are exposed at /actuator/prometheus. Both application scrapes use internal Docker addresses, independent of API_PORT. A 16-panel dashboard is provisioned. Optional local Ollama diagnosis generation is implemented but live model inference was not available in this verification environment. Local embedding inference and runbook retrieval are implemented.
 
@@ -207,3 +207,21 @@ python3 scripts/smoke-auto-detection.py
 Simulators return 404 by default. Explicit opt-in uses `docker compose -f compose.yaml -f compose.dev.yaml up -d --wait api`; GET `/api/dev/simulate/failure` returns 500 and GET `/api/dev/simulate/latency?delayMs=750` delays up to 2000ms. Both the dev profile and simulation flag are required; prod/production profiles disable them even with the flag. Restore default settings with `docker compose up -d --no-deps --wait api`.
 
 Availability alerts measure exporter reachability. An unavailable API cannot receive its own webhook until recovery; an unavailable Alertmanager cannot deliver until recovery. This single-host setup is not an external watchdog. See [actual verification results](docs/automatic-detection-verification.md).
+
+## React incident dashboard
+
+Open **http://localhost:5173** after starting Compose:
+
+```bash
+docker compose --profile observability up -d --build --wait
+# Optional real-browser verification (creates and retains synthetic incidents):
+bash scripts/test-dashboard.sh
+```
+
+The dashboard uses real API data: newest-first paginated incidents, severity/status filters, case-insensitive service search, manual incident reporting and shareable incident details. Click Apply service after entering a service substring; Clear filters resets all filters. Lists refresh every ten seconds, details and diagnoses every five seconds. Times display in the browser's local timezone. Loading, empty results, processing failures and request errors have explicit states and retry controls.
+
+Details show the incident description, diagnosis provenance, cited runbooks and expandable original evidence with similarity scores. RETRIEVAL_ONLY means no language model was used; excerpts are not generated advice. AI-generated results show cited likely causes, investigation steps and suggested remediation with a human-review notice. No commands are executed. Monitoring links open Grafana, Prometheus and Alertmanager in separate tabs; start the observability profile to use them.
+
+The multi-stage frontend Dockerfile runs Node tests, strict TypeScript checking and Vite build, then nginx serves static files and proxies /api over internal Docker networking. No host Node installation or CORS configuration is required. FRONTEND_PORT defaults to 5173; PostgreSQL stays at 55432. Keep .env ignored; no credentials are embedded in the browser bundle.
+
+Optional host development: `cd frontend && npm ci && npm run dev` (Node 22.12+). The Vite proxy targets localhost:8080; API_PROXY_TARGET can override it for local development. Run `npm test && npm run build` for frontend unit tests and compilation. See [verification evidence](docs/dashboard-verification.md).

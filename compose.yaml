@@ -1,5 +1,15 @@
 name: ${COMPOSE_PROJECT_NAME:-incidentiq}
 services:
+  frontend:
+    build:
+      context: ./frontend
+    image: incidentiq-frontend:local
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
   api:
     build:
       context: ./api

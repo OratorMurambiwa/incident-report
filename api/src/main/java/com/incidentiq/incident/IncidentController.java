@@ -24,8 +24,12 @@ public class IncidentController {
 
     @GetMapping
     public IncidentPage list(@RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
-        return service.list(page, size);
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size,
+            @RequestParam(required = false) Severity severity,
+            @RequestParam(required = false) IncidentStatus status,
+            @RequestParam(required = false) @jakarta.validation.constraints.Size(max = 100) String service) {
+        return severity == null && status == null && service == null ? this.service.list(page, size)
+                : this.service.listFiltered(page, size, severity, status, service);
     }
 
     @GetMapping("/{id}")
