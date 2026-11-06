@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: incidentiq-api
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:incidentiq}
+    username: ${POSTGRES_USER:incidentiq}
+    password: ${POSTGRES_PASSWORD:incidentiq_local_only}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: incidentiq_api
+  flyway:
+    schemas: incidentiq_api
+    default-schema: incidentiq_api
+    create-schemas: true
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      properties:
+        enable.idempotence: true
+        max.block.ms: 5000
+        delivery.timeout.ms: 10000
+        request.timeout.ms: 5000
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true

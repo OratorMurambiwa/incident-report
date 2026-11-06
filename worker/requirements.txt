@@ -1,0 +1,16 @@
+langchain==0.3.27
+langchain-core==0.3.86
+langchain-text-splitters==0.3.11
+sentence-transformers==3.4.1
+transformers==4.48.3
+huggingface-hub==0.34.4
+tokenizers==0.21.4
+safetensors==0.6.2
+torch==2.6.0+cpu
+numpy==1.26.4
+scipy==1.15.3
+scikit-learn==1.6.1
+kafka-python==2.2.15
+psycopg[binary]==3.2.9
+pgvector==0.4.1
+prometheus-client==0.22.1

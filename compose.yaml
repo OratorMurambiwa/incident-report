@@ -1,0 +1,193 @@
+name: ${COMPOSE_PROJECT_NAME:-incidentiq}
+services:
+  api:
+    build:
+      context: ./api
+    image: incidentiq-api:local
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-incidentiq}
+      POSTGRES_USER: ${POSTGRES_USER:-incidentiq}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-incidentiq_local_only}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    ports:
+      - "127.0.0.1:${API_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 30s
+    restart: unless-stopped
+  publisher:
+    image: incidentiq-api:local
+    environment:
+      SPRING_MAIN_WEB_APPLICATION_TYPE: none
+      OUTBOX_PUBLISHER_ENABLED: "true"
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-incidentiq}
+      POSTGRES_USER: ${POSTGRES_USER:-incidentiq}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-incidentiq_local_only}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+  runbook-ingest:
+    image: incidentiq-worker:local
+    command: ["python", "ingest.py", "/runbooks"]
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-incidentiq}
+      POSTGRES_USER: ${POSTGRES_USER:-incidentiq}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-incidentiq_local_only}
+    volumes:
+      - ./runbooks:/runbooks:ro
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: "no"
+  worker:
+    build:
+      context: ./worker
+    image: incidentiq-worker:local
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-incidentiq}
+      POSTGRES_USER: ${POSTGRES_USER:-incidentiq}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-incidentiq_local_only}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    depends_on:
+      runbook-ingest:
+        condition: service_completed_successfully
+      api:
+        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./runbooks:/runbooks:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
+  postgres:
+    image: pgvector/pgvector:0.8.7-pg16-trixie
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-incidentiq}
+      POSTGRES_USER: ${POSTGRES_USER:-incidentiq}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-incidentiq_local_only}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-55432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/001-init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+  kafka:
+    image: apache/kafka:3.9.1
+    environment:
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://:29092,EXTERNAL://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:${KAFKA_PORT:-9092}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    ports:
+      - "127.0.0.1:${KAFKA_PORT:-9092}:9092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:29092 --list >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 18
+      start_period: 30s
+    restart: unless-stopped
+  kafka-init:
+    image: apache/kafka:3.9.1
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - >-
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092
+        --create --if-not-exists --topic incident.created --partitions 1 --replication-factor 1;
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092
+        --create --if-not-exists --topic incidents.raw --partitions 1 --replication-factor 1;
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092
+        --create --if-not-exists --topic incidents.analyzed --partitions 1 --replication-factor 1
+    restart: "no"
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    profiles: [observability]
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:9090/-/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+  grafana:
+    image: grafana/grafana:12.1.0
+    profiles: [observability]
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-incidentiq_local_only}
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: "false"
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-3001}:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+volumes:
+  postgres_data:
+  kafka_data:
+  prometheus_data:
+  grafana_data:
