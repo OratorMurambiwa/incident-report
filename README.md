@@ -167,7 +167,7 @@ Receipt, five snapshots, diagnosis and incident status commit atomically. Duplic
 python3 scripts/verify-rag-flow.py --expect-mode RETRIEVAL_ONLY
 ```
 
-Verified here: 34 Java tests, 68 Python tests, actual retrieval-only HTTP/Kafka/database diagnosis flow and duplicate preservation. Ollama client/generation paths used mocked responses and unavailable-model simulations. **Actual Ollama generation was not tested**: no model was configured and the local endpoint was unreachable. See [rag-verification.md](docs/rag-verification.md) for commands and actual outputs.
+Verified here: 34 Java tests, 68 Python tests, actual retrieval-only HTTP/Kafka/database diagnosis flow and duplicate preservation. Ollama client/generation paths used mocked responses and unavailable-model simulations. **At that milestone, actual Ollama generation was not tested**: no model was configured and the local endpoint was unreachable. See [rag-verification.md](docs/rag-verification.md) for commands and actual outputs.
 
 ## Prometheus and Grafana observability
 
@@ -225,3 +225,26 @@ Details show the incident description, diagnosis provenance, cited runbooks and 
 The multi-stage frontend Dockerfile runs Node tests, strict TypeScript checking and Vite build, then nginx serves static files and proxies /api over internal Docker networking. No host Node installation or CORS configuration is required. FRONTEND_PORT defaults to 5173; PostgreSQL stays at 55432. Keep .env ignored; no credentials are embedded in the browser bundle.
 
 Optional host development: `cd frontend && npm ci && npm run dev` (Node 22.12+). The Vite proxy targets localhost:8080; API_PROXY_TARGET can override it for local development. Run `npm test && npm run build` for frontend unit tests and compilation. See [verification evidence](docs/dashboard-verification.md).
+
+## Optional local CPU Ollama verification
+
+Actual qwen3:0.6b generation was verified through React and stored diagnoses. Initial review found a contradicted Kafka offset prohibition; a fail-closed guard now rejects that advice, tested with real model output. Keep retrieval-only as the default and review every generated suggestion. These tests verify sampled fields and failure behavior, not general semantic correctness. See [actual findings and limitations](docs/ollama-verification.md).
+
+Retrieval-only (`LLM_PROVIDER=none`) remains the base configuration. The explicit `compose.ollama.yaml` override uses private Docker DNS `http://ollama:11434`; container localhost is not the host. It publishes no Ollama port and uses no paid/hosted model service. It is for x86-64 CPUs with AVX2/FMA/F16C support.
+
+```bash
+# Build a small CPU runtime and the worker; no GPU toolkit/image downloads:
+docker compose -f compose.yaml -f compose.ollama.yaml build ollama worker
+docker compose -f compose.yaml -f compose.ollama.yaml up -d --no-deps --wait ollama
+# Explicit one-time model download, about 523 MB (never automatic):
+docker compose -f compose.yaml -f compose.ollama.yaml exec ollama ollama pull qwen3:0.6b
+docker build -t incidentiq-browser:local infra/browser
+# Requires the existing API/frontend/publisher/dependencies running, initially in none mode:
+python3 scripts/verify-local-ollama.py
+```
+
+The verifier submits three real React incidents, checks generated diagnoses and persisted receipts/evidence, then exercises an actual adversarial model response, a missing model and a one-second timeout. It retains synthetic records and negative-case quarantine evidence. It restores the base worker in a finally block. Generated/error answers are never executed as commands. Browser captures and proof JSON stay in ignored .incidentiq-backups/ollama-verification.
+
+To opt in outside the verifier, start only the worker with `docker compose -f compose.yaml -f compose.ollama.yaml up -d --no-deps --wait worker` after the runtime and model are ready. Restore retrieval-only with `docker compose up -d --no-deps --wait worker`. Failed generation is durably quarantined, never silently relabeled retrieval-only; restoring the base configuration affects new events, not historical diagnoses. Stop the optional runtime with `docker compose -f compose.yaml -f compose.ollama.yaml stop ollama`; preserve ollama_data.
+
+The CPU image assembles a hash-pinned official Ollama 0.6.8 executable (11 MB compressed) and AVX2 libraries compiled from the matching pinned upstream source (8 MB compressed). This avoids the release image's large GPU library layer. A separate persistent volume caches the explicitly selected model. CPU resources are limited to four CPUs and 2500 MiB; requests use four threads, 8192 context tokens and at most 512 output tokens, with one cited item per category for this small model. The API/storage schema still supports earlier multi-item diagnoses. See [actual local generation verification](docs/ollama-verification.md).

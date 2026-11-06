@@ -138,9 +138,14 @@ def test_transport_sends_schema_no_tools_and_handles_missing_model(monkeypatch):
     prompt = PROMPT.invoke({"schema": json.dumps(GeneratedDiagnosis.model_json_schema()), "data": "{}"})
     with pytest.raises(ModelUnavailable):
         ollama_response(prompt, LlmSettings("ollama", "missing-model"))
-    assert captured[0]["format"] == GeneratedDiagnosis.model_json_schema()
+    schema = captured[0]["format"]
+    assert schema["required"] == GeneratedDiagnosis.model_json_schema()["required"]
+    for field in ("likely_causes", "investigation_steps", "suggested_remediation"):
+        assert schema["properties"][field]["maxItems"] == 1
+    assert schema["$defs"]["CitedStatement"]["properties"]["sources"]["maxItems"] == 1
     assert captured[0]["stream"] is False
     assert "tools" not in captured[0]
+    assert captured[0]["options"] == {"temperature": 0, "num_ctx": 8192, "num_predict": 512, "num_thread": 4}
 
 
 def test_transport_accepts_complete_local_response(monkeypatch):
@@ -152,3 +157,27 @@ def test_transport_accepts_complete_local_response(monkeypatch):
     monkeypatch.setattr(urllib.request, "build_opener", lambda *_: opener)
     prompt = PROMPT.invoke({"schema": "{}", "data": "{}"})
     assert json.loads(ollama_response(prompt, LlmSettings("ollama", "test-model"))) == response()
+
+
+def test_transport_timeout_fails_closed(monkeypatch):
+    import urllib.request
+    from diagnosis import PROMPT
+    opener = Mock()
+    opener.open.side_effect = TimeoutError("socket timeout")
+    monkeypatch.setattr(urllib.request, "build_opener", lambda *_: opener)
+    with pytest.raises(ModelUnavailable):
+        ollama_response(PROMPT.invoke({"schema": "{}", "data": "{}"}), LlmSettings("ollama", "test-model"))
+
+
+@pytest.mark.parametrize("advice", [
+    "Ensure offsets are restored forward and that consumers are only added up to available partitions.",
+    "Reset Kafka offsets forward to clear the backlog.",
+    "Move forward the consumer offsets.",
+])
+def test_observed_actual_model_forward_offset_advice_is_rejected(advice):
+    # First string was emitted by actual qwen3:0.6b with a valid kafka-lag.md
+    # citation, contradicting the retrieved runbook. Unit replay of that failure.
+    data = response()
+    data["suggested_remediation"][0]["text"] = advice
+    with pytest.raises(InvalidDiagnosis, match="Forward-offset"):
+        generate_diagnosis(event(), documents(), LlmSettings("ollama", "test-model"), lambda _: json.dumps(data))

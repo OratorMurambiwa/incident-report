@@ -68,6 +68,7 @@ test-results/
 **/prometheus_data/
 **/grafana_data/
 **/alertmanager_data/
+**/ollama_data/
 *.db
 *.sqlite
 *.sqlite3
