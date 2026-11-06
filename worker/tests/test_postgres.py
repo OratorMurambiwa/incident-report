@@ -110,6 +110,10 @@ def test_mocked_ollama_persists_structured_diagnosis_and_diagnosed_status(incide
 
 
 def test_duplicate_does_not_regenerate_or_overwrite_diagnosis(incident):
+    from prometheus_client import REGISTRY
+    metric = "incidentiq_worker_diagnoses_total"
+    labels = {"outcome": "success", "mode": "retrieval_only"}
+    baseline = REGISTRY.get_sample_value(metric, labels)
     from unittest.mock import Mock
     process_event(incident)
     with connect_db() as conn:
@@ -120,6 +124,7 @@ def test_duplicate_does_not_regenerate_or_overwrite_diagnosis(incident):
     with connect_db() as conn:
         after = conn.execute("SELECT id, mode, retrieved_evidence, created_at FROM incidentiq_api.diagnoses WHERE incident_id=%s", (incident["incidentId"],)).fetchone()
     assert before == after
+    assert REGISTRY.get_sample_value(metric, labels) == baseline + 1
 
 
 def test_unavailable_model_rolls_back_then_quarantines_and_marks_failed(incident):
@@ -127,6 +132,10 @@ def test_unavailable_model_rolls_back_then_quarantines_and_marks_failed(incident
     import threading
     from main import handle_record, Settings
     from diagnosis import ModelUnavailable
+    from prometheus_client import REGISTRY
+    metric = "incidentiq_worker_diagnoses_total"
+    labels = {"outcome": "failure", "mode": "retrieval_only"}
+    baseline = REGISTRY.get_sample_value(metric, labels)
     generator = Mock(side_effect=ModelUnavailable("missing model"))
     process = lambda event: process_event(event, diagnose=generator)
     record = SimpleNamespace(topic="pytest-" + str(uuid4()), partition=0, offset=1, value=json.dumps(incident).encode())
@@ -134,6 +143,7 @@ def test_unavailable_model_rolls_back_then_quarantines_and_marks_failed(incident
     try:
         handle_record(record, consumer, Settings(retry_seconds=0), threading.Event(), process=process)
         assert generator.call_count == 3
+        assert REGISTRY.get_sample_value(metric, labels) == baseline + 1
         consumer.commit.assert_called_once()
         with connect_db() as conn:
             assert conn.execute("SELECT count(*) FROM incidentiq_api.processed_events WHERE event_id=%s", (incident["eventId"],)).fetchone()[0] == 0

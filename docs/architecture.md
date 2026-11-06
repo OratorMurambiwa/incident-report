@@ -6,4 +6,6 @@ Provider none stores RETRIEVAL_ONLY with original evidence and no generated anal
 
 Flyway manages incidentiq_api. V1 incident/diagnosis tables; V2 outbox/receipts/failures; V3 Kafka tombstones; V4 runbook corpus/retrieval snapshots; V5 structured diagnosis/provenance and legacy labeling. public.runbook_chunks and prior data remain intact. GET diagnosis exposes both original fields and structured analysis/evidence/provenance. Snapshots survive corpus updates; historical receipts are not backfilled.
 
-Future work: actual Ollama model validation in this environment, live React views, incidents.analyzed publication, richer processing metrics and Grafana dashboards. Kafka remains one KRaft node, delivery at least once. See rag-verification.md for executed tests and mode-specific runtime evidence.
+Future work: actual Ollama model validation in this environment, live React views, incidents.analyzed publication, additional operational alerts and richer frontend integration. Kafka remains one KRaft node, delivery at least once. See rag-verification.md for executed tests and mode-specific runtime evidence.
+
+Observability is implemented with Actuator/Micrometer and prometheus_client. Prometheus scrapes Docker service addresses; Grafana provisions the incidentiq-overview dashboard. Metrics use bounded labels, database-backed incident gauges and committed/quarantined workflow outcomes. Monitoring volumes persist without replacing PostgreSQL/Kafka storage. See monitoring-verification.md.

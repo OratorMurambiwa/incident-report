@@ -13,6 +13,7 @@ from typing import Any, Callable
 from uuid import UUID
 
 from db import connect_db
+from metrics import PROCESSING_DURATION, RETRIEVAL_DURATION, diagnosis_committed, diagnosis_quarantined
 from kafka import KafkaConsumer, TopicPartition, OffsetAndMetadata
 from prometheus_client import Counter, start_http_server
 
@@ -90,7 +91,8 @@ def process_event(event: dict[str, Any], connect: Callable = connect_db, retriev
                     raise EventConflict("event_id_conflict")
                 return False
             from retrieval import retrieve_incident, persist_retrievals
-            documents = (retrieve or retrieve_incident)(event, connection)
+            with RETRIEVAL_DURATION.time():
+                documents = (retrieve or retrieve_incident)(event, connection)
             from diagnosis import generate_diagnosis, persist_diagnosis, MissingEvidence
             if len(documents) != 5:
                 raise MissingEvidence("Runbook corpus must supply five retrieval results")
@@ -103,6 +105,7 @@ def process_event(event: dict[str, Any], connect: Callable = connect_db, retriev
                 UPDATE incidentiq_api.incidents SET status = %s, updated_at = GREATEST(now(), updated_at)
                 WHERE id = %s AND status IN ('PENDING', 'FAILED')
                 """, (target_status, event["incidentId"]))
+    diagnosis_committed(result["mode"])  # after PostgreSQL context exit/commit; replay returns above
     return True
 
 
@@ -126,11 +129,20 @@ def quarantine(record: Any, error_code: str, attempts: int, connect: Callable = 
                         WHERE id = %s AND status IN ('PENDING', 'ANALYZING')
                         AND NOT EXISTS (SELECT 1 FROM incidentiq_api.processed_events WHERE event_id = %s)
                         """, (event["incidentId"], event["eventId"]))
+    # A durable workflow failure is counted once per handling; malformed/conflicting records are separate.
+    try:
+        validate_event(record.value)
+    except InvalidEvent:
+        pass
+    else:
+        if error_code != "EventConflict":
+            diagnosis_quarantined()
     QUARANTINED.inc()
     LOG.error(json.dumps({"action": "quarantined", "topic": record.topic, "partition": record.partition,
                           "offset": record.offset, "error": error_code, "attempts": attempts}))
 
 
+@PROCESSING_DURATION.time()
 def handle_record(record: Any, consumer: Any, settings: Settings, stopped: threading.Event,
                   process: Callable = process_event, retain: Callable = quarantine) -> None:
     try:

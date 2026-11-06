@@ -88,3 +88,15 @@ After completing and successfully testing each major development milestone:
 8. Report the commit SHA, tests passed and GitHub link.
 
 Never force-push, rewrite history or delete unrelated files. If tests fail or a push is rejected, stop the publication workflow and explain the issue instead of claiming success; do not commit/push failing changes or bypass a rejection. Keep all work and data intact. Obtain no additional confirmation for this explicitly authorized workflow, but respect any later instruction to stop publishing.
+
+## Monitoring
+
+Actuator/Micrometer HTTP request histograms and JVM metrics are enabled. IncidentMetrics registers PostgreSQL-backed incident totals and six bounded status gauges; DB outages return NaN. HTTP URI labels use MVC templates and a 32-value MeterFilter cap. Never add incident IDs, event IDs, filenames, model names, service names or unbounded exception messages to metric labels.
+
+worker/metrics.py defines processing/retrieval histograms and diagnosis outcomes. Increment success only after PostgreSQL commit, never on duplicates or rolled-back attempts. Increment valid workflow failure after durable quarantine, excluding malformed/conflicting records. Processing time includes retries/offset commit; retrieval time includes embeddings/vector SQL per attempt. Counter values are process-lifetime measurements, not durable database totals.
+
+Use `docker compose --profile observability up -d --build --wait`; Prometheus scrapes api:8080/actuator/prometheus and worker:8001/metrics internally. Grafana uses the provisioned prometheus datasource and incidentiq-overview dashboard. Preserve prometheus_data/grafana_data plus all existing volumes. URLs: http://localhost:9090 and http://localhost:3001/d/incidentiq-overview; admin password remains in ignored .env.
+
+Run `python3 scripts/verify-monitoring.py` for live datasource/panel checks (creates explicit synthetic success/error/failure fixtures). Optional scripts/capture-monitoring.py runs inside Playwright, never the application container. Set a valid browser locale (en-US); screenshots/JSON evidence remain under ignored .incidentiq-backups/monitoring. Read docs/monitoring-verification.md for actual results.
+
+SimpleMeterRegistry in the installed Micrometer version has close() but does not implement AutoCloseable: use a normal variable and try/finally cleanup in tests. Verify all Java/Python suites and actual Grafana rendering before applying the Git publication workflow.

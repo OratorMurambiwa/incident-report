@@ -80,7 +80,7 @@ The multi-stage Dockerfile runs `mvn verify` with Maven 3.9.11 and Java 21, then
 
 For optional host API development, install Java 21/Maven and export the database variables from .env, then `cd api && mvn spring-boot:run`. Stop the Compose API first to free port 8080. Run the worker through Compose so the pinned CPU packages and model files are available. For the frontend: Node 22.12+ and npm, then `cd frontend && npm install && npm run dev`. No host Python/Node is needed for the API or its JUnit tests.
 
-Optional Prometheus runs at localhost:9090 and Grafana at localhost:3001 (admin/password from .env). API metrics are exposed at /actuator/prometheus. The existing Prometheus host target reaches the published API port; custom API_PORT changes require updating that target. Worker metrics use the internal worker:8001 target. Dashboards remain unimplemented. Optional local Ollama diagnosis generation is implemented but live model inference was not available in this verification environment. Local embedding inference and runbook retrieval are implemented.
+Optional Prometheus runs at localhost:9090 and Grafana at localhost:3001 (admin/password from .env). API metrics are exposed at /actuator/prometheus. Both application scrapes use internal Docker addresses, independent of API_PORT. A 16-panel dashboard is provisioned. Optional local Ollama diagnosis generation is implemented but live model inference was not available in this verification environment. Local embedding inference and runbook retrieval are implemented.
 
 ## Event delivery and worker
 
@@ -168,3 +168,26 @@ python3 scripts/verify-rag-flow.py --expect-mode RETRIEVAL_ONLY
 ```
 
 Verified here: 34 Java tests, 68 Python tests, actual retrieval-only HTTP/Kafka/database diagnosis flow and duplicate preservation. Ollama client/generation paths used mocked responses and unavailable-model simulations. **Actual Ollama generation was not tested**: no model was configured and the local endpoint was unreachable. See [rag-verification.md](docs/rag-verification.md) for commands and actual outputs.
+
+## Prometheus and Grafana observability
+
+```bash
+docker compose --profile observability up -d --build --wait
+python3 scripts/verify-monitoring.py
+```
+
+- Grafana dashboard: http://localhost:3001/d/incidentiq-overview (login `admin`, password from ignored `.env`).
+- Prometheus: http://localhost:9090 (targets at http://localhost:9090/targets).
+- API exporter: http://localhost:8080/actuator/prometheus.
+
+Prometheus scrapes `api:8080/actuator/prometheus` and `worker:8001/metrics` every five seconds over Docker networking. Grafana's Prometheus datasource and 16-panel **IncidentIQ · Local Operations** dashboard are provisioned from infra/grafana. Existing named volumes store Prometheus history and Grafana state; stopping services without `--volumes` preserves them. PostgreSQL remains published at 55432.
+
+The dashboard shows request traffic/counts, estimated HTTP p95 latency, separate 4xx/5xx error rates, JVM heap/nonheap memory, persisted incident totals/by-status counts, worker processing/retrieval latency and diagnosis outcomes. Actuator traffic is excluded from API traffic/error panels. API p95 uses histogram buckets rather than averaging percentiles.
+
+HTTP URI tags use MVC templates and a 32-value cap. Custom incident labels are restricted to the six status values; worker diagnosis labels are only outcome=success/failure and mode=retrieval_only/generated. No incident/event IDs, service names, filenames or model names become metric labels.
+
+Worker diagnosis successes increment after database commit, and duplicate events do not increment them. Valid workflows durably quarantined after failure increment failure counters; malformed/conflicting events remain in the separate quarantine counter. Processing duration covers retries and offset commit. Retrieval latency covers local query embeddings and vector search, including failed attempts. Counters reset on process restart; Prometheus rate calculations handle resets, and dashboard totals explicitly say 'since restart'. Persisted incident gauges read PostgreSQL and survive API restarts. Database outages produce NaN for those gauges, not a misleading zero.
+
+`verify-monitoring.py` creates synthetic HTTP success/error traffic and one valid Kafka event referencing a nonexistent synthetic incident to exercise failure metrics. It retains the incident/diagnosis and durable quarantine evidence. It verifies both targets, real metric samples, database count agreement, bounded labels, datasource health and numeric data for every dashboard panel. `--no-fixtures` avoids new fixtures but requires recent metric activity for latency checks.
+
+Full verification, including browser rendering, is documented in [monitoring-verification.md](docs/monitoring-verification.md). The optional browser capture helper runs in a temporary Playwright container; it adds no host/application dependency and saves screenshots under ignored .incidentiq-backups/monitoring.
