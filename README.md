@@ -260,3 +260,14 @@ python3 scripts/benchmark.py run
 Uses bounded Dockerized k6 workloads, a separate owned database and Kafka broker, and retrieval-only mode. Measures API request rate/average/p95/p99/error rate separately from a 60-event Kafka-to-committed-diagnosis batch. Existing incidents, main Kafka data, PostgreSQL port 55432 and Docker volumes are preserved. Benchmarks retain their isolated database and results; explicit guarded cleanup is documented.
 
 The measured local baseline observed 65.80 read requests/s, 17.02 incident creates/s and 6.19 asynchronously processed events/s, with zero failures under the recorded quotas/workloads. These are bounded offered-load measurements, not maximum capacity claims. See [actual results and hardware](docs/benchmarks/RESULTS.md) and [methodology/reproduction/cleanup](docs/benchmarks/README.md). Ollama is excluded and must be measured separately.
+
+## Distributed fault recovery
+
+```bash
+python3 -m unittest discover -s faults -p 'test_*.py' -v
+python3 scripts/faults.py run
+```
+
+Runs bounded real-container worker/publisher crashes, duplicates/rebalancing, broker/database outages, stale membership and poison-record checks in a private Docker project. Each run owns a PostgreSQL container/database, Kafka broker/topic/group and localhost:18081 API. Existing application images and local MiniLM weights are reused; retrieval-only is forced. Normal services, PostgreSQL port 55432 and existing volumes are preserved. The runner stops its private containers afterward and retains all test volumes/evidence.
+
+See [reproduction, boundaries and cleanup](docs/faults/README.md) and [actual recovery measurements](docs/faults/RESULTS.md). Delivery remains at least once; durable event-ID deduplication protected the tested database effects. No exactly-once Kafka guarantee is claimed.

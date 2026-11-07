@@ -1,0 +1,30 @@
+{
+  "run": "20261107t190041z_909be1ac",
+  "project": "incidentiq-fault-20261107t190041z_909be1ac",
+  "database": "incidentiq_fault_20261107t190041z_909be1ac",
+  "topic": "incidentiq.fault.20261107t190041z_909be1ac",
+  "timestamp_utc": "2026-11-07T19:00:41.954365+00:00",
+  "timezone": "America/Chicago",
+  "application_commit": "debc2894970673291140cc58dc7da9770cddfa5a",
+  "memory_available_before": 4256112640,
+  "cpu_model": "Intel(R) Core(TM) Ultra 5 225U",
+  "logical_cpus": 14,
+  "session_timeout_ms": 6000,
+  "heartbeat_interval_ms": 1000,
+  "normal_worker_timeouts_unchanged": true,
+  "mode": "RETRIEVAL_ONLY",
+  "images": {
+    "incidentiq-api:local": "sha256:aa3fe84ab853d265383bb2de3c0944253f1acf2a341ae8a977b7051e2bcec4cd",
+    "incidentiq-worker:local": "sha256:b16868086f9f2bfcebbf2b13833868eeb8b7c8543b7c5f28194a46a241f2e8b1",
+    "apache/kafka:3.9.1": "sha256:4ceccc577f03f51f6af8dbfda55194d0d892f4fa7913ffbded567ce3895622ed",
+    "pgvector/pgvector:0.8.7-pg16-trixie": "sha256:9cf8b511f0e9a2c209b61430fc139f1ab9c75edbb31fb1751db6617b246a897a"
+  },
+  "source_sha256": {
+    "faults/contracts.py": "05b78d7840cabe7dc2c11dde63b7af8015e44db5a7b48b4da5bd8813fd3043ce",
+    "faults/control.py": "e574d0821b22752ea0b9768d04500b7b3efcda78d0f036b4ddaea27074e50b11",
+    "faults/test_contracts.py": "d573aa4df512b305daef430f20f3d6d8306b61ca7fd1119f22391ce06d8bec29",
+    "faults/worker_adapter.py": "96b91538da44d83e02e066ad3ddde08924c3cd8166c8db3735b6698f0ee280ae",
+    "faults/compose.yaml": "411abdf1df7e3199a1ff2beef482a46decf6f1784ec24f80ce6f56effc590b8b",
+    "scripts/faults.py": "6d1406743d601343c9ccb46e4acc10a8cc29c142fae3e3248f2848f73b975aa9"
+  }
+}

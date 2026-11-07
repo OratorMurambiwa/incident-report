@@ -1,0 +1,24 @@
+{
+  "run": "20261107t184738z_8d63aac4",
+  "project": "incidentiq-fault-20261107t184738z_8d63aac4",
+  "database": "incidentiq_fault_20261107t184738z_8d63aac4",
+  "topic": "incidentiq.fault.20261107t184738z_8d63aac4",
+  "timestamp_utc": "2026-11-07T18:47:38.138541+00:00",
+  "timezone": "America/Chicago",
+  "application_commit": "debc2894970673291140cc58dc7da9770cddfa5a",
+  "memory_available_before": 4375048192,
+  "cpu_model": "Intel(R) Core(TM) Ultra 5 225U",
+  "logical_cpus": 14,
+  "session_timeout_ms": 6000,
+  "heartbeat_interval_ms": 1000,
+  "normal_worker_timeouts_unchanged": true,
+  "mode": "RETRIEVAL_ONLY",
+  "source_sha256": {
+    "faults/contracts.py": "05b78d7840cabe7dc2c11dde63b7af8015e44db5a7b48b4da5bd8813fd3043ce",
+    "faults/control.py": "8c17894a9d94c6ac527e22b7eb63d8384ab90d30d7b185e91a38d90bd28c06a0",
+    "faults/test_contracts.py": "e3e5ad6a0e56c3e311abce509dd147a6032065a9a5d769c88ef580c5579e191e",
+    "faults/worker_adapter.py": "96b91538da44d83e02e066ad3ddde08924c3cd8166c8db3735b6698f0ee280ae",
+    "faults/compose.yaml": "411abdf1df7e3199a1ff2beef482a46decf6f1784ec24f80ce6f56effc590b8b",
+    "scripts/faults.py": "ea196fe71f5d8f51a29987276fa2befbdbcf29a460cec13d0c95bd912e3fbc81"
+  }
+}

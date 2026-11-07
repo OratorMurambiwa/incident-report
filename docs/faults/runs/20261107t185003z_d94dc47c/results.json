@@ -1,0 +1,248 @@
+{
+  "run": "20261107t185003z_d94dc47c",
+  "project": "incidentiq-fault-20261107t185003z_d94dc47c",
+  "database": "incidentiq_fault_20261107t185003z_d94dc47c",
+  "topic": "incidentiq.fault.20261107t185003z_d94dc47c",
+  "mode": "RETRIEVAL_ONLY",
+  "exactly_once_delivery_claimed": false,
+  "cases": [
+    {
+      "case": "crash_before_db_commit",
+      "recovery_seconds": 15.778,
+      "before": {
+        "incident_id": "7c1d7a19-e1b0-4b8e-b278-a6ce7a5455c1",
+        "event_id": "e5bea722-04a1-480f-a44c-048673e8a5e4",
+        "status": "PENDING",
+        "published": true,
+        "outbox_attempts": 1,
+        "receipts": 0,
+        "diagnoses": 0,
+        "snapshots": 0,
+        "snapshot_hash": null,
+        "diagnosis_id": null
+      },
+      "after": {
+        "row": {
+          "incident_id": "7c1d7a19-e1b0-4b8e-b278-a6ce7a5455c1",
+          "event_id": "e5bea722-04a1-480f-a44c-048673e8a5e4",
+          "status": "RECEIVED",
+          "published": true,
+          "outbox_attempts": 1,
+          "receipts": 1,
+          "diagnoses": 1,
+          "snapshots": 5,
+          "snapshot_hash": "dc5a3b2ec52e6ee627137c267905dab4",
+          "diagnosis_id": "2c25e2b2-ad6a-41bb-ab0b-27fc8c79aeb1"
+        },
+        "offsets": {
+          "end": 2,
+          "committed": 2,
+          "group_state": "Stable",
+          "members": 1
+        }
+      },
+      "worker_state": {
+        "restarts": 0,
+        "running": true,
+        "paused": false,
+        "oom": false
+      }
+    },
+    {
+      "case": "crash_after_db_commit",
+      "recovery_seconds": 13.815,
+      "before": {
+        "incident_id": "72c988ba-e9af-4097-8ad2-bc604f3b4b31",
+        "event_id": "63fb7127-a3ae-4caa-b7f2-0e406773aeea",
+        "status": "RECEIVED",
+        "published": true,
+        "outbox_attempts": 1,
+        "receipts": 1,
+        "diagnoses": 1,
+        "snapshots": 5,
+        "snapshot_hash": "5f9b5857e4d19c7b275a1d2fb9c92dc7",
+        "diagnosis_id": "0360642e-2940-47e5-89e7-0aa43de9bb36"
+      },
+      "after": {
+        "row": {
+          "incident_id": "72c988ba-e9af-4097-8ad2-bc604f3b4b31",
+          "event_id": "63fb7127-a3ae-4caa-b7f2-0e406773aeea",
+          "status": "RECEIVED",
+          "published": true,
+          "outbox_attempts": 1,
+          "receipts": 1,
+          "diagnoses": 1,
+          "snapshots": 5,
+          "snapshot_hash": "5f9b5857e4d19c7b275a1d2fb9c92dc7",
+          "diagnosis_id": "0360642e-2940-47e5-89e7-0aa43de9bb36"
+        },
+        "offsets": {
+          "end": 3,
+          "committed": 3,
+          "group_state": "Stable",
+          "members": 1
+        }
+      },
+      "worker_state": {
+        "restarts": 0,
+        "running": true,
+        "paused": false,
+        "oom": false
+      }
+    },
+    {
+      "case": "duplicates_and_rebalance",
+      "recovery_seconds": 20.636,
+      "duplicates": {
+        "duplicate_offsets": [
+          4,
+          5,
+          6
+        ]
+      },
+      "two_members": {
+        "end": 4,
+        "committed": 4,
+        "group_state": "Stable",
+        "members": 2
+      },
+      "after": {
+        "row": {
+          "incident_id": "c7f0f8d0-599f-41cc-bcbf-b1797ccbee6b",
+          "event_id": "94fe2aaf-3789-4b4d-9cdb-73972983b294",
+          "status": "RECEIVED",
+          "published": true,
+          "outbox_attempts": 1,
+          "receipts": 1,
+          "diagnoses": 1,
+          "snapshots": 5,
+          "snapshot_hash": "37ced06454db8864bf54ae9b493486c0",
+          "diagnosis_id": "fe0c77ea-e4a9-486f-843c-e759c35a1c12"
+        },
+        "offsets": {
+          "end": 7,
+          "committed": 7,
+          "group_state": "Stable",
+          "members": 2
+        }
+      },
+      "one_member": {
+        "end": 7,
+        "committed": 7,
+        "group_state": "Stable",
+        "members": 1
+      }
+    },
+    {
+      "case": "broker_outage",
+      "recovery_seconds": 41.724,
+      "recovered_events": [
+        {
+          "row": {
+            "incident_id": "31136758-38f0-4b68-ab83-e5c23c44b25b",
+            "event_id": "0ba01910-65f5-4c51-97b8-f1728c43e765",
+            "status": "RECEIVED",
+            "published": true,
+            "outbox_attempts": 5,
+            "receipts": 1,
+            "diagnoses": 1,
+            "snapshots": 5,
+            "snapshot_hash": "96d9b2a085a32fb7401194e3314ad9d8",
+            "diagnosis_id": "4d86ce34-2629-48a4-9e7f-cd68cbf336db"
+          },
+          "offsets": {
+            "end": 10,
+            "committed": 10,
+            "group_state": "Stable",
+            "members": 1
+          }
+        },
+        {
+          "row": {
+            "incident_id": "26c7b38f-3366-4a34-a0ff-0a4d19e65840",
+            "event_id": "c3d72b25-7d46-4238-aa59-3448a62560e1",
+            "status": "RECEIVED",
+            "published": true,
+            "outbox_attempts": 4,
+            "receipts": 1,
+            "diagnoses": 1,
+            "snapshots": 5,
+            "snapshot_hash": "451143c67fdb312db72d5458831c63d1",
+            "diagnosis_id": "dc70837c-53af-4707-b6de-4d2df4e110e7"
+          },
+          "offsets": {
+            "end": 10,
+            "committed": 10,
+            "group_state": "Stable",
+            "members": 1
+          }
+        },
+        {
+          "row": {
+            "incident_id": "5ddb6e2c-e383-430b-b3fb-a9f9ff33d525",
+            "event_id": "f66a2ff9-02a3-4b70-9c3d-67d874f6c062",
+            "status": "RECEIVED",
+            "published": true,
+            "outbox_attempts": 4,
+            "receipts": 1,
+            "diagnoses": 1,
+            "snapshots": 5,
+            "snapshot_hash": "46f8cc3af29360bfeeddf9560e820879",
+            "diagnosis_id": "b3fef6ea-da55-46df-876c-529382ddc91f"
+          },
+          "offsets": {
+            "end": 10,
+            "committed": 10,
+            "group_state": "Stable",
+            "members": 1
+          }
+        }
+      ],
+      "outbox_retry_observed": true,
+      "quarantine_before": 0
+    },
+    {
+      "case": "database_outage",
+      "recovery_seconds": 8.805,
+      "before": {
+        "end": 11,
+        "committed": 10,
+        "group_state": "Stable",
+        "members": 1
+      },
+      "during": {
+        "end": 11,
+        "committed": 10,
+        "group_state": "Empty",
+        "members": 0
+      },
+      "after": {
+        "row": {
+          "incident_id": "70a98a85-66f3-4bdd-9879-2fe2fa61f986",
+          "event_id": "1eab2edf-32b6-4a56-b9df-7cc6489c5673",
+          "status": "RECEIVED",
+          "published": true,
+          "outbox_attempts": 1,
+          "receipts": 1,
+          "diagnoses": 1,
+          "snapshots": 5,
+          "snapshot_hash": "643d27410680111293be58dc419e3c92",
+          "diagnosis_id": "a49a74a1-c884-41d7-b0e3-fbae2ac84814"
+        },
+        "offsets": {
+          "end": 11,
+          "committed": 11,
+          "group_state": "Stable",
+          "members": 1
+        }
+      },
+      "worker_state": {
+        "restarts": 2,
+        "running": true,
+        "paused": false,
+        "oom": false
+      }
+    }
+  ],
+  "complete": false
+}

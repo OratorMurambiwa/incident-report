@@ -51,9 +51,9 @@ def wait(check, message, timeout=120):
     raise AssertionError(message)
 
 
-def observation(fingerprint):
-    return db("""
-        SELECT json_build_object('incident_id', a.incident_id, 'resolved_at', a.resolved_at,
+def observation(fingerprint, starts_at=None):
+    row = db("""
+        SELECT json_build_object('incident_id', a.incident_id, 'resolved_at', a.resolved_at, 'starts_at', a.starts_at,
           'status', i.status, 'event_id', o.event_id, 'published', o.published_at IS NOT NULL,
           'diagnosis_id', d.id, 'mode', d.mode,
           'snapshots', (SELECT count(*) FROM incidentiq_api.incident_retrievals r WHERE r.incident_id=i.id),
@@ -67,6 +67,12 @@ def observation(fingerprint):
         LEFT JOIN incidentiq_api.diagnoses d ON d.incident_id=i.id
         WHERE a.fingerprint=:'fingerprint' ORDER BY a.created_at DESC LIMIT 1;
         """, fingerprint=fingerprint)
+    # A fingerprint recurs after resolution. Never accept an older occurrence
+    # while waiting for the current firing webhook to arrive.
+    if starts_at is not None and row is not None:
+        if datetime.fromisoformat(row["starts_at"]) != datetime.fromisoformat(starts_at):
+            return None
+    return row
 
 
 def main():
@@ -93,8 +99,8 @@ def main():
                      and (uri is None or a["labels"].get("uri") == uri)
                      and (job is None or a["labels"].get("job") == job)), None)
 
-    def diagnosed(fp):
-        row = observation(fp)
+    def diagnosed(fp, starts_at):
+        row = observation(fp, starts_at)
         return row if row and row["diagnosis_id"] and row["published"] and row["snapshots"] == 5 else None
 
     def webhook_count():
@@ -141,20 +147,20 @@ def main():
             start_traffic(path, expected)
             alert = wait(lambda: active(name, uri=uri), f"{name} never reached Prometheus and Alertmanager")
             fp = alert["fingerprint"]
-            row = wait(lambda: diagnosed(fp), "Alert webhook did not produce a stored diagnosis")
+            row = wait(lambda: diagnosed(fp, alert["startsAt"]), "Alert webhook did not produce a stored diagnosis")
             assert row["receipts"] == row["outbox_count"] == 1
             diagnosis = http(args.api + "/api/incidents/" + row["incident_id"] + "/diagnosis")
             assert len(diagnosis["retrievedEvidence"]) == 5
             wait(lambda: webhook_count() or None, "No successful real webhook calls observed")
-            baseline = observation(fp)["last_notification"]
-            wait(lambda: observation(fp)["last_notification"] != baseline, "Alertmanager repeat notification for this fingerprint was not delivered", timeout=45)
-            repeated = observation(fp)
+            baseline = observation(fp, alert["startsAt"])["last_notification"]
+            wait(lambda: observation(fp, alert["startsAt"])["last_notification"] != baseline, "Alertmanager repeat notification for this fingerprint was not delivered", timeout=45)
+            repeated = observation(fp, alert["startsAt"])
             assert repeated["incident_id"] == row["incident_id"] and repeated["occurrences"] == row["occurrences"]
             assert repeated["outbox_count"] == repeated["receipts"] == 1
             assert http(args.api + "/api/incidents/" + row["incident_id"] + "/diagnosis") == diagnosis
             print(name, "firing -> one incident/outbox/receipt/diagnosis; repeat deduplicated:", row["incident_id"], flush=True)
             stop_traffic()
-            resolved = wait(lambda: (r if (r := observation(fp)) and r["status"] == "RESOLVED" and r["resolved_at"] else None), "Resolved notification did not close incident")
+            resolved = wait(lambda: (r if (r := observation(fp, alert["startsAt"])) and r["status"] == "RESOLVED" and r["resolved_at"] else None), "Resolved notification did not close incident")
             report["phases"].append({"alertname": name, "fingerprint": fp, **resolved})
             print(name, "resolved notification -> RESOLVED", flush=True)
         print("Triggering actual worker unavailability", flush=True)
@@ -162,12 +168,12 @@ def main():
         worker_stopped = True
         alert = wait(lambda: active("IncidentIQServiceUnavailable", job="incidentiq-worker"), "Worker outage did not alert")
         fp = alert["fingerprint"]
-        pending = wait(lambda: observation(fp), "Service alert did not create an incident")
+        pending = wait(lambda: observation(fp, alert["startsAt"]), "Service alert did not create an incident")
         assert pending["outbox_count"] == 1
         compose("start", "worker")
         worker_stopped = False
-        row = wait(lambda: diagnosed(fp), "Queued worker-outage alert did not receive a diagnosis after recovery")
-        resolved = wait(lambda: (r if (r := observation(fp)) and r["status"] == "RESOLVED" else None), "Worker recovery did not resolve incident")
+        row = wait(lambda: diagnosed(fp, alert["startsAt"]), "Queued worker-outage alert did not receive a diagnosis after recovery")
+        resolved = wait(lambda: (r if (r := observation(fp, alert["startsAt"])) and r["status"] == "RESOLVED" else None), "Worker recovery did not resolve incident")
         assert row["receipts"] == row["outbox_count"] == 1
         assert http(args.api + "/api/incidents/" + row["incident_id"] + "/diagnosis")["id"] == row["diagnosis_id"]
         report["phases"].append({"alertname": "IncidentIQServiceUnavailable", "fingerprint": fp, **resolved})

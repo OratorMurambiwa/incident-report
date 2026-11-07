@@ -1,0 +1,517 @@
+{
+  "run": "20261107t190041z_909be1ac",
+  "project": "incidentiq-fault-20261107t190041z_909be1ac",
+  "database": "incidentiq_fault_20261107t190041z_909be1ac",
+  "topic": "incidentiq.fault.20261107t190041z_909be1ac",
+  "mode": "RETRIEVAL_ONLY",
+  "exactly_once_delivery_claimed": false,
+  "cases": [
+    {
+      "case": "crash_before_db_commit",
+      "recovery_seconds": 13.538,
+      "before": {
+        "incident_id": "895a9a11-2f82-4e01-a23e-d39fb7cac4b3",
+        "event_id": "c3749b81-9980-4370-930f-92f6d8988362",
+        "status": "PENDING",
+        "published": true,
+        "outbox_attempts": 1,
+        "receipts": 0,
+        "diagnoses": 0,
+        "snapshots": 0,
+        "snapshot_hash": null,
+        "diagnosis_id": null
+      },
+      "after": {
+        "row": {
+          "incident_id": "895a9a11-2f82-4e01-a23e-d39fb7cac4b3",
+          "event_id": "c3749b81-9980-4370-930f-92f6d8988362",
+          "status": "RECEIVED",
+          "published": true,
+          "outbox_attempts": 1,
+          "receipts": 1,
+          "diagnoses": 1,
+          "snapshots": 5,
+          "snapshot_hash": "9333f4bcb592fd76a05374c71bbe2c59",
+          "diagnosis_id": "ecfdcb0d-2f64-48b1-b67b-39057babc527"
+        },
+        "offsets": {
+          "end": 2,
+          "committed": 2,
+          "group_state": "Stable",
+          "members": 1
+        }
+      },
+      "worker_state": {
+        "restarts": 0,
+        "running": true,
+        "paused": false,
+        "oom": false
+      }
+    },
+    {
+      "case": "crash_after_db_commit",
+      "recovery_seconds": 13.595,
+      "before": {
+        "incident_id": "7806dd44-8d7b-4000-a893-529c1074dd36",
+        "event_id": "9b401446-3eb1-48d1-bdc9-175f5a4a75ab",
+        "status": "RECEIVED",
+        "published": true,
+        "outbox_attempts": 1,
+        "receipts": 1,
+        "diagnoses": 1,
+        "snapshots": 5,
+        "snapshot_hash": "19f83e719b39245053e238115a4c614c",
+        "diagnosis_id": "ae1d36f3-0258-44cd-864f-bd9ba401e586"
+      },
+      "after": {
+        "row": {
+          "incident_id": "7806dd44-8d7b-4000-a893-529c1074dd36",
+          "event_id": "9b401446-3eb1-48d1-bdc9-175f5a4a75ab",
+          "status": "RECEIVED",
+          "published": true,
+          "outbox_attempts": 1,
+          "receipts": 1,
+          "diagnoses": 1,
+          "snapshots": 5,
+          "snapshot_hash": "19f83e719b39245053e238115a4c614c",
+          "diagnosis_id": "ae1d36f3-0258-44cd-864f-bd9ba401e586"
+        },
+        "offsets": {
+          "end": 3,
+          "committed": 3,
+          "group_state": "Stable",
+          "members": 1
+        }
+      },
+      "worker_state": {
+        "restarts": 0,
+        "running": true,
+        "paused": false,
+        "oom": false
+      }
+    },
+    {
+      "case": "duplicates_and_rebalance",
+      "recovery_seconds": 17.515,
+      "duplicates": {
+        "duplicate_offsets": [
+          4,
+          5,
+          6
+        ]
+      },
+      "two_members": {
+        "end": 4,
+        "committed": 4,
+        "group_state": "Stable",
+        "members": 2
+      },
+      "after": {
+        "row": {
+          "incident_id": "cdcf24d3-d6e5-46a6-a335-8c7ec19e41dd",
+          "event_id": "c6a22bda-f276-40b2-97d9-37a2e5f9a9cd",
+          "status": "RECEIVED",
+          "published": true,
+          "outbox_attempts": 1,
+          "receipts": 1,
+          "diagnoses": 1,
+          "snapshots": 5,
+          "snapshot_hash": "7e81c2535355792a04c360ed5eda4260",
+          "diagnosis_id": "b7a26da5-97a4-4879-a000-d53af9c3e93b"
+        },
+        "offsets": {
+          "end": 7,
+          "committed": 7,
+          "group_state": "Stable",
+          "members": 2
+        }
+      },
+      "one_member": {
+        "end": 7,
+        "committed": 7,
+        "group_state": "Stable",
+        "members": 1
+      }
+    },
+    {
+      "case": "broker_outage",
+      "recovery_seconds": 38.289,
+      "recovered_events": [
+        {
+          "row": {
+            "incident_id": "a140967e-5460-48f0-a6ea-80a82f5f79ad",
+            "event_id": "6474fedf-33b9-4eb9-a5ac-3df6e43f81cc",
+            "status": "RECEIVED",
+            "published": true,
+            "outbox_attempts": 5,
+            "receipts": 1,
+            "diagnoses": 1,
+            "snapshots": 5,
+            "snapshot_hash": "2c26b8392aa355144f07616e67add290",
+            "diagnosis_id": "3268f612-a315-473d-8d0a-52c54435738f"
+          },
+          "offsets": {
+            "end": 10,
+            "committed": 10,
+            "group_state": "Stable",
+            "members": 1
+          }
+        },
+        {
+          "row": {
+            "incident_id": "6caaa4ba-ac09-4284-b179-c3bd220fedd5",
+            "event_id": "efd9a433-dc2d-454f-a75e-9c8a0ec95bc5",
+            "status": "RECEIVED",
+            "published": true,
+            "outbox_attempts": 4,
+            "receipts": 1,
+            "diagnoses": 1,
+            "snapshots": 5,
+            "snapshot_hash": "bc25b401db9e33160122b5d20e4f9a33",
+            "diagnosis_id": "25498a0c-1ad5-41dd-b03e-bb2e1ffc2292"
+          },
+          "offsets": {
+            "end": 10,
+            "committed": 10,
+            "group_state": "Stable",
+            "members": 1
+          }
+        },
+        {
+          "row": {
+            "incident_id": "61bfcd09-28c7-4dea-b7b3-055549a49b64",
+            "event_id": "9407db98-0cdc-4766-a7dc-df327bb3be28",
+            "status": "RECEIVED",
+            "published": true,
+            "outbox_attempts": 4,
+            "receipts": 1,
+            "diagnoses": 1,
+            "snapshots": 5,
+            "snapshot_hash": "03518a0a1fbb55db8f1a385912512344",
+            "diagnosis_id": "e651a093-b145-441c-8d53-d62247c4cf69"
+          },
+          "offsets": {
+            "end": 10,
+            "committed": 10,
+            "group_state": "Stable",
+            "members": 1
+          }
+        }
+      ],
+      "outbox_retry_observed": true,
+      "quarantine_before": 0
+    },
+    {
+      "case": "database_outage",
+      "recovery_seconds": 8.477,
+      "before": {
+        "end": 11,
+        "committed": 10,
+        "group_state": "Stable",
+        "members": 1
+      },
+      "during": {
+        "end": 11,
+        "committed": 10,
+        "group_state": "Empty",
+        "members": 0
+      },
+      "after": {
+        "row": {
+          "incident_id": "702295b7-6d53-47d0-89d8-7938b6d2f7d0",
+          "event_id": "1e7cf0b5-69e3-4b3e-a53f-1f1b2acdca65",
+          "status": "RECEIVED",
+          "published": true,
+          "outbox_attempts": 1,
+          "receipts": 1,
+          "diagnoses": 1,
+          "snapshots": 5,
+          "snapshot_hash": "d44e254f14b9c24e5110b86178ce8608",
+          "diagnosis_id": "6ae994c4-91e2-46ab-9f1b-d58fb621ed62"
+        },
+        "offsets": {
+          "end": 11,
+          "committed": 11,
+          "group_state": "Stable",
+          "members": 1
+        }
+      },
+      "worker_state": {
+        "restarts": 2,
+        "running": true,
+        "paused": false,
+        "oom": false
+      }
+    },
+    {
+      "case": "publisher_crash_after_kafka_ack",
+      "recovery_seconds": 62.871,
+      "before": {
+        "incident_id": "bd59b43f-5e51-456f-a683-c869e13616ff",
+        "event_id": "876c4ff3-45f9-428f-9f00-7ff7e71dbf55",
+        "status": "RECEIVED",
+        "published": false,
+        "outbox_attempts": 0,
+        "receipts": 1,
+        "diagnoses": 1,
+        "snapshots": 5,
+        "snapshot_hash": "0e949af524974ae4f64b957466c7c6f7",
+        "diagnosis_id": "78c14f20-3600-4169-903b-20626d78ae0c"
+      },
+      "after": {
+        "row": {
+          "incident_id": "bd59b43f-5e51-456f-a683-c869e13616ff",
+          "event_id": "876c4ff3-45f9-428f-9f00-7ff7e71dbf55",
+          "status": "RECEIVED",
+          "published": true,
+          "outbox_attempts": 1,
+          "receipts": 1,
+          "diagnoses": 1,
+          "snapshots": 5,
+          "snapshot_hash": "0e949af524974ae4f64b957466c7c6f7",
+          "diagnosis_id": "78c14f20-3600-4169-903b-20626d78ae0c"
+        },
+        "offsets": {
+          "end": 13,
+          "committed": 13,
+          "group_state": "Stable",
+          "members": 1
+        }
+      },
+      "kafka_copies": 2,
+      "publisher_state": {
+        "restarts": 0,
+        "running": true,
+        "paused": false,
+        "oom": false
+      }
+    },
+    {
+      "case": "unknown_member_id_recovery",
+      "recovery_seconds": 35.519,
+      "before": {
+        "incident_id": "6b3dc823-2fc9-452e-b85c-f8aa3ba8325b",
+        "event_id": "002ba981-d1d6-444e-8382-81e1ee6038d7",
+        "status": "RECEIVED",
+        "published": true,
+        "outbox_attempts": 1,
+        "receipts": 1,
+        "diagnoses": 1,
+        "snapshots": 5,
+        "snapshot_hash": "ad0c77b1164bb7ba6f41b4f23d9bd291",
+        "diagnosis_id": "e3659510-ee53-4061-9524-8d7f94bc6a25"
+      },
+      "expired_group": {
+        "end": 14,
+        "committed": 13,
+        "group_state": "Empty",
+        "members": 0
+      },
+      "after": {
+        "row": {
+          "incident_id": "6b3dc823-2fc9-452e-b85c-f8aa3ba8325b",
+          "event_id": "002ba981-d1d6-444e-8382-81e1ee6038d7",
+          "status": "RECEIVED",
+          "published": true,
+          "outbox_attempts": 1,
+          "receipts": 1,
+          "diagnoses": 1,
+          "snapshots": 5,
+          "snapshot_hash": "ad0c77b1164bb7ba6f41b4f23d9bd291",
+          "diagnosis_id": "e3659510-ee53-4061-9524-8d7f94bc6a25"
+        },
+        "offsets": {
+          "end": 14,
+          "committed": 14,
+          "group_state": "Stable",
+          "members": 1
+        }
+      },
+      "worker_state": {
+        "restarts": 3,
+        "running": true,
+        "paused": false,
+        "oom": false
+      },
+      "broker_error": "UnknownMemberIdError",
+      "client_error": "CommitFailedError"
+    },
+    {
+      "case": "poison_retained",
+      "recovery_seconds": 4.876,
+      "after": {
+        "rows": [
+          {
+            "offset": 14,
+            "error": "InvalidEvent",
+            "attempts": 1,
+            "payload_sha256": "8ca5c6a84840a219b2519e54117fcf52a3fc70d2fb3b4742c041f2a8669a501c"
+          }
+        ],
+        "offsets": {
+          "end": 15,
+          "committed": 15,
+          "group_state": "Stable",
+          "members": 1
+        }
+      }
+    }
+  ],
+  "complete": true,
+  "valid_events": 10,
+  "committed_diagnoses": 10,
+  "data_loss": 0,
+  "quarantined": [
+    {
+      "offset": 14,
+      "error": "InvalidEvent",
+      "attempts": 1,
+      "payload_sha256": "8ca5c6a84840a219b2519e54117fcf52a3fc70d2fb3b4742c041f2a8669a501c"
+    }
+  ],
+  "raw_kafka": {
+    "event_copies": {
+      "b2a75d8e-fa30-4a63-bab7-c7ee27639f21": 1,
+      "c3749b81-9980-4370-930f-92f6d8988362": 1,
+      "9b401446-3eb1-48d1-bdc9-175f5a4a75ab": 1,
+      "c6a22bda-f276-40b2-97d9-37a2e5f9a9cd": 4,
+      "efd9a433-dc2d-454f-a75e-9c8a0ec95bc5": 1,
+      "9407db98-0cdc-4766-a7dc-df327bb3be28": 1,
+      "6474fedf-33b9-4eb9-a5ac-3df6e43f81cc": 1,
+      "1e7cf0b5-69e3-4b3e-a53f-1f1b2acdca65": 1,
+      "876c4ff3-45f9-428f-9f00-7ff7e71dbf55": 2,
+      "002ba981-d1d6-444e-8382-81e1ee6038d7": 1
+    },
+    "invalid_records": 1,
+    "end": 15
+  },
+  "offsets": {
+    "end": 15,
+    "committed": 15,
+    "group_state": "Stable",
+    "members": 1
+  },
+  "duplicate_handlings": 7,
+  "final_rows": [
+    {
+      "incident_id": "085ee866-11c4-43ec-8c22-ac00f240e0da",
+      "event_id": "b2a75d8e-fa30-4a63-bab7-c7ee27639f21",
+      "status": "RECEIVED",
+      "published": true,
+      "outbox_attempts": 1,
+      "receipts": 1,
+      "diagnoses": 1,
+      "snapshots": 5,
+      "snapshot_hash": "4c457e18ea2bb7a9b56abbeedaf710bd",
+      "diagnosis_id": "cdbd7016-1035-4a8d-82ec-a27dca6ac735"
+    },
+    {
+      "incident_id": "895a9a11-2f82-4e01-a23e-d39fb7cac4b3",
+      "event_id": "c3749b81-9980-4370-930f-92f6d8988362",
+      "status": "RECEIVED",
+      "published": true,
+      "outbox_attempts": 1,
+      "receipts": 1,
+      "diagnoses": 1,
+      "snapshots": 5,
+      "snapshot_hash": "9333f4bcb592fd76a05374c71bbe2c59",
+      "diagnosis_id": "ecfdcb0d-2f64-48b1-b67b-39057babc527"
+    },
+    {
+      "incident_id": "7806dd44-8d7b-4000-a893-529c1074dd36",
+      "event_id": "9b401446-3eb1-48d1-bdc9-175f5a4a75ab",
+      "status": "RECEIVED",
+      "published": true,
+      "outbox_attempts": 1,
+      "receipts": 1,
+      "diagnoses": 1,
+      "snapshots": 5,
+      "snapshot_hash": "19f83e719b39245053e238115a4c614c",
+      "diagnosis_id": "ae1d36f3-0258-44cd-864f-bd9ba401e586"
+    },
+    {
+      "incident_id": "cdcf24d3-d6e5-46a6-a335-8c7ec19e41dd",
+      "event_id": "c6a22bda-f276-40b2-97d9-37a2e5f9a9cd",
+      "status": "RECEIVED",
+      "published": true,
+      "outbox_attempts": 1,
+      "receipts": 1,
+      "diagnoses": 1,
+      "snapshots": 5,
+      "snapshot_hash": "7e81c2535355792a04c360ed5eda4260",
+      "diagnosis_id": "b7a26da5-97a4-4879-a000-d53af9c3e93b"
+    },
+    {
+      "incident_id": "a140967e-5460-48f0-a6ea-80a82f5f79ad",
+      "event_id": "6474fedf-33b9-4eb9-a5ac-3df6e43f81cc",
+      "status": "RECEIVED",
+      "published": true,
+      "outbox_attempts": 5,
+      "receipts": 1,
+      "diagnoses": 1,
+      "snapshots": 5,
+      "snapshot_hash": "2c26b8392aa355144f07616e67add290",
+      "diagnosis_id": "3268f612-a315-473d-8d0a-52c54435738f"
+    },
+    {
+      "incident_id": "6caaa4ba-ac09-4284-b179-c3bd220fedd5",
+      "event_id": "efd9a433-dc2d-454f-a75e-9c8a0ec95bc5",
+      "status": "RECEIVED",
+      "published": true,
+      "outbox_attempts": 4,
+      "receipts": 1,
+      "diagnoses": 1,
+      "snapshots": 5,
+      "snapshot_hash": "bc25b401db9e33160122b5d20e4f9a33",
+      "diagnosis_id": "25498a0c-1ad5-41dd-b03e-bb2e1ffc2292"
+    },
+    {
+      "incident_id": "61bfcd09-28c7-4dea-b7b3-055549a49b64",
+      "event_id": "9407db98-0cdc-4766-a7dc-df327bb3be28",
+      "status": "RECEIVED",
+      "published": true,
+      "outbox_attempts": 4,
+      "receipts": 1,
+      "diagnoses": 1,
+      "snapshots": 5,
+      "snapshot_hash": "03518a0a1fbb55db8f1a385912512344",
+      "diagnosis_id": "e651a093-b145-441c-8d53-d62247c4cf69"
+    },
+    {
+      "incident_id": "702295b7-6d53-47d0-89d8-7938b6d2f7d0",
+      "event_id": "1e7cf0b5-69e3-4b3e-a53f-1f1b2acdca65",
+      "status": "RECEIVED",
+      "published": true,
+      "outbox_attempts": 1,
+      "receipts": 1,
+      "diagnoses": 1,
+      "snapshots": 5,
+      "snapshot_hash": "d44e254f14b9c24e5110b86178ce8608",
+      "diagnosis_id": "6ae994c4-91e2-46ab-9f1b-d58fb621ed62"
+    },
+    {
+      "incident_id": "bd59b43f-5e51-456f-a683-c869e13616ff",
+      "event_id": "876c4ff3-45f9-428f-9f00-7ff7e71dbf55",
+      "status": "RECEIVED",
+      "published": true,
+      "outbox_attempts": 1,
+      "receipts": 1,
+      "diagnoses": 1,
+      "snapshots": 5,
+      "snapshot_hash": "0e949af524974ae4f64b957466c7c6f7",
+      "diagnosis_id": "78c14f20-3600-4169-903b-20626d78ae0c"
+    },
+    {
+      "incident_id": "6b3dc823-2fc9-452e-b85c-f8aa3ba8325b",
+      "event_id": "002ba981-d1d6-444e-8382-81e1ee6038d7",
+      "status": "RECEIVED",
+      "published": true,
+      "outbox_attempts": 1,
+      "receipts": 1,
+      "diagnoses": 1,
+      "snapshots": 5,
+      "snapshot_hash": "ad0c77b1164bb7ba6f41b4f23d9bd291",
+      "diagnosis_id": "e3659510-ee53-4061-9524-8d7f94bc6a25"
+    }
+  ]
+}
