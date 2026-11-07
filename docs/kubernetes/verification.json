@@ -1,0 +1,366 @@
+{
+  "timestamp_utc": "2026-11-07T19:52:11.584594+00:00",
+  "application_commit": "a24e98188d2750824c1f6f58a192a066d40c0d7a",
+  "kubernetes_runtime_deployed": false,
+  "kubernetes_smoke_executed": false,
+  "reason": "Insufficient available memory; dedicated cluster tools/context absent; validation-only path explicitly requested.",
+  "preflight": {
+    "total_bytes": 7751802880,
+    "available_bytes": 4031352832,
+    "required_available_bytes": 6442450944,
+    "cluster_attempt_allowed": false,
+    "kubectl": true,
+    "kind": false,
+    "k3d": false
+  },
+  "schema_target": "1.35.0",
+  "kubectl_client": "1.36.1",
+  "kustomize": "5.8.1",
+  "kubeconform": "0.6.7",
+  "base_schema": {
+    "valid": 16,
+    "invalid": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "local_schema": {
+    "valid": 17,
+    "invalid": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "cross_resource_validation": "passed",
+  "negative_manifest_tests": 9,
+  "java_tests": 62,
+  "python_tests": 77,
+  "frontend_tests": 7,
+  "browser_checks": 14,
+  "other_helper_tests": 19,
+  "http_checks": 12,
+  "real_rag_mode": "RETRIEVAL_ONLY",
+  "nginx_syntax": "passed in actual frontend container",
+  "bootstrap_imports": "passed in actual worker container",
+  "api_probe_paths": "HTTP 200; health UP",
+  "publisher_process_probe": "passed in existing non-web publisher",
+  "low_memory_deploy_refusal": "verified before any cluster operation",
+  "kind_node_image_manifest": "kindest/node:v1.35.0 exists; metadata inspected only, image not pulled",
+  "docker_images": [
+    {
+      "Containers": "10",
+      "CreatedAt": "2026-11-06 12:00:38 -0600 CST",
+      "CreatedSince": "26 hours ago",
+      "Digest": "<none>",
+      "ID": "6b0b9e55677e",
+      "Repository": "incidentiq-worker",
+      "SharedSize": "N/A",
+      "Size": "2.2GB",
+      "Tag": "local",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "0",
+      "CreatedAt": "2026-11-06 12:00:09 -0600 CST",
+      "CreatedSince": "26 hours ago",
+      "Digest": "<none>",
+      "ID": "4c756fed2b6a",
+      "Repository": "incidentiq-worker-tests",
+      "SharedSize": "N/A",
+      "Size": "2.22GB",
+      "Tag": "local",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "1",
+      "CreatedAt": "2026-11-06 10:33:58 -0600 CST",
+      "CreatedSince": "27 hours ago",
+      "Digest": "<none>",
+      "ID": "be6ebf6157cb",
+      "Repository": "incidentiq-ollama-cpu",
+      "SharedSize": "N/A",
+      "Size": "172MB",
+      "Tag": "0.6.8",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "0",
+      "CreatedAt": "2026-11-06 10:09:51 -0600 CST",
+      "CreatedSince": "28 hours ago",
+      "Digest": "<none>",
+      "ID": "506626cd07c8",
+      "Repository": "incidentiq-frontend-tests",
+      "SharedSize": "N/A",
+      "Size": "331MB",
+      "Tag": "latest",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "0",
+      "CreatedAt": "2026-11-06 10:09:51 -0600 CST",
+      "CreatedSince": "28 hours ago",
+      "Digest": "<none>",
+      "ID": "a195fc7a839a",
+      "Repository": "incidentiq-frontend-tests",
+      "SharedSize": "N/A",
+      "Size": "331MB",
+      "Tag": "local",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "1",
+      "CreatedAt": "2026-11-06 10:09:51 -0600 CST",
+      "CreatedSince": "28 hours ago",
+      "Digest": "<none>",
+      "ID": "a5eb62722d42",
+      "Repository": "incidentiq-frontend",
+      "SharedSize": "N/A",
+      "Size": "74MB",
+      "Tag": "local",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "8",
+      "CreatedAt": "2026-11-06 10:04:42 -0600 CST",
+      "CreatedSince": "28 hours ago",
+      "Digest": "<none>",
+      "ID": "c9ebb88560a6",
+      "Repository": "incidentiq-api",
+      "SharedSize": "N/A",
+      "Size": "558MB",
+      "Tag": "local",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "0",
+      "CreatedAt": "2026-11-06 10:02:08 -0600 CST",
+      "CreatedSince": "28 hours ago",
+      "Digest": "<none>",
+      "ID": "a637025a6256",
+      "Repository": "incidentiq-api-tests",
+      "SharedSize": "N/A",
+      "Size": "1.6GB",
+      "Tag": "local",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "0",
+      "CreatedAt": "2026-11-05 19:11:51 -0600 CST",
+      "CreatedSince": "43 hours ago",
+      "Digest": "<none>",
+      "ID": "9fbb048c169a",
+      "Repository": "incidentiq-monitoring-browser",
+      "SharedSize": "N/A",
+      "Size": "3.8GB",
+      "Tag": "local",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "0",
+      "CreatedAt": "2026-11-05 19:11:51 -0600 CST",
+      "CreatedSince": "43 hours ago",
+      "Digest": "<none>",
+      "ID": "c7293c39e39d",
+      "Repository": "incidentiq-browser",
+      "SharedSize": "N/A",
+      "Size": "3.8GB",
+      "Tag": "local",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "0",
+      "CreatedAt": "2026-11-05 18:28:47 -0600 CST",
+      "CreatedSince": "43 hours ago",
+      "Digest": "<none>",
+      "ID": "b5033c4e3903",
+      "Repository": "incidentiq-worker-dependencies",
+      "SharedSize": "N/A",
+      "Size": "2.2GB",
+      "Tag": "local",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "4",
+      "CreatedAt": "2026-10-31 05:11:49 -0500 CDT",
+      "CreatedSince": "7 days ago",
+      "Digest": "<none>",
+      "ID": "9cf8b511f0e9",
+      "Repository": "pgvector/pgvector",
+      "SharedSize": "N/A",
+      "Size": "641MB",
+      "Tag": "0.8.7-pg16-trixie",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "0",
+      "CreatedAt": "2025-09-23 04:22:29 -0500 CDT",
+      "CreatedSince": "13 months ago",
+      "Digest": "<none>",
+      "ID": "3ddc8b1a33a2",
+      "Repository": "grafana/k6",
+      "SharedSize": "N/A",
+      "Size": "111MB",
+      "Tag": "1.3.0",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "1",
+      "CreatedAt": "2025-07-28 15:39:01 -0500 CDT",
+      "CreatedSince": "15 months ago",
+      "Digest": "<none>",
+      "ID": "c4d56c24da4f",
+      "Repository": "docker/welcome-to-docker",
+      "SharedSize": "N/A",
+      "Size": "22.2MB",
+      "Tag": "latest",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "1",
+      "CreatedAt": "2025-07-18 15:32:03 -0500 CDT",
+      "CreatedSince": "15 months ago",
+      "Digest": "<none>",
+      "ID": "6ac590e7cabc",
+      "Repository": "grafana/grafana",
+      "SharedSize": "N/A",
+      "Size": "960MB",
+      "Tag": "12.1.0",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "1",
+      "CreatedAt": "2025-07-14 11:46:29 -0500 CDT",
+      "CreatedSince": "16 months ago",
+      "Digest": "<none>",
+      "ID": "63805ebb8d2b",
+      "Repository": "prom/prometheus",
+      "SharedSize": "N/A",
+      "Size": "440MB",
+      "Tag": "v3.5.0",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "5",
+      "CreatedAt": "2025-05-12 01:39:59 -0500 CDT",
+      "CreatedSince": "18 months ago",
+      "Digest": "<none>",
+      "ID": "4ceccc577f03",
+      "Repository": "apache/kafka",
+      "SharedSize": "N/A",
+      "Size": "563MB",
+      "Tag": "3.9.1",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "0",
+      "CreatedAt": "2025-04-23 13:00:49 -0500 CDT",
+      "CreatedSince": "18 months ago",
+      "Digest": "<none>",
+      "ID": "30f1c0d78e0a",
+      "Repository": "nginx",
+      "SharedSize": "N/A",
+      "Size": "74.5MB",
+      "Tag": "1.28.0-alpine",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "1",
+      "CreatedAt": "2025-03-07 09:10:29 -0600 CST",
+      "CreatedSince": "20 months ago",
+      "Digest": "<none>",
+      "ID": "27c475db5fb1",
+      "Repository": "prom/alertmanager",
+      "SharedSize": "N/A",
+      "Size": "110MB",
+      "Tag": "v0.28.1",
+      "UniqueSize": "N/A"
+    },
+    {
+      "Containers": "0",
+      "CreatedAt": "2025-02-12 23:05:05 -0600 CST",
+      "CreatedSince": "21 months ago",
+      "Digest": "<none>",
+      "ID": "9bef0ef1e268",
+      "Repository": "node",
+      "SharedSize": "N/A",
+      "Size": "224MB",
+      "Tag": "22.14.0-alpine",
+      "UniqueSize": "N/A"
+    }
+  ],
+  "compose_services": [
+    {
+      "service": "alertmanager",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "api",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "frontend",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "grafana",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "kafka",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "postgres",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "prometheus",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "publisher",
+      "state": "running",
+      "health": ""
+    },
+    {
+      "service": "worker",
+      "state": "running",
+      "health": "healthy"
+    }
+  ],
+  "volumes_created_at": {
+    "postgres_data": "2026-11-06T00:00:34Z",
+    "kafka_data": "2026-11-06T00:00:34Z",
+    "prometheus_data": "2026-11-06T01:22:39Z",
+    "grafana_data": "2026-11-06T01:22:39Z",
+    "alertmanager_data": "2026-11-06T01:58:52Z",
+    "ollama_data": "2026-11-06T16:26:37Z"
+  },
+  "source_sha256": {
+    "infra/kubernetes/base/api.yaml": "7501e7d20649f5c66acd76eb8f8d921bbf6642e18bd8d68a0b0e5f7bc3bf6321",
+    "infra/kubernetes/base/frontend.yaml": "b754d88aa0bcee482ea3214b12d5957461fcdb3694b5b8158b20cf9eb2e4d9d7",
+    "infra/kubernetes/base/ingestion.yaml": "4138e3fd11aa85dc4a8570cd08b1c1b8c4363da4a0afe131b7ff5fc6678838a8",
+    "infra/kubernetes/base/kafka.yaml": "00e3bb204abc4aa532160bf492870d3dbb3d5b1ae988395cae52442710a1f627",
+    "infra/kubernetes/base/kustomization.yaml": "69126beb8f1d2d77badd5ac43debaaabe253bc6af2f214bef6d93fbaab58aa34",
+    "infra/kubernetes/base/nginx.conf": "9335b2d1bf731a4242a92e4a5d5f0cf37e33de820e92c743a1db7c4a1730f0dd",
+    "infra/kubernetes/base/postgres.yaml": "e4dea76d7c037aad9b22ec22b692233e39df2a8ec530e18251e8e1bf1e40ad19",
+    "infra/kubernetes/base/publisher.yaml": "85bbea309211517a58f6966bdc1486f50a29156a6eb64df586686adaf21dfcf9",
+    "infra/kubernetes/base/wait.py": "dfadfcdc3c012108eee115191bc019eb83ee304e8f0421f2f1de4418705a36ac",
+    "infra/kubernetes/base/worker.yaml": "a64d783e4f78ad178939a14e4b1f5c67559245b0f9eeb72bcb855fa18bb48932",
+    "infra/kubernetes/kind.yaml": "7c9b1c363c9a97d0f1a90a590771a6e5c69c65b3c0e6b4fe690e7cfb32dba1e9",
+    "infra/kubernetes/overlays/local/kustomization.yaml": "a9a456c5ae92f0a91c5f9ac601ddf493786c1e2f1bf9e120784f81af557504b8",
+    "infra/kubernetes/overlays/local/namespace.yaml": "b062c83d2083323523e9960f0d8a1d1e1911a88c1e0b9d14000f387db064eab9",
+    "infra/kubernetes/tests/test_manifests.py": "f24c4bb27b3d84b87a835ae6ab9e10c05ca2adaaa25e8fb39334f497d1b93483",
+    "runbooks/kustomization.yaml": "e1ed31e219d0291b0e015ec293d9b608927fe7591db360ad48f8dd994005ef11",
+    "scripts/kubernetes-local.sh": "2d905857e4889310a9661792ce6788bc80bdcd9a9d006a54d29774f079b6cc77",
+    "scripts/kubernetes-preflight.py": "bd0286c11e15baa0d3ea16d663046dc4f780b149abb6b3bc842fe58657df232f",
+    "scripts/smoke-kubernetes.py": "e58a6e42b558a5c74a1a9930a4c77306d65d0ad78526acd610e8ee4d8e1750d0",
+    "scripts/validate-kubernetes.py": "1c2ffe16cf5002dd67432d15272e540c2ccaf8749afba513b7d29effee9804f9",
+    "scripts/validate-kubernetes.sh": "46b7769b7faf771b76e0dd67a155cbc4454f50efc0f62f4c68658d53c8500eb8"
+  }
+}

@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels: &id001
+      app.kubernetes.io/name: publisher
+      app.kubernetes.io/part-of: incidentiq
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 60
+      containers:
+      - name: publisher
+        image: incidentiq-api:local
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 384Mi
+        envFrom: &id004
+        - configMapRef:
+            name: incidentiq-config
+        - secretRef:
+            name: database-credentials
+        env:
+        - name: JAVA_TOOL_OPTIONS
+          value: -Xms64m -Xmx128m -XX:ActiveProcessorCount=1
+        - name: SPRING_MAIN_WEB_APPLICATION_TYPE
+          value: none
+        - name: SPRING_FLYWAY_ENABLED
+          value: 'false'
+        - name: OUTBOX_PUBLISHER_ENABLED
+          value: 'true'
+        - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+          value: '3'
+        startupProbe:
+          exec: &id002
+            command:
+            - /bin/sh
+            - -ec
+            - kill -0 1
+          periodSeconds: 5
+          timeoutSeconds: 5
+          failureThreshold: 60
+        livenessProbe: &id003
+          exec: *id002
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe: *id003
+      initContainers:
+      - name: wait-schema
+        image: incidentiq-worker:local
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        command:
+        - python
+        - /bootstrap/wait.py
+        - schema
+        envFrom: *id004
+        volumeMounts:
+        - name: bootstrap
+          mountPath: /bootstrap
+          readOnly: true
+      - name: wait-topic
+        image: incidentiq-worker:local
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        command:
+        - python
+        - /bootstrap/wait.py
+        - topic
+        envFrom: *id004
+        volumeMounts:
+        - name: bootstrap
+          mountPath: /bootstrap
+          readOnly: true
+      volumes:
+      - name: bootstrap
+        configMap:
+          name: bootstrap
+  strategy:
+    type: Recreate

@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+configMapGenerator:
+- name: runbooks
+  files:
+  - authentication-failures.md
+  - cpu-saturation.md
+  - database-failures.md
+  - deployment-failures.md
+  - disk-exhaustion.md
+  - downstream-timeouts.md
+  - high-latency.md
+  - http-500-errors.md
+  - kafka-lag.md
+  - memory-exhaustion.md

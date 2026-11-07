@@ -1,0 +1,62 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: runbook-ingest
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 600
+  template:
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: Never
+      initContainers:
+      - name: wait-schema
+        image: incidentiq-worker:local
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        command:
+        - python
+        - /bootstrap/wait.py
+        - schema
+        envFrom: &id001
+        - configMapRef:
+            name: incidentiq-config
+        - secretRef:
+            name: database-credentials
+        volumeMounts:
+        - name: bootstrap
+          mountPath: /bootstrap
+          readOnly: true
+      containers:
+      - name: runbook-ingest
+        image: incidentiq-worker:local
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            cpu: '1'
+            memory: 1024Mi
+        command:
+        - python
+        - ingest.py
+        - /runbooks
+        envFrom: *id001
+        volumeMounts:
+        - name: runbooks
+          mountPath: /runbooks
+          readOnly: true
+      volumes:
+      - name: bootstrap
+        configMap:
+          name: bootstrap
+      - name: runbooks
+        configMap:
+          name: runbooks

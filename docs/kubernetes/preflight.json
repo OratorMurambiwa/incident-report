@@ -1,0 +1,9 @@
+{
+  "total_bytes": 7751802880,
+  "available_bytes": 4031352832,
+  "required_available_bytes": 6442450944,
+  "cluster_attempt_allowed": false,
+  "kubectl": true,
+  "kind": false,
+  "k3d": false
+}

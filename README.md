@@ -271,3 +271,9 @@ python3 scripts/faults.py run
 Runs bounded real-container worker/publisher crashes, duplicates/rebalancing, broker/database outages, stale membership and poison-record checks in a private Docker project. Each run owns a PostgreSQL container/database, Kafka broker/topic/group and localhost:18081 API. Existing application images and local MiniLM weights are reused; retrieval-only is forced. Normal services, PostgreSQL port 55432 and existing volumes are preserved. The runner stops its private containers afterward and retains all test volumes/evidence.
 
 See [reproduction, boundaries and cleanup](docs/faults/README.md) and [actual recovery measurements](docs/faults/RESULTS.md). Delivery remains at least once; durable event-ID deduplication protected the tested database effects. No exactly-once Kafka guarantee is claimed.
+
+## Local Kubernetes manifests (Step 8A)
+
+Kustomize base/local overlay covers API, publisher, worker, frontend, PostgreSQL/pgvector, Kafka and runbook ingestion, with isolated PVCs, internal Services, external Secret references, resource bounds and dependency gates. Render with `kubectl kustomize infra/kubernetes/overlays/local`; validate with `./scripts/validate-kubernetes.sh` after the documented lightweight validator setup.
+
+**Kubernetes runtime deployment is unverified.** Current 7.2 GiB WSL resources failed the conservative available-memory gate; Compose remains running with its data and PostgreSQL port 55432 preserved. No local cluster or Azure resources were created. See [deployment and preservation instructions](docs/kubernetes/README.md) and [actual verification](docs/kubernetes/VERIFICATION.md).
