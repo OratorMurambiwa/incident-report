@@ -248,3 +248,15 @@ The verifier submits three real React incidents, checks generated diagnoses and 
 To opt in outside the verifier, start only the worker with `docker compose -f compose.yaml -f compose.ollama.yaml up -d --no-deps --wait worker` after the runtime and model are ready. Restore retrieval-only with `docker compose up -d --no-deps --wait worker`. Failed generation is durably quarantined, never silently relabeled retrieval-only; restoring the base configuration affects new events, not historical diagnoses. Stop the optional runtime with `docker compose -f compose.yaml -f compose.ollama.yaml stop ollama`; preserve ollama_data.
 
 The CPU image assembles a hash-pinned official Ollama 0.6.8 executable (11 MB compressed) and AVX2 libraries compiled from the matching pinned upstream source (8 MB compressed). This avoids the release image's large GPU library layer. A separate persistent volume caches the explicitly selected model. CPU resources are limited to four CPUs and 2500 MiB; requests use four threads, 8192 context tokens and at most 512 output tokens, with one cited item per category for this small model. The API/storage schema still supports earlier multi-item diagnoses. See [actual local generation verification](docs/ollama-verification.md).
+
+## Local performance benchmarks
+
+```bash
+docker pull grafana/k6:1.3.0
+python3 -m unittest discover -s benchmarks -p 'test_*.py' -v
+python3 scripts/benchmark.py run
+```
+
+Uses bounded Dockerized k6 workloads, a separate owned database and Kafka broker, and retrieval-only mode. Measures API request rate/average/p95/p99/error rate separately from a 60-event Kafka-to-committed-diagnosis batch. Existing incidents, main Kafka data, PostgreSQL port 55432 and Docker volumes are preserved. Benchmarks retain their isolated database and results; explicit guarded cleanup is documented.
+
+The measured local baseline observed 65.80 read requests/s, 17.02 incident creates/s and 6.19 asynchronously processed events/s, with zero failures under the recorded quotas/workloads. These are bounded offered-load measurements, not maximum capacity claims. See [actual results and hardware](docs/benchmarks/RESULTS.md) and [methodology/reproduction/cleanup](docs/benchmarks/README.md). Ollama is excluded and must be measured separately.

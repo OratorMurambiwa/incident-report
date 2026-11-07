@@ -1,0 +1,33 @@
+{
+  "read": {
+    "requests": 1371,
+    "requests_per_second": 65.79698210269333,
+    "avg_ms": 7.361439070021885,
+    "p95_ms": 14.525415,
+    "p99_ms": 40.52791049999997,
+    "error_rate": 0
+  },
+  "write": {
+    "requests": 40,
+    "requests_per_second": 17.02213216432456,
+    "avg_ms": 15.847106650000004,
+    "p95_ms": 21.3512375,
+    "p99_ms": 22.28336967,
+    "error_rate": 0
+  },
+  "async": {
+    "events_per_second": 6.187199978875946,
+    "latency": {
+      "avg_ms": 2730.882958571116,
+      "p95_ms": 5204.0141224861145,
+      "p99_ms": 5369.189701080322,
+      "min_ms": 112.20407485961914,
+      "max_ms": 5385.440111160278
+    },
+    "expected": 60,
+    "failures": 0,
+    "error_rate": 0.0,
+    "window_seconds": 9.697439908981323,
+    "max_observer_cycle_ms": 115.53564999485388
+  }
+}

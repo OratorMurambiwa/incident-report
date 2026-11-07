@@ -1,0 +1,5 @@
+{
+  "complete": false,
+  "database_retained": true,
+  "reason": "Calibration cancelled: Java-based broker health probes consumed the one-CPU quota. API measurements are retained for audit but are not the final benchmark baseline. No asynchronous result was produced."
+}

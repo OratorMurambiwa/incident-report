@@ -10,7 +10,7 @@ Current flow: React dashboard → Spring Boot API → PostgreSQL incident + outb
 
 ## Technologies and versions
 
-Java 21; Spring Boot 3.5.16 (use its dependency management for Spring Kafka, JDBC and Micrometer); Maven 3.6.3+; Python 3.12; LangChain 0.3.27; PostgreSQL 16; pgvector 0.8.7; Kafka 3.9.1 in single-node KRaft; React 19.1.1; Vite 6.4.5; Node 22.12+; Docker Compose v2; Prometheus 3.5.0; Grafana 12.1.0; Alertmanager 0.28.1. See manifests for remaining Python pins. Verify compatibility before dependency upgrades; generate dependency locks with actual tools, never fabricate them.
+Java 21; Spring Boot 3.5.16 (use its dependency management for Spring Kafka, JDBC and Micrometer); Maven 3.6.3+; Python 3.12; LangChain 0.3.27; PostgreSQL 16; pgvector 0.8.7; Kafka 3.9.1 in single-node KRaft; React 19.1.1; Vite 6.4.5; Node 22.12+; Docker Compose v2; Prometheus 3.5.0; Grafana 12.1.0; Alertmanager 0.28.1; Dockerized k6 1.3.0. See manifests for remaining Python pins. Verify compatibility before dependency upgrades; generate dependency locks with actual tools, never fabricate them.
 
 ## Directories
 
@@ -134,3 +134,13 @@ Setup: docker compose -f compose.yaml -f compose.ollama.yaml build ollama worker
 After verification, run the existing retrieval-only RAG and dashboard checks to prove default mode remains working. Report actual inference and end-to-end latency separately. Never execute generated suggestions. See docs/ollama-verification.md for executed commands and remaining quality limits.
 
 A real initial answer inverted kafka-lag.md and advised restoring offsets forward. The worker now rejects forward-offset references in generated investigation/remediation, including benign prohibitions conservatively. Do not remove this guard without an equivalent verified policy. Model text remains untrusted, often shallow or imprecise; exact citations do not prove factual correctness. Prior unsafe synthetic trial diagnosis e7716ad9-f31a-4bae-aad5-ebc1efa5206a is retained unchanged as evidence and must not be treated as operational advice.
+
+## Bounded local performance benchmarks
+
+Use python3 scripts/benchmark.py run after the normal platform/images are ready and grafana/k6:1.3.0 is pulled. No host k6/Java/Maven/new Python dependencies. Harness requires at least 2.9 GB available RAM. Separate incidentiq-bench project, owned incidentiq_bench_<run-id> database on the existing PostgreSQL server, separate single-node Kafka broker/topic/group, prefixed service names on the existing network. Never point benchmark writes at the normal database/topic. No production application source/config changes are needed. PostgreSQL stays published at 55432; temporary benchmark API uses localhost:18080.
+
+Limits are fixed in benchmarks/api.js and benchmarks/compose.yaml: 5s/2-VU warmup, 20s/4-VU reads, 40 creates/2 VUs/max20s; separate 60-event batch/max120s observer after 64 real warm pipeline events. API/worker/publisher/broker quotas are recorded; do not quietly increase bounds or mix provider modes. Retrieval-only is forced. Ollama performance must have a separate opt-in methodology/result set and never be mixed with this baseline.
+
+Results under docs/benchmarks/runs are intentionally tracked measurement artifacts (not build output). Include conditions/source hashes, raw k6 summaries, exact async samples, completion markers and honest limitations. Never write resolved Compose configuration, credentials, full envs, raw application payloads or DB dumps there. Temporary logs/fixtures/active lock stay in ignored .incidentiq-backups/benchmarks. Final results are not saturation/capacity/SLO claims; read/write phases include think time. Async latency is broker LogAppendTime to first visible committed diagnosis, including observer delay; do not misuse transaction-start now() timestamps as commit times.
+
+Runner removes only temporary benchmark containers without --volumes and retains isolated databases. Kafka image ancillary anonymous volumes are retained too; never prune volumes to clean a run. Explicit optional cleanup: python3 scripts/benchmark.py cleanup EXACT_RUN_ID. It validates a strict ID and database ownership marker, refuses active connections and never force-drops. Tests: python3 -m unittest discover -s benchmarks -p 'test_*.py' -v (statistics and cleanup safety). Existing Java/Python/frontend/browser regressions must still pass before publishing. See docs/benchmarks/README.md and RESULTS.md for reproduction and actual measurements.

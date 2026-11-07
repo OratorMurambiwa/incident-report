@@ -1,0 +1,71 @@
+{
+  "run": "20261107t181836z_e97e5b4b",
+  "timestamp_utc": "2026-11-07T18:18:38.475524+00:00",
+  "timezone": "America/Chicago",
+  "database": "incidentiq_bench_20261107t181836z_e97e5b4b",
+  "mode": "RETRIEVAL_ONLY",
+  "ollama_tested": false,
+  "cpu_model": "Intel(R) Core(TM) Ultra 5 225U",
+  "logical_cpus": 14,
+  "memory_before": {
+    "MemTotal": 7751802880,
+    "MemAvailable": 4287836160,
+    "SwapTotal": 2147483648,
+    "SwapFree": 1574518784
+  },
+  "images": {
+    "incidentiq-api:local": "sha256:aa3fe84ab853d265383bb2de3c0944253f1acf2a341ae8a977b7051e2bcec4cd",
+    "incidentiq-worker:local": "sha256:b16868086f9f2bfcebbf2b13833868eeb8b7c8543b7c5f28194a46a241f2e8b1",
+    "apache/kafka:3.9.1": "sha256:4ceccc577f03f51f6af8dbfda55194d0d892f4fa7913ffbded567ce3895622ed",
+    "grafana/k6:1.3.0": "sha256:3ddc8b1a33a2c3d8edc6e99b6a762ae36cba08788463458f5e6a7703e14eb77d"
+  },
+  "application_commit": "f8912f0ee82b6801de5f628893915e55624f9b0d",
+  "harness_sha256": {
+    "benchmarks/async_probe.py": "5ae48339cd0239b712262c17ae2e288c5f618f4072067645c348e8d69f5b460d",
+    "benchmarks/measurements.py": "f3d313aceef23ae476b5dd5ef3866f69cc06cd293712d96479c8dc2bd6856734",
+    "benchmarks/test_measurements.py": "e332e92c1cbc161b9b11ad21f8838238909da59ab2de4dfbcd44f32d28179ba2",
+    "benchmarks/test_runner.py": "83d5b0738c6b0a27e708dd7ac60fac2cd20442ad68193f5b18ff5f45320362c6",
+    "benchmarks/api.js": "1aade7c8540a9d5f93cdbb2f56db8448466415b041d5d7d11f8863a3b7d45d0b",
+    "benchmarks/compose.yaml": "67d6734fddf0c4b609e61657f5a5fae5cde37ed82f922534054112e00274146f",
+    "scripts/benchmark.py": "03a65d1f92d16601a4dc972a5fbb2e527c822208f96df1e057570d646f498adb"
+  },
+  "bounds": {
+    "read_vus": 4,
+    "read_seconds": 20,
+    "warmup_vus": 2,
+    "warmup_seconds": 5,
+    "write_vus": 2,
+    "write_iterations": 40,
+    "write_max_seconds": 20,
+    "async_events": 60,
+    "async_timeout_seconds": 120,
+    "observer_poll_ms": 100
+  },
+  "environment": "Existing local platform running; shared PostgreSQL server, isolated DB and separate Kafka broker. No benchmark Prometheus scrape.",
+  "effective_resources": {
+    "bench-api": {
+      "memory_bytes": 536870912,
+      "nano_cpus": 1500000000
+    },
+    "bench-worker": {
+      "memory_bytes": 1073741824,
+      "nano_cpus": 1000000000
+    },
+    "bench-publisher": {
+      "memory_bytes": 402653184,
+      "nano_cpus": 500000000
+    },
+    "bench-kafka": {
+      "memory_bytes": 671088640,
+      "nano_cpus": 1000000000
+    }
+  },
+  "memory_after": {
+    "MemTotal": 7751802880,
+    "MemAvailable": 2988744704,
+    "SwapTotal": 2147483648,
+    "SwapFree": 1565564928
+  },
+  "total_harness_seconds": 258.74950021399854,
+  "k6_version": "Container incidentiq-bench-k6-run-e80dae12568f Creating \n Container incidentiq-bench-k6-run-e80dae12568f Created \nk6 v1.3.0+dirty (commit/5870e99ae8-dirty, go1.25.1, linux/amd64)"
+}

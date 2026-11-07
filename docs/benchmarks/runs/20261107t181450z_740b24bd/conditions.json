@@ -1,0 +1,45 @@
+{
+  "run": "20261107t181450z_740b24bd",
+  "timestamp_utc": "2026-11-07T18:14:54.302645+00:00",
+  "timezone": "America/Chicago",
+  "database": "incidentiq_bench_20261107t181450z_740b24bd",
+  "mode": "RETRIEVAL_ONLY",
+  "ollama_tested": false,
+  "cpu_model": "Intel(R) Core(TM) Ultra 5 225U",
+  "logical_cpus": 14,
+  "memory_before": {
+    "MemTotal": 7751802880,
+    "MemAvailable": 4233535488,
+    "SwapTotal": 2147483648,
+    "SwapFree": 1622417408
+  },
+  "images": {
+    "incidentiq-api:local": "sha256:aa3fe84ab853d265383bb2de3c0944253f1acf2a341ae8a977b7051e2bcec4cd",
+    "incidentiq-worker:local": "sha256:b16868086f9f2bfcebbf2b13833868eeb8b7c8543b7c5f28194a46a241f2e8b1",
+    "apache/kafka:3.9.1": "sha256:4ceccc577f03f51f6af8dbfda55194d0d892f4fa7913ffbded567ce3895622ed",
+    "grafana/k6:1.3.0": "sha256:3ddc8b1a33a2c3d8edc6e99b6a762ae36cba08788463458f5e6a7703e14eb77d"
+  },
+  "application_commit": "f8912f0ee82b6801de5f628893915e55624f9b0d",
+  "harness_sha256": {
+    "benchmarks/async_probe.py": "5ae48339cd0239b712262c17ae2e288c5f618f4072067645c348e8d69f5b460d",
+    "benchmarks/measurements.py": "f3d313aceef23ae476b5dd5ef3866f69cc06cd293712d96479c8dc2bd6856734",
+    "benchmarks/test_measurements.py": "e332e92c1cbc161b9b11ad21f8838238909da59ab2de4dfbcd44f32d28179ba2",
+    "benchmarks/test_runner.py": "1ffc8693ed3a893b2e38359e7a95b8956cc1f570da261d0c06cba35fa33089ef",
+    "benchmarks/api.js": "1aade7c8540a9d5f93cdbb2f56db8448466415b041d5d7d11f8863a3b7d45d0b",
+    "benchmarks/compose.yaml": "2bb02ea9d02ad1f7218a9140b808887923e43f22792fce6c0e290827f80d2db8",
+    "scripts/benchmark.py": "0b758d09fc88b9ab8da59eead638ff8cf264a5337617a59d0e9b963c8ab83d3f"
+  },
+  "bounds": {
+    "read_vus": 4,
+    "read_seconds": 20,
+    "warmup_vus": 2,
+    "warmup_seconds": 5,
+    "write_vus": 2,
+    "write_iterations": 40,
+    "write_max_seconds": 20,
+    "async_events": 60,
+    "async_timeout_seconds": 120,
+    "observer_poll_ms": 100
+  },
+  "environment": "Existing local platform running; shared PostgreSQL server, isolated DB and separate Kafka broker. No benchmark Prometheus scrape."
+}
