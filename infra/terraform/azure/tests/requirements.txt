@@ -1,0 +1,5 @@
+# Static tooling only; does not change application dependencies.
+python-hcl2==7.3.1
+lark==1.2.2
+regex==2026.11.7
+PyYAML==6.0.2

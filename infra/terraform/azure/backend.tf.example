@@ -1,0 +1,10 @@
+# Future-only remote-state design. Not loaded by Terraform and not provisioned here.
+# Review/bootstrap a dedicated encrypted, private, RBAC-protected state account first.
+# Never put account keys, SAS tokens or client secrets in backend configuration.
+terraform {
+  backend "azurerm" {
+    use_azuread_auth = true
+    use_oidc        = true
+    # Supply nonsecret storage_account_name/container_name/key via private configuration.
+  }
+}

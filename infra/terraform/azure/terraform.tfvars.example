@@ -1,0 +1,12 @@
+# Documentation-only identifiers; never run a plan with these placeholder UUIDs.
+subscription_id = "00000000-0000-0000-0000-000000000000"
+tenant_id = "00000000-0000-0000-0000-000000000000"
+admin_group_object_ids = ["00000000-0000-0000-0000-000000000000"]
+name_prefix = "incidentiq"
+unique_suffix = "replace01"
+location = "eastus"
+kubernetes_version = "1.35"
+node_vm_size = "Standard_D4s_v5"
+node_count = 1
+kubernetes_namespace = "incidentiq-azure"
+tags = { owner = "replace-before-any-future-deployment" }

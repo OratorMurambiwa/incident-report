@@ -277,3 +277,9 @@ See [reproduction, boundaries and cleanup](docs/faults/README.md) and [actual re
 Kustomize base/local overlay covers API, publisher, worker, frontend, PostgreSQL/pgvector, Kafka and runbook ingestion, with isolated PVCs, internal Services, external Secret references, resource bounds and dependency gates. Render with `kubectl kustomize infra/kubernetes/overlays/local`; validate with `./scripts/validate-kubernetes.sh` after the documented lightweight validator setup.
 
 **Kubernetes runtime deployment is unverified.** Current 7.2 GiB WSL resources failed the conservative available-memory gate; Compose remains running with its data and PostgreSQL port 55432 preserved. No local cluster or Azure resources were created. See [deployment and preservation instructions](docs/kubernetes/README.md) and [actual verification](docs/kubernetes/VERIFICATION.md).
+
+## Future Azure Terraform (Step 8B)
+
+`infra/terraform/azure` provides modular resource-group/network, ACR, private AKS, managed identities and private Key Vault infrastructure. The Azure-only Kustomize overlay reuses the application base with ACR/CSI secret references. No secret values, kubeconfig or client credentials are managed as outputs.
+
+**Static verification only: no Azure authentication, plan/apply, cloud resources or image push.** Run `python3 scripts/verify-terraform-azure.py` and `./scripts/verify-azure-kustomize.sh` after the documented isolated tool setup. Existing Compose data, volumes and port 55432 are unchanged. This future design is billable and not production HA; see [architecture, setup and costs](docs/azure/README.md) and [actual checks/untested limits](docs/azure/VERIFICATION.md).

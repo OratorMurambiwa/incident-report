@@ -1,0 +1,48 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: incidentiq-azure
+resources:
+- ../../base
+- namespace.yaml
+- serviceaccount.yaml
+- secretproviderclass.yaml
+patches:
+- path: api-identity.yaml
+- path: publisher-identity.yaml
+- path: worker-identity.yaml
+- path: postgres-identity.yaml
+- path: runbook-ingest-identity.yaml
+- target:
+    kind: StatefulSet
+    name: postgres
+  patch: "- op: add\n  path: /spec/volumeClaimTemplates/0/spec/storageClassName\n\
+    \  value: managed-csi\n- op: replace\n  path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage\n\
+    \  value: 8Gi\n"
+- target:
+    kind: StatefulSet
+    name: kafka
+  patch: "- op: add\n  path: /spec/volumeClaimTemplates/0/spec/storageClassName\n\
+    \  value: managed-csi\n- op: replace\n  path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage\n\
+    \  value: 8Gi\n"
+images:
+- name: incidentiq-api:local
+  newName: replaceacr.azurecr.io/incidentiq-api
+  newTag: replace-with-release-tag
+- name: incidentiq-worker:local
+  newName: replaceacr.azurecr.io/incidentiq-worker
+  newTag: replace-with-release-tag
+- name: incidentiq-frontend:local
+  newName: replaceacr.azurecr.io/incidentiq-frontend
+  newTag: replace-with-release-tag
+- name: pgvector/pgvector
+  newName: replaceacr.azurecr.io/pgvector
+  newTag: 0.8.7-pg16-trixie
+- name: apache/kafka
+  newName: replaceacr.azurecr.io/kafka
+  newTag: 3.9.1
+configMapGenerator:
+- name: incidentiq-config
+  behavior: merge
+  literals:
+  - POSTGRES_DB=incidentiq_azure
+  - KAFKA_GROUP_ID=incidentiq-azure-worker-v1

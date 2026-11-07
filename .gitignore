@@ -87,3 +87,17 @@ pytorch_model.bin
 
 # Compiled frontend unit tests
 **/.test-build/
+
+# Terraform local providers, state, credentials, plans and private variable values
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.plan
+crash.log
+crash.*.log
+*.tfvars
+*.tfvars.json
+.terraformrc
+terraform.rc
+# Commit real .terraform.lock.hcl dependency locks; examples end in .example.

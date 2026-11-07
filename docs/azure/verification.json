@@ -1,0 +1,145 @@
+{
+  "timestamp_utc": "2026-11-07T21:15:49.712665+00:00",
+  "application_commit": "38db6b05d8378d671c42bd9b66f5768904059e01",
+  "scope": "credential-free static verification only",
+  "azure_authentication_used": false,
+  "cloud_resources_provisioned": false,
+  "terraform_plan_or_apply_executed": false,
+  "azure_kubernetes_smoke_executed": false,
+  "terraform": "1.12.2",
+  "azurerm": "4.30.0",
+  "fmt_check": "passed recursive",
+  "init": "passed -backend=false -input=false; real provider lock generated; readonly reinitialization passed",
+  "validate": "Success! The configuration is valid.",
+  "azure_static_tests": 10,
+  "azure_template_schemas": {
+    "valid": 19,
+    "invalid": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "azure_generated_example_schemas": {
+    "valid": 19,
+    "invalid": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "csi_crd_version": "v1.4.8",
+  "csi_crd_sha256": "ef1623b34403bb11311fc92763b5b364ba456a166f1637eeec8d29052dd115f3",
+  "kubernetes_schema_version": "1.35.0",
+  "local_kustomize_schemas": 17,
+  "local_kustomize_tests": 9,
+  "java_tests": 62,
+  "python_tests": 77,
+  "frontend_tests": 7,
+  "browser_checks": 14,
+  "other_helper_tests": 19,
+  "http_checks": 12,
+  "real_rag_regression": "passed RETRIEVAL_ONLY plus unchanged duplicate evidence; after an observed consumer restart",
+  "rag_incident_id": "fe07425c-8a49-4b69-b83d-54944923e00e",
+  "rag_duplicate_offset": 102,
+  "rag_committed_offset": 103,
+  "known_worker_membership_error": "UnknownMemberIdError/CommitFailedError observed; fail-closed restart and deduplication recovered; original expiry trigger unresolved",
+  "worker_provider": "none",
+  "compose_services": [
+    {
+      "service": "alertmanager",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "api",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "frontend",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "grafana",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "kafka",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "postgres",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "prometheus",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "publisher",
+      "state": "running",
+      "health": ""
+    },
+    {
+      "service": "worker",
+      "state": "running",
+      "health": "healthy"
+    }
+  ],
+  "postgres_host_port": 55432,
+  "volumes_created_at": {
+    "postgres_data": "2026-11-06T00:00:34Z",
+    "kafka_data": "2026-11-06T00:00:34Z",
+    "prometheus_data": "2026-11-06T01:22:39Z",
+    "grafana_data": "2026-11-06T01:22:39Z",
+    "alertmanager_data": "2026-11-06T01:58:52Z",
+    "ollama_data": "2026-11-06T16:26:37Z"
+  },
+  "source_sha256": {
+    "infra/kubernetes/overlays/azure/api-identity.yaml": "fc597b2d03410c2bb4752b0cf8d580098e0a40ffda58bed01dc071724dfe1ce9",
+    "infra/kubernetes/overlays/azure/kustomization.yaml": "94d75f46ad70e6cc47eb687ad3606dda7e98a3d9e8fd2c4b488af1bd741a4ff0",
+    "infra/kubernetes/overlays/azure/namespace.yaml": "2a8ce7efb43e9768a733171cdbc4edcdef766a8393c8f1da0488cdf31f8c391d",
+    "infra/kubernetes/overlays/azure/postgres-identity.yaml": "beebb3fdc2deaaa1cc6aae858d68e2dda738f3e0830dcac58acb34013a500225",
+    "infra/kubernetes/overlays/azure/publisher-identity.yaml": "cc0bb52048ef2ce325b98e34e7cfaf5593754ebe2fd94cd360532467a7764a33",
+    "infra/kubernetes/overlays/azure/runbook-ingest-identity.yaml": "50f2b62abf43c2fe593f3ad60b66674348005161e5df80c8d53c5ef957bcfb8a",
+    "infra/kubernetes/overlays/azure/secretproviderclass.yaml": "1fa92bc357f17205d2d159c68d1d0087878fe4e5ce5f9b52d1e1c025cea409ec",
+    "infra/kubernetes/overlays/azure/serviceaccount.yaml": "44638c09f010d0c79872a176b88fce5981eb939f982439fd90ec023e5b7ec678",
+    "infra/kubernetes/overlays/azure/worker-identity.yaml": "d835588a927f320cdd4dbcf0a19680c56372df74e9db30d5fe12cc24374093c4",
+    "infra/terraform/azure/.terraform.lock.hcl": "9ca906ecaab4d90f8b760f5eff91052fbc4ab6b3f8aecc15504cc29da277b3c2",
+    "infra/terraform/azure/backend.tf.example": "7e66c95b553f01c848a27317b215ef85bca2a5b32a2ccc4e8e02874f05cd2ce9",
+    "infra/terraform/azure/main.tf": "c77aa4ae1161d1104a5205a5142664585579c605afeaa2511bda878198549e77",
+    "infra/terraform/azure/modules/aks/extra-variables.tf": "48f3ad3be2ee33683c30a3f42a1732c4b873ceadb6df24f9e49680632ec95238",
+    "infra/terraform/azure/modules/aks/main.tf": "e1d6664af6256d0c0bffb34a412a0298a4c5641221cda23b7da4375aeef79d42",
+    "infra/terraform/azure/modules/aks/outputs.tf": "40060e96d2e84d0bdeb1ada9755d9530e31f56887206d466d94cfc7ffbaf8178",
+    "infra/terraform/azure/modules/aks/variables.tf": "c4a61f47eb1cccf066377f416a3d5667534c2bd757f8f92f817c5ddb4b8ca783",
+    "infra/terraform/azure/modules/aks/versions.tf": "9ac376cda7a47ead4b4b2d398413a367f973ea37c595e506609b8457f4d9429d",
+    "infra/terraform/azure/modules/identities/main.tf": "ea91439f241f7b7ceb86850b5e9f993a59506838ebc5760a67f31c6f086901fc",
+    "infra/terraform/azure/modules/identities/outputs.tf": "e6e4bc58f5c2e328fea7f4eb0331b0e393446daf78131c8c411e97dd37fe2f36",
+    "infra/terraform/azure/modules/identities/variables.tf": "c4a61f47eb1cccf066377f416a3d5667534c2bd757f8f92f817c5ddb4b8ca783",
+    "infra/terraform/azure/modules/identities/versions.tf": "9ac376cda7a47ead4b4b2d398413a367f973ea37c595e506609b8457f4d9429d",
+    "infra/terraform/azure/modules/network/main.tf": "f1986bd64527de31e21eea3c4702c59655581176b50ed4c9f5e00a6542f0d72a",
+    "infra/terraform/azure/modules/network/outputs.tf": "0ab9e31f50e5df036a396ce901a757d13339f926927b6091aa2a2ac9c2b7c314",
+    "infra/terraform/azure/modules/network/variables.tf": "c4a61f47eb1cccf066377f416a3d5667534c2bd757f8f92f817c5ddb4b8ca783",
+    "infra/terraform/azure/modules/network/versions.tf": "9ac376cda7a47ead4b4b2d398413a367f973ea37c595e506609b8457f4d9429d",
+    "infra/terraform/azure/modules/registry/main.tf": "9299eeecf2221dd0092c268eadd4e7d4c709f17a5ee42273d93d3ee6a09f41d5",
+    "infra/terraform/azure/modules/registry/outputs.tf": "c63450bfe066dac09c2b25a1027d0b430762698294bfa6e523d3303271147cf3",
+    "infra/terraform/azure/modules/registry/variables.tf": "c4a61f47eb1cccf066377f416a3d5667534c2bd757f8f92f817c5ddb4b8ca783",
+    "infra/terraform/azure/modules/registry/versions.tf": "9ac376cda7a47ead4b4b2d398413a367f973ea37c595e506609b8457f4d9429d",
+    "infra/terraform/azure/modules/vault/extra-variables.tf": "785be8cb84adbe86aa6e125d2bdd2f7361ec038a3bd26742ba6cbcae4c86adcf",
+    "infra/terraform/azure/modules/vault/main.tf": "ae053c1539cf1b0a3afd42dc39c55bd22d7072d22a3454df9cd1755d178bcc5f",
+    "infra/terraform/azure/modules/vault/outputs.tf": "ff1815ea0165abd2b1c26e7f2e33d8db9963e5b7229221aa21a80e1c3ca2fd77",
+    "infra/terraform/azure/modules/vault/variables.tf": "c4a61f47eb1cccf066377f416a3d5667534c2bd757f8f92f817c5ddb4b8ca783",
+    "infra/terraform/azure/modules/vault/versions.tf": "9ac376cda7a47ead4b4b2d398413a367f973ea37c595e506609b8457f4d9429d",
+    "infra/terraform/azure/outputs.tf": "f3c14fecabaf678ad745937813e0031b373ad6285ef4c8217806b731662acc03",
+    "infra/terraform/azure/terraform.tfvars.example": "464678eef3ab33f54291957d894bb3c9f0e783d0a19628d6cc4fa8625f33340c",
+    "infra/terraform/azure/tests/requirements.txt": "4e338f872b8720393404ad5fd80dda3053be7ebb58152b5c801fb73229021772",
+    "infra/terraform/azure/tests/test_static.py": "a344c7d770dd9bc173e9c1cd982e7acfe1025bf0ff9c9d369366d1d411202092",
+    "infra/terraform/azure/variables.tf": "654bb7b85462dd625cfa2f1456d37dfbdeaed96a327d7f49aecd65352ace6135",
+    "infra/terraform/azure/versions.tf": "9364b6616d3f05559a736a14020deb0b6efdff6fe981000f2de4ecc66ea54e15",
+    "scripts/render-azure-overlay.py": "8ff2e63777ec05ac5811263fee59ba75c2a3563e480a70d875d2c711c0dc7c3d",
+    "scripts/verify-azure-kustomize.sh": "b470d076a50ee4310f032aa37f39944fb9c60a823083c1e19023ac14c5ccd182",
+    "scripts/verify-terraform-azure.py": "f1723da4bd55ff906c3af29aaa091ad60b0917588c098703b0a71b48ed511500"
+  }
+}

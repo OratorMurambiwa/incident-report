@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  template:
+    metadata:
+      labels:
+        azure.workload.identity/use: 'true'
+    spec:
+      serviceAccountName: incidentiq-keyvault
+      volumes:
+      - name: keyvault
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: incidentiq-keyvault
+      containers:
+      - name: postgres
+        volumeMounts:
+        - name: keyvault
+          mountPath: /mnt/keyvault
+          readOnly: true
