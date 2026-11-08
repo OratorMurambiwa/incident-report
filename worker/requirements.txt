@@ -1,16 +1,19 @@
-langchain==0.3.27
+langchain==0.3.30
 langchain-core==0.3.86
 langchain-text-splitters==0.3.11
-sentence-transformers==3.4.1
-transformers==4.48.3
-huggingface-hub==0.34.4
-tokenizers==0.21.4
+sentence-transformers==5.6.0
+transformers==5.10.0
+huggingface-hub==1.33.0
+tokenizers==0.22.2
 safetensors==0.6.2
-torch==2.6.0+cpu
+torch==2.10.0+cpu
 numpy==1.26.4
 scipy==1.15.3
 scikit-learn==1.6.1
-kafka-python==2.2.15
+kafka-python==2.3.2
 psycopg[binary]==3.2.9
 pgvector==0.4.1
 prometheus-client==0.22.1
+
+# Required by torch on Python 3.12; update vendored build helpers together.
+setuptools==84.2.1

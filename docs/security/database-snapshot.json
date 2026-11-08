@@ -1,0 +1,18 @@
+{
+  "db/metadata.json": {
+    "sha256": "d73bcff4e592425f43862903545331cecbaedb0abab97cdfec0cc33d2589be98",
+    "bytes": 153
+  },
+  "db/trivy.db": {
+    "sha256": "5f65d85f13d040a4f718dd51524514dc40011743154fbf8973b4ae0da98c9f56",
+    "bytes": 1677078528
+  },
+  "java-db/metadata.json": {
+    "sha256": "1eb16ac312481d64be2cbefcc41b53aa68aa99e78c2a35cfce63cc8082796d9f",
+    "bytes": 153
+  },
+  "java-db/trivy-java.db": {
+    "sha256": "5fed36849ee9a6e462ad41acd378f2b8109362b3e12596f7622a14f6796eff1c",
+    "bytes": 1573408768
+  }
+}

@@ -10,7 +10,7 @@ Current flow: React dashboard → Spring Boot API → PostgreSQL incident + outb
 
 ## Technologies and versions
 
-Java 21; Spring Boot 3.5.16 (use its dependency management for Spring Kafka, JDBC and Micrometer); Maven 3.6.3+; Python 3.12; LangChain 0.3.27; PostgreSQL 16; pgvector 0.8.7; Kafka 3.9.1 in single-node KRaft; React 19.1.1; Vite 6.4.5; Node 22.12+; Docker Compose v2; Prometheus 3.5.0; Grafana 12.1.0; Alertmanager 0.28.1; Dockerized k6 1.3.0. See manifests for remaining Python pins. Verify compatibility before dependency upgrades; generate dependency locks with actual tools, never fabricate them.
+Java 21; Spring Boot 3.5.16 (use its dependency management for Spring Kafka, JDBC and Micrometer); Maven 3.6.3+; Python 3.12; LangChain 0.3.30; PostgreSQL 16; pgvector 0.8.7; Kafka 3.9.1 in single-node KRaft; React 19.1.1; Vite 6.4.5; Node 22.12+; Docker Compose v2; Prometheus 3.5.0; Grafana 12.1.0; Alertmanager 0.28.1; Dockerized k6 1.3.0. See manifests for remaining Python pins. Verify compatibility before dependency upgrades; generate dependency locks with actual tools, never fabricate them.
 
 ## Directories
 
@@ -56,7 +56,7 @@ Worker receipt and PENDING→RECEIVED transition are atomic. Deduplicate by even
 
 ## Local retrieval
 
-Model: sentence-transformers/all-MiniLM-L6-v2, revision c9745ed1d9f207416be6d2e6f8de32d1f16199bf, 384 dimensions, normalized CPU embeddings. sentence-transformers 3.4.1, transformers 4.48.3 and CPU torch 2.6.0+cpu are pinned; worker/requirements.lock records actual resolved transitive versions and is used as constraints. Never fabricate locks or silently download another model. Runtime uses local_files_only plus offline/tracing-disabled environment flags.
+Model: sentence-transformers/all-MiniLM-L6-v2, revision c9745ed1d9f207416be6d2e6f8de32d1f16199bf, 384 dimensions, normalized CPU embeddings. sentence-transformers 5.6.0, transformers 5.10.0 and CPU torch 2.10.0+cpu are pinned; worker/requirements.lock records actual resolved transitive versions and is used as constraints. Never fabricate locks or silently download another model. Runtime uses local_files_only plus offline/tracing-disabled environment flags.
 
 LangChain MarkdownHeaderTextSplitter + token-aware RecursiveCharacterTextSplitter use 180 tokens, 30 overlap and a chunking-version fingerprint. Ingestion skips unchanged files and atomically replaces chunks of changed sources using deterministic UUIDs; filenames are unique. README.md is excluded. Missing disk files are not automatically purged. The default ten runbooks produce 60 chunks. Compose runbook-ingest runs after API migration and before the worker starts.
 
@@ -180,3 +180,11 @@ Use ci/bootstrap.sh and ci/test.sh java|python|frontend for local equivalents; t
 ci/infra.sh reuses credential-filtered Terraform/schema checks and pipeline policy tests. Official Azure pipeline schema uses scalar coercion and does not substitute for real server expansion. Security blocks detected source/baked credentials and unsafe app-user settings; CVE findings are advisory JSON requiring triage, not a clean security claim. Release stays hard blocked. Retain actual scanner results/timestamps and distinguish Azure DevOps tasks not executed locally. Tool pins/digests are in ci/tool-versions.env; no latest scanner/actions. Caches contain public dependencies/provider software only, never credentials, state or test databases.
 
 Sanitized source hashes, counts and public CVE identifiers under docs/ci are intentional verification evidence. Keep raw JUnit/Trivy reports, model/provider caches and all temporary databases/artifacts ignored.
+
+## Container security triage
+
+Read docs/security/README.md and the full critical/high ledger before dependency changes. API keeps Boot 3.5.16/Spring 6.2.19/Java 21, with compatible Tomcat 10.1.61, Jackson BOM 2.21.8, JDBC 42.7.12, LZ4 1.11.4 and Snappy 1.1.10.9 overrides. Worker keeps LangChain 0.3, updates CPU ML dependencies only after offline MiniLM parity, real retrieval and RAG regression checks. setuptools 84.2.1 is required by Torch on Python 3.12; its vendored jaraco.context/wheel must be scanned too. Never remove it merely to hide vulnerabilities. The unchanged private heartbeat fault seam was also verified under kafka-python 2.3.2; membership errors must still fail closed and recover through restart/deduplication. Nginx stays on 1.28.3 with Alpine 3.23 security revision r7 and the original compatible global config; nginx -t runs at build time.
+
+Use security/scan.sh before|after with SECURITY_DB_CACHE pointing at a frozen vulnerability and Java database. security/triage.py --cache PATH verifies all four database file hashes and fails on unreviewed critical/high findings; run python3 -m unittest discover -s security -v. Preserve every occurrence and severity; never equate duplicate rows with independent exploits or call reachability review an exploit proof. Do not add ignore rules. Spring 6.2 fixes for the remaining findings require enterprise access; a public Spring 7/Boot 4 migration and LangChain 1 migration require separate compatibility verification. Debian source-level findings remain tracked even when the affected executable is absent.
+
+Sanitized inventory, dependency graphs, hashes and measurements under docs/security are intentional verification evidence. Keep raw scanner/test/browser/model outputs and advisory databases in ignored .incidentiq-backups or /tmp. Historical docs/ci inventory remains the original baseline, not the current remediation result. Normal Compose volumes and port 55432 must remain untouched.

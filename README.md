@@ -106,7 +106,7 @@ Verification retains synthetic incidents and a malformed-message failure record.
 
 Ten detailed Markdown guides in runbooks/ are split by headings, then into at most 180-token chunks with 30-token overlap. Headings are retained in chunk text and the complete embedding input is checked against the model context window. The current corpus produces 60 chunks. LangChain Documents, text splitters, an Embeddings adapter and a BaseRetriever provide the retrieval path; PostgreSQL pgvector performs exact cosine-distance search.
 
-The worker image pins sentence-transformers 3.4.1, transformers 4.48.3, CPU-only torch 2.6.0+cpu and the remaining direct dependencies. requirements.lock was generated from the resolved Docker environment and constrains transitive versions. Model revision c9745ed1d9f207416be6d2e6f8de32d1f16199bf of sentence-transformers/all-MiniLM-L6-v2 is downloaded at build time and smoke-tested. Model loading and embeddings are offline at runtime; no hosted inference, API key or paid service is used. Model and package downloads need internet at build time.
+The worker image pins sentence-transformers 5.6.0, transformers 5.10.0, CPU-only torch 2.10.0+cpu and the remaining direct dependencies. requirements.lock was generated from the resolved Docker environment and constrains transitive versions. Model revision c9745ed1d9f207416be6d2e6f8de32d1f16199bf of sentence-transformers/all-MiniLM-L6-v2 is downloaded at build time and smoke-tested. Model loading and embeddings are offline at runtime; no hosted inference, API key or paid service is used. Model and package downloads need internet at build time.
 
 ```bash
 docker compose up -d --build --wait
@@ -289,3 +289,7 @@ Kustomize base/local overlay covers API, publisher, worker, frontend, PostgreSQL
 `azure-pipelines.yml` defines Java/JUnit, isolated worker tests/dependency checks, React/TypeScript/build, Terraform/Kubernetes static checks, and Docker builds/security reports. Versioned tools, package/provider/scanner caches and test XML reporting are configured. CI PostgreSQL uses a separate temporary Docker project with no host ports or existing data volumes.
 
 Release is disabled by default and deliberately fails closed if enabled; no Azure credentials, image publishing or deployment is implemented. CVE inventory is explicitly advisory; detected source/baked credentials, config errors and scanner failures block CI. See [setup and local equivalents](docs/ci/README.md) and [actual verification/limitations](docs/ci/VERIFICATION.md).
+
+## Container security verification
+
+[Step 8D security triage](docs/security/README.md) records the frozen-snapshot before/after scans, all critical/high package occurrences, compatible updates, dependency provenance, remaining risks and real regression results. Findings are retained without suppression; the older Step 8C inventory is historical evidence. The default remains local retrieval-only mode, with the same MiniLM weights and preserved Compose data.

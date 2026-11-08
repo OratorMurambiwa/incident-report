@@ -1,0 +1,24 @@
+{
+  "worker_runtime": {
+    "uid": 999,
+    "pid1": "python",
+    "cap_eff": "0000000000000000",
+    "cap_bnd": "00000000a80425fb",
+    "sys_admin_effective": false,
+    "sys_admin_bounded": false,
+    "systemd_homed_present": false,
+    "kernel": "6.6.87.2-microsoft-standard-WSL2"
+  },
+  "source_files_inspected": 35,
+  "feature_literal_matches": {
+    "XsltView": [],
+    "SseEmitter": [],
+    "ServerSentEvent": [],
+    "load_prompt_from_config": [],
+    "load_prompt\\(": [],
+    "JsonTypeInfo": [],
+    "JsonIdentityInfo": [],
+    "setDefaultTyping": []
+  },
+  "limitation": "Literal source search and current process facts are configuration-specific reachability evidence, not an exploit proof or a complete call graph."
+}

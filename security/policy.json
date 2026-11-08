@@ -1,0 +1,594 @@
+{
+  "CVE-2026-109518": {
+    "exploit_conditions": "APT retries downloads into attacker-influenced paths/hardlinks during package installation.",
+    "application_exposure": "Build/update tool; non-root API does not run APT.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-106451": {
+    "exploit_conditions": "A local attacker wins a predictable native-library path race in a shared temporary directory.",
+    "application_exposure": "Transitive Kafka compression library; patched even though application container has a separate temporary directory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-89407": {
+    "exploit_conditions": "Attacker-provided extremely long numeric JSON triggers expensive pre-validation.",
+    "application_exposure": "REST JSON parser is reachable; bounded DTO validation occurs after parsing, so patch is important.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-89425": {
+    "exploit_conditions": "Malformed JSON tokens through DataInput parsing grow diagnostic StringBuilder without bounds.",
+    "application_exposure": "MVC uses the standard HTTP stream path, not a custom DataInput reader; patch applied.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-68497": {
+    "exploit_conditions": "Very large numeric input reaches XML duration/calendar deserializers.",
+    "application_exposure": "Incident DTOs contain no XML duration/calendar types; parser patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-91776": {
+    "exploit_conditions": "Attacker-controlled polymorphic fallback types grow a deserializer cache.",
+    "application_exposure": "No default typing or attacker-controlled JsonTypeInfo configured; patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-91777": {
+    "exploit_conditions": "Many unresolved JsonIdentityInfo forward references trigger quadratic processing.",
+    "application_exposure": "No JsonIdentityInfo incident DTOs; patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-55276": {
+    "exploit_conditions": "Web application security constraints are omitted from effective web.xml logging.",
+    "application_exposure": "REST application has no web.xml security-constraint policy; Tomcat patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-65182": {
+    "exploit_conditions": "Overlapping servlet URL security constraints depend on matching order.",
+    "application_exposure": "No servlet security-constraint based authorization configured; Tomcat patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-65637": {
+    "exploit_conditions": "HTTP/2 requests omit authority under strict TLS SNI routing.",
+    "application_exposure": "Local API uses plain HTTP/1, without configured TLS/HTTP2 strict SNI; patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-65905": {
+    "exploit_conditions": "DIGEST authentication replay-window handling permits reuse.",
+    "application_exposure": "No servlet DIGEST authentication; patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-68525": {
+    "exploit_conditions": "FORM authentication redirects permit bypass of method-based servlet constraints.",
+    "application_exposure": "No FORM authentication or servlet web.xml constraints; patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-53404": {
+    "exploit_conditions": "RewriteValve rules use OR-linked conditions in vulnerable combinations.",
+    "application_exposure": "No RewriteValve configured; patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-54291": {
+    "exploit_conditions": "An active network attacker downgrades SCRAM-PLUS when TLS channel binding is required.",
+    "application_exposure": "Compose uses a local plain PostgreSQL connection; patch protects future TLS deployments.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-47884": {
+    "exploit_conditions": "XsltView with /** view mapping and implicit view names permits unintended stylesheet access and SSRF/RCE.",
+    "application_exposure": "REST controllers return JSON; no XsltView, view resolver or implicit template names. Reachability inspection is not an exploit proof.",
+    "deferred_reason": "Public fixed branch is Spring 7.0.9; 6.2.20 is enterprise-only. Boot 3.5.16 manages 6.2.19. Defer to a separately verified Boot 4/Spring 7 migration; do not fetch paid enterprise artifacts or mix incompatible Spring majors. Upstream severity MEDIUM differs from scanner CRITICAL.",
+    "review_reference": "https://spring.io/security/cve-2026-47884/",
+    "upstream_fixed_versions": [
+      "7.0.9 (public)",
+      "6.2.20 (enterprise only)"
+    ]
+  },
+  "CVE-2026-47890": {
+    "exploit_conditions": "Attacker-controlled view fragments are streamed using server-sent events.",
+    "application_exposure": "No SSE endpoints or fragment views in this REST API.",
+    "deferred_reason": "Same public-major/enterprise maintenance constraint as CVE-2026-47884. Upstream severity LOW differs from scanner CRITICAL. Retain finding.",
+    "review_reference": "https://spring.io/security/cve-2026-47890/",
+    "upstream_fixed_versions": [
+      "7.0.9 (public)",
+      "6.2.20 (enterprise only)"
+    ]
+  },
+  "CVE-2026-108106": {
+    "exploit_conditions": "Malformed compressed input reaches native Snappy decoding or excessive output allocation.",
+    "application_exposure": "Kafka compression dependency; publisher defaults to uncompressed events and broker is local. Added Snappy and LZ4 round-trip tests check compatibility of the patched codecs.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-93451": {
+    "exploit_conditions": "Malformed compressed input reaches native Snappy decoding or excessive output allocation.",
+    "application_exposure": "Kafka compression dependency; publisher defaults to uncompressed events and broker is local. Added Snappy and LZ4 round-trip tests check compatibility of the patched codecs.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-23949": {
+    "exploit_conditions": "Archive extraction helpers process attacker-controlled member paths.",
+    "application_exposure": "jaraco.context is vendored inside setuptools, not an application import; fixed by replacing setuptools and verifying vendor metadata.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-10142": {
+    "exploit_conditions": "A malicious Kafka broker supplies invalid or excessive response frame sizes.",
+    "application_exposure": "Local broker is trusted but decoder dependency patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-10143": {
+    "exploit_conditions": "A malicious SCRAM broker chooses an excessive iteration count causing CPU denial of service.",
+    "application_exposure": "Local Kafka is PLAINTEXT, without SCRAM; dependency patched for future authentication.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-45134": {
+    "exploit_conditions": "Pulling untrusted LangSmith Hub prompts reaches unsafe deserialization paths.",
+    "application_exposure": "No Hub prompt pulls; tracing is disabled. Compatible LangChain 0.3.30 patch applied.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-34070": {
+    "exploit_conditions": "Legacy load_prompt/load_prompt_from_config resolves attacker-controlled filesystem paths.",
+    "application_exposure": "Application uses locally constructed ChatPromptTemplate and runnable parsing; neither vulnerable legacy loader is called.",
+    "deferred_reason": "Fixed core 1.2.22 conflicts with LangChain 0.3.30 core<1 constraint. Defer coordinated LangChain 1 migration with retrieval/RAG regression coverage; no suppression.",
+    "review_reference": "https://github.com/advisories?query=CVE-2026-34070",
+    "upstream_fixed_versions": [
+      "1.2.22"
+    ]
+  },
+  "CVE-2026-68770": {
+    "exploit_conditions": "An attacker supplies a model directory whose custom Python modules execute despite trust_remote_code=False.",
+    "application_exposure": "Fixed sentence-transformers 5.6.0 verified with the exact pinned MiniLM revision, offline loading, unchanged weight hash and measured embedding parity. Never load arbitrary local models.",
+    "deferred_reason": "",
+    "review_reference": "https://github.com/advisories/GHSA-jhr6-gm9c-rqjv"
+  },
+  "CVE-2025-47273": {
+    "exploit_conditions": "PackageIndex processes malicious package archive paths.",
+    "application_exposure": "setuptools is required by Torch on Python 3.12; kept and patched rather than uninstalling a required dependency.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-24747": {
+    "exploit_conditions": "Malicious serialized checkpoint reaches the weights_only unpickler.",
+    "application_exposure": "Pinned MiniLM uses safetensors, not an untrusted checkpoint; CPU Torch patched to 2.10.0.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-4372": {
+    "exploit_conditions": "Attacker-controlled model configuration selects an unsafe attention implementation.",
+    "application_exposure": "Only baked, pinned MiniLM model is loaded offline; Transformers updated.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-5241": {
+    "exploit_conditions": "LightGlue model loading bypasses trust_remote_code checks.",
+    "application_exposure": "MiniLM is not LightGlue. Advisory description identifies the 5.2.0 implementation while baseline is 4.48.3: scanner range is potentially overbroad. Do not silently discard the row; candidate is above fixed 5.5.0.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-9856": {
+    "exploit_conditions": "Attacker-controlled chat template filenames reach save_pretrained output paths.",
+    "application_exposure": "Runtime only embeds pinned MiniLM; no user-selected model saving. Transformers patched to 5.10.0.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-24049": {
+    "exploit_conditions": "Unpacking a malicious wheel trusts the original archive name during chmod after extraction path sanitization, modifying permissions outside the destination.",
+    "application_exposure": "Vulnerable wheel is the setuptools-vendored copy; updated vendor metadata is 0.46.3, not just a top-level wheel installation.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-76642": {
+    "exploit_conditions": "Failed external mount helpers still execute privileged X-mount post-hooks.",
+    "application_exposure": "Worker runs as uid 999, has no SYS_ADMIN capability and does not invoke mount helpers.",
+    "deferred_reason": "No Debian 13 fixed version in the frozen database. Retain Debian 13 support and essential package dependencies; do not mix unstable packages or delete libraries merely to reduce counts. Upstream releases 2.41.6/2.42.3 are fixed, but are not an available Debian 13 package fix in this snapshot.",
+    "review_reference": "https://github.com/util-linux/util-linux/security/advisories/GHSA-m25x-3hj9-m26f",
+    "upstream_fixed_versions": [
+      "2.41.6",
+      "2.42.3"
+    ]
+  },
+  "CVE-2026-78408": {
+    "exploit_conditions": "Privileged nsenter --join-cgroup leaks cgroup migration authority.",
+    "application_exposure": "Worker does not invoke nsenter, join host namespaces or use privileged mode.",
+    "deferred_reason": "No Debian 13 fixed version in snapshot. Nine util-linux binary package rows per CVE share one source advisory; not nine independent defects. Upstream releases 2.41.6/2.42.3 are fixed, but are not an available Debian 13 package fix in this snapshot.",
+    "review_reference": "https://github.com/util-linux/util-linux/security/advisories/GHSA-55fx-f4gg-cfhj",
+    "upstream_fixed_versions": [
+      "2.41.6",
+      "2.42.3"
+    ]
+  },
+  "CVE-2026-78409": {
+    "exploit_conditions": "On Linux >=6.15, an fstab-authorized X-mount.subdir entry follows an intermediate symlink/procfs path outside the detached mounted tree.",
+    "application_exposure": "Worker has no mount privileges or mount calls; actual Docker kernel is 6.6.87.2-microsoft-standard-WSL2. Upstream GHSA affected range starts at 2.42 while Debian flags 2.41.5: retain the source-level finding pending vendor clarification, not a verified false positive.",
+    "deferred_reason": "No Debian 13 fixed version in snapshot; defer vendor update, keep duplicate source-package rows visible. Upstream releases 2.41.6/2.42.3 are fixed, but are not an available Debian 13 package fix in this snapshot.",
+    "review_reference": "https://github.com/util-linux/util-linux/security/advisories/GHSA-8f2p-47x3-43mv",
+    "upstream_fixed_versions": [
+      "2.41.6",
+      "2.42.3"
+    ]
+  },
+  "CVE-2026-78410": {
+    "exploit_conditions": "Restricted bind-mount sources can be redirected before ownership/mode actions.",
+    "application_exposure": "Worker is non-root, without mount privileges or bind-mount operations in its code.",
+    "deferred_reason": "No Debian 13 fixed version in snapshot; do not replace supported system libraries with unstable builds. Upstream releases 2.41.6/2.42.3 are fixed, but are not an available Debian 13 package fix in this snapshot.",
+    "review_reference": "https://github.com/util-linux/util-linux/security/advisories/GHSA-rh77-686x-2f2m",
+    "upstream_fixed_versions": [
+      "2.41.6",
+      "2.42.3"
+    ]
+  },
+  "CVE-2026-54369": {
+    "exploit_conditions": "Privileged ACL operations follow attacker-controlled symlinks.",
+    "application_exposure": "Worker does not change ACLs or operate with elevated filesystem privileges.",
+    "deferred_reason": "No Debian 13 fixed version in snapshot; retain required base library pending vendor fix.",
+    "review_reference": "",
+    "upstream_fixed_versions": [
+      "2.4.0 (ACL upstream)"
+    ]
+  },
+  "CVE-2025-69720": {
+    "exploit_conditions": "Malformed terminal capability strings reach infocmp analyze_string (stack overflow); library source-package matches do not establish that a daemon or remote parser is running.",
+    "application_exposure": "No interactive terminal or user-controlled TERM capability files in worker processing.",
+    "deferred_reason": "No Debian 13 fix in snapshot; four binary rows are one ncurses source advisory.",
+    "review_reference": "",
+    "upstream_fixed_versions": [
+      "6.5-20251213 (ncurses upstream snapshot)"
+    ]
+  },
+  "CVE-2026-119373": {
+    "exploit_conditions": "FTS5 detail=none prefix doclists with invalid row IDs trigger heap corruption.",
+    "application_exposure": "Application persists to PostgreSQL; no untrusted SQLite FTS input.",
+    "deferred_reason": "Debian 13 has no fixed package in snapshot. Upstream 3.54.0/sid 3.54.1-1 fixes are not a compatible stable distribution update.",
+    "review_reference": "https://security-tracker.debian.org/tracker/CVE-2026-119373",
+    "upstream_fixed_versions": [
+      "3.54.0 (SQLite upstream)"
+    ]
+  },
+  "CVE-2026-119374": {
+    "exploit_conditions": "A corrupted SQLite FTS5 index triggers unsafe memory handling.",
+    "application_exposure": "No SQLite database ingestion or FTS5 queries in the application.",
+    "deferred_reason": "No Debian 13 fixed package in snapshot; avoid custom/unstable libsqlite replacing Python base ABI.",
+    "review_reference": "",
+    "upstream_fixed_versions": [
+      "3.54.0 (SQLite upstream)"
+    ]
+  },
+  "CVE-2026-119379": {
+    "exploit_conditions": "Crafted SQLite session changesets reach unsafe session extension code.",
+    "application_exposure": "No SQLite session changeset APIs or untrusted SQLite files accepted.",
+    "deferred_reason": "No Debian 13 fixed package in snapshot; retain base dependency and track vendor update.",
+    "review_reference": "",
+    "upstream_fixed_versions": [
+      "3.54.0 (SQLite upstream)"
+    ]
+  },
+  "CVE-2026-16742": {
+    "exploit_conditions": "systemd-homed accepts an incorrectly verified home record during privileged account operations.",
+    "application_exposure": "Only libsystemd0/libudev1 are installed; actual systemd-homed executable is absent (verified in candidate). Container entrypoint is Python, not systemd.",
+    "deferred_reason": "Source-level matching creates two rows for libraries without the homed daemon; retain scanner output and record reachability limitation instead of suppressing.",
+    "review_reference": "https://github.com/systemd/systemd/security/advisories/GHSA-jm29-p7hh-vjhv",
+    "upstream_fixed_versions": [
+      "258.10",
+      "259.8",
+      "260.4",
+      "261.2",
+      "262"
+    ]
+  },
+  "CVE-2026-9538": {
+    "exploit_conditions": "Perl Archive::Tar parses an attacker-crafted header declaring a huge entry size.",
+    "application_exposure": "Worker never invokes Perl Archive::Tar or accepts tar archives.",
+    "deferred_reason": "No Debian 13 fixed version in snapshot; perl-base is a base-package dependency, not application functionality.",
+    "review_reference": "",
+    "upstream_fixed_versions": [
+      "3.10 (Perl Archive::Tar module; not Perl interpreter version)"
+    ]
+  },
+  "CVE-2026-76844": {
+    "exploit_conditions": "zlib gzip write-error handling can overflow a heap buffer.",
+    "application_exposure": "Runtime compression paths are not fed attacker-selected filesystem write failures; base package patched. CVE-2026-76844 scanner title incorrectly refers to webpack; Debian identifies zlib, and these IDs share the remedial commit.",
+    "deferred_reason": "",
+    "review_reference": "https://security-tracker.debian.org/tracker/CVE-2026-76844"
+  },
+  "CVE-2026-85091": {
+    "exploit_conditions": "zlib gzip write-error handling can overflow a heap buffer.",
+    "application_exposure": "Runtime compression paths are not fed attacker-selected filesystem write failures; base package patched. CVE-2026-76844 scanner title incorrectly refers to webpack; Debian identifies zlib, and these IDs share the remedial commit.",
+    "deferred_reason": "",
+    "review_reference": "https://security-tracker.debian.org/tracker/CVE-2026-76844"
+  },
+  "CVE-2026-111497": {
+    "exploit_conditions": "Crafted Brotli compressed input reaches vulnerable decoding.",
+    "application_exposure": "Brotli library came from the full image dependency chain; slim image inventory verifies removal, not merely absence of a CVE row.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-33630": {
+    "exploit_conditions": "A c-ares query-completion callback frees query/channel state still linked or accessed by resend/finish handling, causing use-after-free/double-free.",
+    "application_exposure": "Base-image transitive resolver library; slim inventory verifies removal.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-5773": {
+    "exploit_conditions": "Sequential SMB transfers reuse a live connection for a different share on the same server, reading/writing the wrong path with the same credentials.",
+    "application_exposure": "Frontend uses nginx proxying and wget health checks, not application curl transfers. Full-image curl/libcurl removed in slim inventory; each duplicate library/tool finding remains counted before.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-6276": {
+    "exploit_conditions": "A custom Host header is removed on a reused curl easy handle, but stale cookie-routing state leaks first-host cookies.",
+    "application_exposure": "Frontend uses nginx proxying and wget health checks, not application curl transfers. Full-image curl/libcurl removed in slim inventory; each duplicate library/tool finding remains counted before.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-8286": {
+    "exploit_conditions": "A STARTTLS transfer reuses a live connection despite a mismatching requested TLS configuration.",
+    "application_exposure": "Frontend uses nginx proxying and wget health checks, not application curl transfers. Full-image curl/libcurl removed in slim inventory; each duplicate library/tool finding remains counted before.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-8927": {
+    "exploit_conditions": "Reusing curl handles with environment-selected proxies leaks Digest Proxy-Authorization state between different proxies.",
+    "application_exposure": "Frontend uses nginx proxying and wget health checks, not application curl transfers. Full-image curl/libcurl removed in slim inventory; each duplicate library/tool finding remains counted before.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-92392": {
+    "exploit_conditions": "During HTTP/2 upload, a peer sends RST_STREAM with HTTP_1_1_REQUIRED/REFUSED_STREAM and triggers Curl_easy use-after-free.",
+    "application_exposure": "Frontend uses nginx proxying and wget health checks, not application curl transfers. Full-image curl/libcurl removed in slim inventory; each duplicate library/tool finding remains counted before.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-31789": {
+    "exploit_conditions": "Large X.509 processing on affected 32-bit targets reaches memory corruption.",
+    "application_exposure": "Image is amd64; frontend currently uses HTTP, without certificate upload. OpenSSL libraries patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2025-15467": {
+    "exploit_conditions": "Unauthenticated CMS AuthEnvelopedData/EnvelopedData contains oversized AEAD IV parameters copied into a fixed stack buffer.",
+    "application_exposure": "HTTP-only static frontend does not configure these protocol/parser features; OpenSSL still patched rather than treating this as immunity.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2025-69421": {
+    "exploit_conditions": "Malformed PKCS#12 files reach PKCS12_item_decrypt_d2i_ex with a NULL octet parameter, causing a crash.",
+    "application_exposure": "HTTP-only static frontend does not configure these protocol/parser features; OpenSSL still patched rather than treating this as immunity.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-28387": {
+    "exploit_conditions": "A DANE client accepts a mixed TLSA RRset with PKIX and DANE-TA usages; uncommon client/server record combinations trigger use-after-free/double-free.",
+    "application_exposure": "HTTP-only static frontend does not configure these protocol/parser features; OpenSSL still patched rather than treating this as immunity.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-28388": {
+    "exploit_conditions": "Delta-CRL validation with X509_V_FLAG_USE_DELTAS processes a delta CRL missing the CRL Number extension.",
+    "application_exposure": "HTTP-only static frontend does not configure these protocol/parser features; OpenSSL still patched rather than treating this as immunity.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-28389": {
+    "exploit_conditions": "CMS_decrypt processes unauthenticated KeyAgreeRecipientInfo without optional algorithm parameters and dereferences NULL.",
+    "application_exposure": "HTTP-only static frontend does not configure these protocol/parser features; OpenSSL still patched rather than treating this as immunity.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-28390": {
+    "exploit_conditions": "CMS_decrypt processes unauthenticated RSA-OAEP KeyTransportRecipientInfo without optional algorithm parameters and dereferences NULL.",
+    "application_exposure": "HTTP-only static frontend does not configure these protocol/parser features; OpenSSL still patched rather than treating this as immunity.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-45447": {
+    "exploit_conditions": "PKCS7_verify processes a SignedData empty digestAlgorithms set, frees a caller-owned BIO and causes use-after-free during subsequent BIO use.",
+    "application_exposure": "HTTP-only static frontend does not configure these protocol/parser features; OpenSSL still patched rather than treating this as immunity.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-84782": {
+    "exploit_conditions": "A DTLS handshake-message write fails during retransmission and the retransmission state is handled incorrectly, disclosing memory or crashing.",
+    "application_exposure": "HTTP-only static frontend does not configure these protocol/parser features; OpenSSL still patched rather than treating this as immunity.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-113351": {
+    "exploit_conditions": "Repeated XML_ParserReset clears byte accounting without resetting tracked allocations; a large document poisons later memory-budget checks on the reused parser.",
+    "application_exposure": "No XML transformation/upload handlers. libexpat removed with unused full-image dependencies, confirmed from package inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-115506": {
+    "exploit_conditions": "A moderately sized XML DTD with nested entities delays amplification detection, consuming excessive CPU before protection triggers.",
+    "application_exposure": "No XML transformation/upload handlers. libexpat removed with unused full-image dependencies, confirmed from package inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-117610": {
+    "exploit_conditions": "An attacker controls external-entity stream chunking so an empty nonfinal first parse leaves invalid state and a later parse dereferences NULL.",
+    "application_exposure": "No XML transformation/upload handlers. libexpat removed with unused full-image dependencies, confirmed from package inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-118370": {
+    "exploit_conditions": "A multi-gigabyte start tag with over 2^30 attributes overflows storeAtts counters and writes out of bounds.",
+    "application_exposure": "No XML transformation/upload handlers. libexpat removed with unused full-image dependencies, confirmed from package inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-25210": {
+    "exploit_conditions": "An oversized XML tag causes unchecked integer overflow while reallocating its tag buffer.",
+    "application_exposure": "No XML transformation/upload handlers. libexpat removed with unused full-image dependencies, confirmed from package inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-45186": {
+    "exploit_conditions": "Crafted XML attribute names trigger expensive collision checking and CPU denial of service.",
+    "application_exposure": "No XML transformation/upload handlers. libexpat removed with unused full-image dependencies, confirmed from package inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-66046": {
+    "exploit_conditions": "Many nonnormalized specified attributes trigger a quadratic default-attribute scan during ordinary XML parsing.",
+    "application_exposure": "No XML transformation/upload handlers. libexpat removed with unused full-image dependencies, confirmed from package inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-76641": {
+    "exploit_conditions": "An external-entity parser has a mismatched ELEMENT_TYPE layout during attribute handling, causing out-of-bounds access; associated with an earlier complexity fix.",
+    "application_exposure": "No XML transformation/upload handlers. libexpat removed with unused full-image dependencies, confirmed from package inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-76956": {
+    "exploit_conditions": "Crafted XML hash collisions exploit insufficient entropy caused by incorrect getentropy return-code handling.",
+    "application_exposure": "No XML transformation/upload handlers. libexpat removed with unused full-image dependencies, confirmed from package inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-76957": {
+    "exploit_conditions": "A custom encoding callback re-enters parser handlers without correct call-depth tracking, causing use-after-free.",
+    "application_exposure": "No XML transformation/upload handlers. libexpat removed with unused full-image dependencies, confirmed from package inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-77214": {
+    "exploit_conditions": "Repeated XML_ParseBuffer calls use unvalidated lengths after a buffer exists, advancing beyond allocation and exposing adjacent heap contents.",
+    "application_exposure": "No XML transformation/upload handlers. libexpat removed with unused full-image dependencies, confirmed from package inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-93990": {
+    "exploit_conditions": "Malformed UTF-16 with an unpaired high surrogate consumes the next code unit, corrupting the XML character stream passed to the application.",
+    "application_exposure": "No XML transformation/upload handlers. libexpat removed with unused full-image dependencies, confirmed from package inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2025-64720": {
+    "exploit_conditions": "PNG simplified API processes palette compositing with PNG_FLAG_OPTIMIZE_ALPHA, violating the component/alpha invariant and reading out of bounds.",
+    "application_exposure": "Nginx serves image bytes without decoding; libpng removed with unused image transform modules, inventory verified.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2025-65018": {
+    "exploit_conditions": "PNG simplified API decodes interlaced 16-bit PNG into 8-bit output and writes beyond heap bounds.",
+    "application_exposure": "Nginx serves image bytes without decoding; libpng removed with unused image transform modules, inventory verified.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2025-66293": {
+    "exploit_conditions": "Valid palette PNG with partial transparency/gamma correction reaches an invalid simplified-API state and reads beyond png_sRGB_base.",
+    "application_exposure": "Nginx serves image bytes without decoding; libpng removed with unused image transform modules, inventory verified.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-22695": {
+    "exploit_conditions": "Interlaced 16-bit PNG decoded to 8-bit output with nonminimal row stride triggers a simplified-API over-read; regression associated with an earlier PNG fix.",
+    "application_exposure": "Nginx serves image bytes without decoding; libpng removed with unused image transform modules, inventory verified.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-22801": {
+    "exploit_conditions": "Simplified PNG write APIs receive negative or greater-than-65535 row stride and truncate integer values before reading memory.",
+    "application_exposure": "Nginx serves image bytes without decoding; libpng removed with unused image transform modules, inventory verified.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-25646": {
+    "exploit_conditions": "png_set_quantize with no histogram and too many palette colors can loop beyond the palette allocation.",
+    "application_exposure": "Nginx serves image bytes without decoding; libpng removed with unused image transform modules, inventory verified.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2025-49794": {
+    "exploit_conditions": "XML Schematron sch:name path XPath processing triggers use-after-free.",
+    "application_exposure": "No XSLT/XML transformation configured; libxml2 removed in slim runtime inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2025-49795": {
+    "exploit_conditions": "Crafted XML XPath expressions trigger a NULL dereference.",
+    "application_exposure": "No XSLT/XML transformation configured; libxml2 removed in slim runtime inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2025-49796": {
+    "exploit_conditions": "XML sch:name schema elements trigger memory corruption.",
+    "application_exposure": "No XSLT/XML transformation configured; libxml2 removed in slim runtime inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-6732": {
+    "exploit_conditions": "A crafted XSD-validated document with an internal entity reference triggers type confusion.",
+    "application_exposure": "No XSLT/XML transformation configured; libxml2 removed in slim runtime inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-107891": {
+    "exploit_conditions": "Attacker-supplied regular expressions reach musl regex compilation.",
+    "application_exposure": "No endpoint accepts regular expression source; base musl patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-40200": {
+    "exploit_conditions": "musl qsort of extremely large arrays corrupts stack state; practical threshold is about seven million elements on 32-bit, but vastly larger/impractical on 64-bit.",
+    "application_exposure": "Core libc remains required; patched from same supported Alpine branch.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-27135": {
+    "exploit_conditions": "HTTP/2 frames reach nghttp2 after a session has terminated.",
+    "application_exposure": "Local frontend HTTP/1 configuration; unused nghttp2 library removed in slim runtime inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-103111": {
+    "exploit_conditions": "Attacker-controlled regular expressions and affected PCRE2 JIT API usage permit an arbitrary-data out-of-bounds write.",
+    "application_exposure": "Nginx uses fixed configuration patterns, not user-provided regex. PCRE2 retained and patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-86145": {
+    "exploit_conditions": "Recursive DFA matching reuses an undersized cached workspace block; requires attacker-controlled regex or recursive patterns with a small heap limit.",
+    "application_exposure": "Nginx uses fixed configuration patterns, not user-provided regex. PCRE2 retained and patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-89157": {
+    "exploit_conditions": "On 32-bit platforms, pcre2_pattern_convert receives an attacker-supplied large pattern and writes out of bounds; current image is amd64.",
+    "application_exposure": "Nginx uses fixed configuration patterns, not user-provided regex. PCRE2 retained and patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-89161": {
+    "exploit_conditions": "pcre2_jit_match receives a previously copied subject through matching context and incorrectly frees memory.",
+    "application_exposure": "Nginx uses fixed configuration patterns, not user-provided regex. PCRE2 retained and patched.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-4775": {
+    "exploit_conditions": "Malformed TIFF image reaches libtiff processing.",
+    "application_exposure": "No image decoding or TIFF transformation configured; libtiff removed in slim inventory.",
+    "deferred_reason": "",
+    "review_reference": ""
+  },
+  "CVE-2026-22184": {
+    "exploit_conditions": "An excessively long archive filename is supplied to contrib/untgz demonstration utility; the core zlib compression library itself is not affected.",
+    "application_exposure": "No application untgz usage; retained zlib patched. Library-level source matching does not establish utility presence.",
+    "deferred_reason": "",
+    "review_reference": ""
+  }
+}

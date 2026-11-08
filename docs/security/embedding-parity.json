@@ -1,0 +1,18 @@
+{
+  "queries": 5,
+  "dimensions": 384,
+  "maximum_absolute_difference": 8.475035429000854e-08,
+  "minimum_cosine": 0.9999999999998836,
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "revision": "c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+  "weight_sha256": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db",
+  "offline": true,
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "sentence-transformers": "5.6.0",
+    "transformers": "5.10.0",
+    "langchain": "0.3.30",
+    "langchain-core": "0.3.86",
+    "kafka-python": "2.3.2"
+  }
+}

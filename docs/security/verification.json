@@ -1,0 +1,532 @@
+{
+  "verified_at_utc": "2026-11-08T02:16:45.095359+00:00",
+  "baseline_commit": "3fc8ac8dfe85abd84cbba91550afa384cf8c4331",
+  "candidate_sources_sha256": {
+    "api/.dockerignore": "3ba19e0a25c88cc29179ddc82505244f19d99566c76c8dd82cc2b642fd5bfaf2",
+    "api/Dockerfile": "dc9c2a188f973f534070c72329e41c6a1fa9ed08c1d781d5b407d7fa4c198e88",
+    "api/pom.xml": "333255e52d48803bcd67b15ca0f32cc90478cee31adff27a572d582ebf5e6247",
+    "api/src/main/java/com/incidentiq/IncidentIqApplication.java": "644727768821cfea655f9a99e98afeb81c1e356b4c3883e251360c25ef64eea8",
+    "api/src/main/java/com/incidentiq/alert/AlertController.java": "730d7b4d63556f90f53af6b9544a1add546271358ae8be5d47b11766f0d58883",
+    "api/src/main/java/com/incidentiq/alert/AlertReceipt.java": "e9c67b83b5af276671c473ea072b158c223a2f64b780591abe5987490a807b7e",
+    "api/src/main/java/com/incidentiq/alert/AlertRepository.java": "02d2a7b2bbea2607405851a8d9b0995a9a223809cae06a4588cb388ad281d04e",
+    "api/src/main/java/com/incidentiq/alert/AlertService.java": "6f2993a91ec65f4771478105f24025001d444ef7d5eba2cddf8769b1c3fcd7df",
+    "api/src/main/java/com/incidentiq/alert/AlertmanagerNotification.java": "f1aa3088b6359403fdfc944b77162f92ce7e9360c1370ac37aa075afc7262fc1",
+    "api/src/main/java/com/incidentiq/common/ApiExceptionHandler.java": "585e171aeee257c78cce0d5601e366db407648d642c618237fa4a7186e019b06",
+    "api/src/main/java/com/incidentiq/common/ResourceNotFoundException.java": "2f9f8ef8bb61425a7bb2a82916fe615cc0f071a5ffb7fe218b67403e2bee94f1",
+    "api/src/main/java/com/incidentiq/dev/SimulationController.java": "1bdb8d94ba50626e0de0d18c3f027410054ee01017ec66b791291b7cb3198eb9",
+    "api/src/main/java/com/incidentiq/diagnosis/Diagnosis.java": "fd0832c297941d5eabdd180ba7318eb000c7bdf680aec7f94f27f4c0f6864c59",
+    "api/src/main/java/com/incidentiq/diagnosis/DiagnosisRepository.java": "c00f7c0c3446a330d5516f236fe9e5713a9e394b6cd0e1bd9f5a1419128a2bf0",
+    "api/src/main/java/com/incidentiq/diagnosis/DiagnosisResponse.java": "462c2b0ca6f8f6c6c721c531fface1e79acd5137c3341d3e8709adcb75be6af8",
+    "api/src/main/java/com/incidentiq/incident/CreateIncidentRequest.java": "c197a0072cb15e696b0932851b34c724b41a0a1be1b2c2fae6d0ea5905de9b28",
+    "api/src/main/java/com/incidentiq/incident/Incident.java": "a0cc7fc6a8d185970171c5f153e461b953152764f57d5dcccf9c41ee3d57b0cf",
+    "api/src/main/java/com/incidentiq/incident/IncidentController.java": "c7b421f2372d821dcbe5d0ff0fd6a898225418ff711b61809816e27f5f2089e8",
+    "api/src/main/java/com/incidentiq/incident/IncidentPage.java": "053e51e41aed35f2af3172b0441d78f5fe2d8d151706f2f9e85e363d7b779170",
+    "api/src/main/java/com/incidentiq/incident/IncidentRepository.java": "bd157a52f2cc7f09b0b36ccd29ac72005ed39facdb92f60c9f47a12e27ef079a",
+    "api/src/main/java/com/incidentiq/incident/IncidentResponse.java": "ba45d52aa86b5e8571316ea544991b45c20f05df3e66fa9a055988799bbe8f17",
+    "api/src/main/java/com/incidentiq/incident/IncidentService.java": "0e08d58bfc6cdfb24123b81e9b9c460e9ac7bdaa5250605a1fffa55768699944",
+    "api/src/main/java/com/incidentiq/incident/IncidentStatus.java": "8ea28ceac439ded8485b2ceffad5b667052a6ece15afea3e7b1084efad9b4ebb",
+    "api/src/main/java/com/incidentiq/incident/Severity.java": "1afc8aab45f5daac4f80c72e9577e28f1f128661419f2551f5254dfc0df88e56",
+    "api/src/main/java/com/incidentiq/metrics/IncidentMetrics.java": "cb11fe5b594454b8f65ecd2cfe885ca39c288919d0b81451f57d0fa2f7ac793c",
+    "api/src/main/java/com/incidentiq/metrics/MetricsConfiguration.java": "abe2f08893804e3277dc9a12f9afe16f62ef76eb20f30b9e7a1bc016eebdb8c3",
+    "api/src/main/java/com/incidentiq/outbox/IncidentCreatedEvent.java": "c4942ba6dda65d7f05e45b802fb55d20e58d17beb1e747990723c8e80f13722a",
+    "api/src/main/java/com/incidentiq/outbox/OutboxDelivery.java": "7971fb337a8dc96265c0f9d5f38820b6b882198e7c60e7b456214cce2f179698",
+    "api/src/main/java/com/incidentiq/outbox/OutboxPublisher.java": "b4ab13cf4c366d41fc962d95d2390336bd7068b62cf8abc69cbfe3e287218a8d",
+    "api/src/main/java/com/incidentiq/outbox/OutboxStore.java": "f13d868cfc049143beb5b885b6ce8ee7fe0665c40e0750e182cecd3b2e527eb3",
+    "api/src/main/resources/application.yml": "b7d32ea08e478c3e2206ab1456a995829b083be32c5d2f474b2dd5017f3184ca",
+    "api/src/main/resources/db/migration/V1__create_incidents_and_diagnoses.sql": "ec8307c4f0ef01ae56d803de763ba89fc870effc3c757f5f6ccc17868353acd7",
+    "api/src/main/resources/db/migration/V2__outbox_and_worker_receipts.sql": "2aacce9dc0b4fa28879c6c5be823afc6c943a144f21b6ba47601ef98444c21ae",
+    "api/src/main/resources/db/migration/V3__retain_kafka_tombstones.sql": "57c0c35e9eb5b88d2a8accf62ea8928beacf2dda1e288c0ede11d94c32585207",
+    "api/src/main/resources/db/migration/V4__runbook_retrieval.sql": "45725b08fcc7b509ab43a89d5459002e242ed6ed4a0a0563726f13c98ea774d1",
+    "api/src/main/resources/db/migration/V5__structured_rag_diagnoses.sql": "659d186c544508ae7c8d4cfb5e91892048f976c9c1b8dbdb4e7f1ba226bcc1fe",
+    "api/src/main/resources/db/migration/V6__alertmanager_fingerprints.sql": "8d34e21d4d445a9635e6a3ac3d86c81661b2ec23794b213e8d19c35d93c0d892",
+    "api/src/test/java/com/incidentiq/AlertControllerTest.java": "b086f0ccd56dae2e231474de2568f7380c5e759a3bec175fd2b0a578776e9d10",
+    "api/src/test/java/com/incidentiq/AlertIntegrationTest.java": "ca03792af9a4e4c3f06d0a41300e30008cdacab806ec8a4fccc56c762c47b4da",
+    "api/src/test/java/com/incidentiq/CompressionCompatibilityTest.java": "3c1cfaabc7a2dab8fadbd0a8dd7e190537dd568e6283b57ecfeddad6c69e5aa6",
+    "api/src/test/java/com/incidentiq/IncidentControllerTest.java": "85d49654acfd7fb7091c4eb45aada851dbb8a4f05b011a7acf2d9a1187f35011",
+    "api/src/test/java/com/incidentiq/IncidentMetricsTest.java": "23fd1cddd738dd3ff9d278efd30f163638890272e767612f90682345556294cb",
+    "api/src/test/java/com/incidentiq/IncidentServiceTest.java": "31d80268e6229a138a669f0dbd5a1e892b19fc255a931c6253db8302862dc95c",
+    "api/src/test/java/com/incidentiq/OutboxDeliveryTest.java": "f913929a95aedf558e8c250c05b498e6b89d236d5f4e42aa2a6b64b71464b70f",
+    "api/src/test/java/com/incidentiq/OutboxPostgresTest.java": "ae0af8b63e5d4e42a15e7316c701b3c1516c92f16163f05d969874b0e69bcc3c",
+    "api/src/test/java/com/incidentiq/PostgresIntegrationTest.java": "207d9c90f7633e65f7bf3145d95c1e11dcb8cf572bf3282225251a1576f8b510",
+    "api/src/test/java/com/incidentiq/SimulationControllerTest.java": "a3df5d9cbf889c107161a574fa8eb20c30c266abb771ca4d5081c8741e7d2190",
+    "api/src/test/java/com/incidentiq/SimulationDisabledTest.java": "4ee37fa8731fcc9d37e4f747eaffa84fa150fa3a38a5918f7f2c96c2a3d73e0c",
+    "api/src/test/java/com/incidentiq/SimulationFlagDisabledTest.java": "72276703150f4b086a8f73032ed6bf12d60c07d81c2f9ce5419cad13db9294ab",
+    "api/src/test/java/com/incidentiq/SimulationProductionTest.java": "0abd7c80fb5e10bf197db0f239422705516587ea2a329fbf73acdeea23426d9b",
+    "ci/bootstrap.sh": "863b9aaf7755f21c80d583a8a9570f9fe90ad0ce1f4b720467785899169c7d2b",
+    "ci/compose.yaml": "4945802e15d4ee7544bc3065de93a1522ddc8a22ac3e86eb4ddb1d98b51ed701",
+    "ci/images.sh": "7eb8c7c1505897c854c090e2884fac01c4de55526a020115538f89db532f1804",
+    "ci/infra.sh": "14f29a82f980cf1144a328c3d0894d74d7001a258a48f3426a3cf533d4f90be5",
+    "ci/locks.sh": "493a9446f83e1c44013c44d979d6225da592f255ef2328ea2c82df49119000ee",
+    "ci/requirements.txt": "5adefda38869e178481f96f0ff1758d13d89d692df40262db1d57188620e60fe",
+    "ci/security.py": "531edb7f439a070d5dae076f88cea599a91a39cacfcc761c696d0bee24612835",
+    "ci/test.sh": "2e8789e19c19cb186c926aef0813351a6df7505e267dc748b00ca3d2d28dd1df",
+    "ci/tests/test_pipeline.py": "c2d957313eebd946c035516e31c38acd1fa9310964689caa256999a34f0bc7a1",
+    "ci/tool-versions.env": "3883f1c89d8c7a022f39c4d0be1b52b0d40dc761076a129a299ea01d44efd5dc",
+    "ci/validate-pipeline.py": "a6ff2d22c56ed39010d7e49186e4ead75d9152a96dadd0374b9707e9050b8553",
+    "faults/compose.yaml": "411abdf1df7e3199a1ff2beef482a46decf6f1784ec24f80ce6f56effc590b8b",
+    "faults/contracts.py": "05b78d7840cabe7dc2c11dde63b7af8015e44db5a7b48b4da5bd8813fd3043ce",
+    "faults/control.py": "e574d0821b22752ea0b9768d04500b7b3efcda78d0f036b4ddaea27074e50b11",
+    "faults/test_contracts.py": "d573aa4df512b305daef430f20f3d6d8306b61ca7fd1119f22391ce06d8bec29",
+    "faults/worker_adapter.py": "813166dce9f43bc950a43e3e50fb44d8b46b7494be405223b299a74ceb9ab9a8",
+    "frontend/.dockerignore": "f9045f38bc622eb2d71392c63f5366b7601cd19e783fedaaf8613a7c44c799a2",
+    "frontend/Dockerfile": "32b98c320be522208570c6a57554908da8e87171c2930cbead44eda59fd0631a",
+    "frontend/index.html": "a74dcdde96342d22e43473683d8531c640a8a210855c25df9ad3cf4d8959d679",
+    "frontend/nginx.conf": "640119d9e13ca06167c3ef4dfc70f893de742ba6e857492eb72b2cc9ed308dff",
+    "frontend/package-lock.json": "69d444268fc6f6845fd5d593de20f8b9a5f93a8df10dfa9746936e90fc166954",
+    "frontend/package.json": "5b53f1bb4e2397b2685a0d31a64d47f70d00daa1acda96a537f690ff90d4bf34",
+    "frontend/src/api.ts": "332f7012425575a6787db91ccf4cdc841dbbce48b69b1091cf5d19dc043cd985",
+    "frontend/src/domain.test.ts": "0692f68ba3808e9b0450d52562d28ca4e003f7f8e1aa2a7daae77704de680832",
+    "frontend/src/domain.ts": "9fd617008fc67141f4c888af99cd7cf590623dc64195045cdfe651a2d6973d05",
+    "frontend/src/main.tsx": "5c45d92739baee6489d95d2ac23175e27839d54a3c36d0ec1c36fa4484d16964",
+    "frontend/src/style.css": "e286818ce673822f37ea9f082d06f7f6b962c02794899dba1951eeeb52e3038f",
+    "frontend/tsconfig.json": "d16dc856244c5bdf87fc266e9c866f5ce04edc7499df6c827c8c3dec7fc887cb",
+    "frontend/tsconfig.test.json": "c51c60a2f070c05c5cd1ed1dd4919adcf9624b5bf53fb0779346b97e3f8c1512",
+    "frontend/vite.config.ts": "afc7d1981488f070bef1f9e4637f21efe8036e05b10d082cb7ce65eaf2fce78d",
+    "infra/alertmanager/alertmanager.yml": "3039dd9d36fb9f1656643292b45defca3cde9fb0b497e116f1521ddbcd449f97",
+    "infra/browser/Dockerfile": "dfdcf32d78ab3ae3cad3f6b2757196d3be875e61a06c13ae4c80d94fb263ce26",
+    "infra/grafana/dashboards/incidentiq.json": "6fca0717e9ba244b26a62b7f04e57b9749a60fa48231ac8c1b83ccbcc9152f20",
+    "infra/grafana/provisioning/dashboards/incidentiq.yml": "fd1fee7a815b3ca1e1fef0f135f48c3ee7c0a5f1393751c022c8dae20d548126",
+    "infra/grafana/provisioning/datasources/prometheus.yml": "945b9e76110a0e11ceeaefb7ce08c2e00459c140eeeed46332e97dade706d7b5",
+    "infra/kubernetes/base/api.yaml": "7501e7d20649f5c66acd76eb8f8d921bbf6642e18bd8d68a0b0e5f7bc3bf6321",
+    "infra/kubernetes/base/frontend.yaml": "b754d88aa0bcee482ea3214b12d5957461fcdb3694b5b8158b20cf9eb2e4d9d7",
+    "infra/kubernetes/base/ingestion.yaml": "4138e3fd11aa85dc4a8570cd08b1c1b8c4363da4a0afe131b7ff5fc6678838a8",
+    "infra/kubernetes/base/kafka.yaml": "00e3bb204abc4aa532160bf492870d3dbb3d5b1ae988395cae52442710a1f627",
+    "infra/kubernetes/base/kustomization.yaml": "69126beb8f1d2d77badd5ac43debaaabe253bc6af2f214bef6d93fbaab58aa34",
+    "infra/kubernetes/base/nginx.conf": "9335b2d1bf731a4242a92e4a5d5f0cf37e33de820e92c743a1db7c4a1730f0dd",
+    "infra/kubernetes/base/postgres.yaml": "e4dea76d7c037aad9b22ec22b692233e39df2a8ec530e18251e8e1bf1e40ad19",
+    "infra/kubernetes/base/publisher.yaml": "85bbea309211517a58f6966bdc1486f50a29156a6eb64df586686adaf21dfcf9",
+    "infra/kubernetes/base/wait.py": "dfadfcdc3c012108eee115191bc019eb83ee304e8f0421f2f1de4418705a36ac",
+    "infra/kubernetes/base/worker.yaml": "a64d783e4f78ad178939a14e4b1f5c67559245b0f9eeb72bcb855fa18bb48932",
+    "infra/kubernetes/kind.yaml": "7c9b1c363c9a97d0f1a90a590771a6e5c69c65b3c0e6b4fe690e7cfb32dba1e9",
+    "infra/kubernetes/overlays/azure/api-identity.yaml": "fc597b2d03410c2bb4752b0cf8d580098e0a40ffda58bed01dc071724dfe1ce9",
+    "infra/kubernetes/overlays/azure/kustomization.yaml": "94d75f46ad70e6cc47eb687ad3606dda7e98a3d9e8fd2c4b488af1bd741a4ff0",
+    "infra/kubernetes/overlays/azure/namespace.yaml": "2a8ce7efb43e9768a733171cdbc4edcdef766a8393c8f1da0488cdf31f8c391d",
+    "infra/kubernetes/overlays/azure/postgres-identity.yaml": "beebb3fdc2deaaa1cc6aae858d68e2dda738f3e0830dcac58acb34013a500225",
+    "infra/kubernetes/overlays/azure/publisher-identity.yaml": "cc0bb52048ef2ce325b98e34e7cfaf5593754ebe2fd94cd360532467a7764a33",
+    "infra/kubernetes/overlays/azure/runbook-ingest-identity.yaml": "50f2b62abf43c2fe593f3ad60b66674348005161e5df80c8d53c5ef957bcfb8a",
+    "infra/kubernetes/overlays/azure/secretproviderclass.yaml": "1fa92bc357f17205d2d159c68d1d0087878fe4e5ce5f9b52d1e1c025cea409ec",
+    "infra/kubernetes/overlays/azure/serviceaccount.yaml": "44638c09f010d0c79872a176b88fce5981eb939f982439fd90ec023e5b7ec678",
+    "infra/kubernetes/overlays/azure/worker-identity.yaml": "d835588a927f320cdd4dbcf0a19680c56372df74e9db30d5fe12cc24374093c4",
+    "infra/kubernetes/overlays/local/kustomization.yaml": "a9a456c5ae92f0a91c5f9ac601ddf493786c1e2f1bf9e120784f81af557504b8",
+    "infra/kubernetes/overlays/local/namespace.yaml": "b062c83d2083323523e9960f0d8a1d1e1911a88c1e0b9d14000f387db064eab9",
+    "infra/kubernetes/tests/test_manifests.py": "f24c4bb27b3d84b87a835ae6ab9e10c05ca2adaaa25e8fb39334f497d1b93483",
+    "infra/ollama/.dockerignore": "186d353a16e74bb39f8eb6c2f568bcb7310e7d4e2247c7ed43110a21afe52ce9",
+    "infra/ollama/Dockerfile": "2ecb11515df4a4032fb0f9b0f638084b2fb9057d3456b9fd894adee23f1ba86e",
+    "infra/ollama/fetch_runtime.py": "4d537209535abaf1ae555d32d5039fa3dbb7572c34327d9619c77e7984b0600b",
+    "infra/ollama/fetch_source.py": "f8b5bffee621545b3a1fb0822afb01acf4d866a676d62be985cd726bc1118dc6",
+    "infra/postgres/001-init.sql": "6e44b063e22fc44390d4a2f80a8bd4cb9705f1aa8857f31e791eca63964a257d",
+    "infra/prometheus/alerts.yml": "6b164fb62ef0edc1ff869375baba07316091d9c73af3953d77f6bc666e0ed6f7",
+    "infra/prometheus/alerts_test.yml": "837a2a358c2d1969c09127c61ce3c7f02d09de0121def09f314dbd6b091724e8",
+    "infra/prometheus/prometheus.yml": "1af1504fd232d470ac2450b29a2db7efde1609622d19fe74baa827f767ffad01",
+    "infra/terraform/azure/.terraform.lock.hcl": "9ca906ecaab4d90f8b760f5eff91052fbc4ab6b3f8aecc15504cc29da277b3c2",
+    "infra/terraform/azure/backend.tf.example": "7e66c95b553f01c848a27317b215ef85bca2a5b32a2ccc4e8e02874f05cd2ce9",
+    "infra/terraform/azure/main.tf": "c77aa4ae1161d1104a5205a5142664585579c605afeaa2511bda878198549e77",
+    "infra/terraform/azure/modules/aks/extra-variables.tf": "48f3ad3be2ee33683c30a3f42a1732c4b873ceadb6df24f9e49680632ec95238",
+    "infra/terraform/azure/modules/aks/main.tf": "e1d6664af6256d0c0bffb34a412a0298a4c5641221cda23b7da4375aeef79d42",
+    "infra/terraform/azure/modules/aks/outputs.tf": "40060e96d2e84d0bdeb1ada9755d9530e31f56887206d466d94cfc7ffbaf8178",
+    "infra/terraform/azure/modules/aks/variables.tf": "c4a61f47eb1cccf066377f416a3d5667534c2bd757f8f92f817c5ddb4b8ca783",
+    "infra/terraform/azure/modules/aks/versions.tf": "9ac376cda7a47ead4b4b2d398413a367f973ea37c595e506609b8457f4d9429d",
+    "infra/terraform/azure/modules/identities/main.tf": "ea91439f241f7b7ceb86850b5e9f993a59506838ebc5760a67f31c6f086901fc",
+    "infra/terraform/azure/modules/identities/outputs.tf": "e6e4bc58f5c2e328fea7f4eb0331b0e393446daf78131c8c411e97dd37fe2f36",
+    "infra/terraform/azure/modules/identities/variables.tf": "c4a61f47eb1cccf066377f416a3d5667534c2bd757f8f92f817c5ddb4b8ca783",
+    "infra/terraform/azure/modules/identities/versions.tf": "9ac376cda7a47ead4b4b2d398413a367f973ea37c595e506609b8457f4d9429d",
+    "infra/terraform/azure/modules/network/main.tf": "f1986bd64527de31e21eea3c4702c59655581176b50ed4c9f5e00a6542f0d72a",
+    "infra/terraform/azure/modules/network/outputs.tf": "0ab9e31f50e5df036a396ce901a757d13339f926927b6091aa2a2ac9c2b7c314",
+    "infra/terraform/azure/modules/network/variables.tf": "c4a61f47eb1cccf066377f416a3d5667534c2bd757f8f92f817c5ddb4b8ca783",
+    "infra/terraform/azure/modules/network/versions.tf": "9ac376cda7a47ead4b4b2d398413a367f973ea37c595e506609b8457f4d9429d",
+    "infra/terraform/azure/modules/registry/main.tf": "9299eeecf2221dd0092c268eadd4e7d4c709f17a5ee42273d93d3ee6a09f41d5",
+    "infra/terraform/azure/modules/registry/outputs.tf": "c63450bfe066dac09c2b25a1027d0b430762698294bfa6e523d3303271147cf3",
+    "infra/terraform/azure/modules/registry/variables.tf": "c4a61f47eb1cccf066377f416a3d5667534c2bd757f8f92f817c5ddb4b8ca783",
+    "infra/terraform/azure/modules/registry/versions.tf": "9ac376cda7a47ead4b4b2d398413a367f973ea37c595e506609b8457f4d9429d",
+    "infra/terraform/azure/modules/vault/extra-variables.tf": "785be8cb84adbe86aa6e125d2bdd2f7361ec038a3bd26742ba6cbcae4c86adcf",
+    "infra/terraform/azure/modules/vault/main.tf": "ae053c1539cf1b0a3afd42dc39c55bd22d7072d22a3454df9cd1755d178bcc5f",
+    "infra/terraform/azure/modules/vault/outputs.tf": "ff1815ea0165abd2b1c26e7f2e33d8db9963e5b7229221aa21a80e1c3ca2fd77",
+    "infra/terraform/azure/modules/vault/variables.tf": "c4a61f47eb1cccf066377f416a3d5667534c2bd757f8f92f817c5ddb4b8ca783",
+    "infra/terraform/azure/modules/vault/versions.tf": "9ac376cda7a47ead4b4b2d398413a367f973ea37c595e506609b8457f4d9429d",
+    "infra/terraform/azure/outputs.tf": "f3c14fecabaf678ad745937813e0031b373ad6285ef4c8217806b731662acc03",
+    "infra/terraform/azure/terraform.tfvars.example": "464678eef3ab33f54291957d894bb3c9f0e783d0a19628d6cc4fa8625f33340c",
+    "infra/terraform/azure/tests/requirements.txt": "4e338f872b8720393404ad5fd80dda3053be7ebb58152b5c801fb73229021772",
+    "infra/terraform/azure/tests/test_static.py": "a344c7d770dd9bc173e9c1cd982e7acfe1025bf0ff9c9d369366d1d411202092",
+    "infra/terraform/azure/variables.tf": "654bb7b85462dd625cfa2f1456d37dfbdeaed96a327d7f49aecd65352ace6135",
+    "infra/terraform/azure/versions.tf": "9364b6616d3f05559a736a14020deb0b6efdff6fe981000f2de4ecc66ea54e15",
+    "scripts/benchmark.py": "03a65d1f92d16601a4dc972a5fbb2e527c822208f96df1e057570d646f498adb",
+    "scripts/capture-monitoring.py": "36a6f43c62e3edfc88e43433e3f6a818239725b39891c8e29ae35eb06a847ea1",
+    "scripts/doctor.sh": "b34a14bf1d0cf666bbe21943ff74e73a359900945449c291601b316b43cf5103",
+    "scripts/faults.py": "6d1406743d601343c9ccb46e4acc10a8cc29c142fae3e3248f2848f73b975aa9",
+    "scripts/kubernetes-local.sh": "2d905857e4889310a9661792ce6788bc80bdcd9a9d006a54d29774f079b6cc77",
+    "scripts/kubernetes-preflight.py": "bd0286c11e15baa0d3ea16d663046dc4f780b149abb6b3bc842fe58657df232f",
+    "scripts/render-azure-overlay.py": "8ff2e63777ec05ac5811263fee59ba75c2a3563e480a70d875d2c711c0dc7c3d",
+    "scripts/smoke-auto-detection.py": "c7541aa53d9719049dd428834d1b59ee97c22f02df14812b380a206577734f7f",
+    "scripts/smoke-kubernetes.py": "e58a6e42b558a5c74a1a9930a4c77306d65d0ad78526acd610e8ee4d8e1750d0",
+    "scripts/start.sh": "92fddea885e85c4ee5c13cbaa3e3bfc18afe185ba7f026ec113fe0356d0bf535",
+    "scripts/test-api.sh": "8f818150afed3033d4a234f625ba8716a2970215dfa04bdca8dda7ab6c96a03a",
+    "scripts/test-dashboard.sh": "e9236c7a199e9e617a5569b6e888375bde12533dfce5c8b3edd00a9484fec51e",
+    "scripts/test-worker.sh": "8c18d8f7905b24d8901ec9cb9b8da1c09bdc62b1406a2208c5909af8629cdfa4",
+    "scripts/test_alert_smoke.py": "a6f56f70b00bf5de4a914f9cf0d23c627504854695ad292dbb2b8f7901089dbd",
+    "scripts/validate-kubernetes.py": "1c2ffe16cf5002dd67432d15272e540c2ccaf8749afba513b7d29effee9804f9",
+    "scripts/validate-kubernetes.sh": "46b7769b7faf771b76e0dd67a155cbc4454f50efc0f62f4c68658d53c8500eb8",
+    "scripts/verify-api.py": "042ffd0c11391db0a386ea7debcef06e5915b086d828bed15e77d7e86ba4f3a4",
+    "scripts/verify-azure-kustomize.sh": "b470d076a50ee4310f032aa37f39944fb9c60a823083c1e19023ac14c5ccd182",
+    "scripts/verify-dashboard.py": "eb25448099259c29d19a334de21db0e4b7b30db086329ea477afe23bfda7b9a0",
+    "scripts/verify-event-flow.py": "b8176ac996c68ee1ee7b311a65c68d1535815c605074d91c7c22c6abee4329d7",
+    "scripts/verify-infra.sh": "fb7b72ca4d35ac6d4ddba01d09de5682bdf3c4d3f9eae3705020c9274681997a",
+    "scripts/verify-local-ollama.py": "791a22b52de94208f4e70e394cc7497f111f5f4e2009dde966f1c2076ab98c2e",
+    "scripts/verify-monitoring.py": "b03db4cf78e725d089532f9c9f1fb97b4ed751ef75970aaaa15646a827599ee5",
+    "scripts/verify-ollama-browser.py": "092651f21ce3122078209cb82a917794a9b347ad219ba1f67f18bcc604d0bf71",
+    "scripts/verify-ollama-guards.py": "1d263eb126f22e86efed57594111f82bbee6b61bb9b16ae9bb9b1762ca3545e8",
+    "scripts/verify-rag-flow.py": "726a6cfa80e182ebbdbbe3665bfbb14bf143d2b66c1d0eccb178a8997750cf7a",
+    "scripts/verify-terraform-azure.py": "f1723da4bd55ff906c3af29aaa091ad60b0917588c098703b0a71b48ed511500",
+    "security/check-embeddings.py": "3d5b6bf7108d61cb8b8f9a983d85eadb16f42c38794fd6b4113f5dc389221de1",
+    "security/export-embeddings.py": "6b657f171669f423c3c9f2132ca75cf146a1131efced1255da97add51e78a100",
+    "security/policy.json": "89a5aff06a5fb04ea03a4d6e2c81e06c8a553fc1574d358f3d75dac70bf34e27",
+    "security/scan.sh": "18c9ff9a440d92c91f4df744e005a96f3a99d358d0cce9f468fd53a9ca2c0c7f",
+    "security/test_triage.py": "4a0fbb8900efe2bfa97c5154823dc7032ec1764d954f2b559b50352123247b56",
+    "security/triage.py": "f7849ba0540c0beb1a0d2e343e4daa4b2e03fb8ca5f96126e9019aa7e349669a",
+    "worker/.dockerignore": "d4af9084a60262e26bdb805143877ff785a9dc39f78b51b660889b4605b75e05",
+    "worker/Dockerfile": "fe40862e3dd1e53e36646b76a7d127bc7b179970e7f679ea7a26299ec2cb269c",
+    "worker/db.py": "9c7fa008dd71e16bc5437d0a3c5c2c4a5528636f2ebc11576f2c4f7b810c4bc1",
+    "worker/diagnosis.py": "82b1ad7aa565559b97acea43ea1ad70ee7f4e75e984e09e69c4d4b3bc1a55eda",
+    "worker/download_model.py": "a6c3bdf66a29e6382c069620139f830bf710f5ff39eac94ffca48d63579feba9",
+    "worker/ingest.py": "bef97ce104031d9536acb8c30dc916ee786a6e362ccb19737fd30a12132e3233",
+    "worker/main.py": "11bef15c851bab2abc99157225445229fee44e472a8660d2b1c184fb0f13b8be",
+    "worker/metrics.py": "818080336656afb83ac42be53ba9eab9e627967a0be09740bdd430b37ae172e1",
+    "worker/model.py": "e2371ff01ca7860dac561d0ad5d91d850857a3bc582486f53a0bd7db0df719be",
+    "worker/requirements.lock": "a116d8d24225924c1120666bee5ac28aaaf583392697c711e5ddbec7f46b9547",
+    "worker/requirements.txt": "83b0b62c6760a14ca0d5e07e5d0e4cabc9cdb313dae8c24353f423ad4d450aa7",
+    "worker/retrieval.py": "e7d52ce45c9dc71a264e8fdd84392d6df672f0555cfb0be9966869aff0b0f41c",
+    "worker/tests/test_diagnosis.py": "8a1101788ebb350c1a5151199d30ec6db8609a7cf49250e240faf2fe8e4b2e28",
+    "worker/tests/test_metrics.py": "7732f422ba17d73039206b9363a67ebf6a389290aa5edc4168703e6615036438",
+    "worker/tests/test_postgres.py": "735470cb5ba103ab502b43f5adfc68e0f30c32bd66ddf6b5e105efd4c83c25b6",
+    "worker/tests/test_retrieval.py": "23d1308c89eec8cbbce0b291b8d4ce3f50aac0d6e56f5c6f5b376efcfaddc5ef",
+    "worker/tests/test_worker.py": "293e6e392abb89bec32653dd40546fe0cdb6d66c8339c440ea08765d42739d98"
+  },
+  "tests": {
+    "java": {
+      "tests": 64,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "python": {
+      "tests": 77,
+      "failures": 0,
+      "skipped": 0,
+      "seconds": 12.985
+    },
+    "frontend": 7,
+    "browser": 14,
+    "infra_security_helpers": 55,
+    "fault_scenarios": 8,
+    "grafana_panels": 16,
+    "http_checks": 12
+  },
+  "scan": {
+    "api": {
+      "before_counts": {
+        "HIGH": 12,
+        "MEDIUM": 41,
+        "LOW": 17,
+        "CRITICAL": 7
+      },
+      "after_counts": {
+        "MEDIUM": 22,
+        "LOW": 16,
+        "CRITICAL": 2
+      },
+      "before_ch_occurrences": 19,
+      "after_ch_occurrences": 2
+    },
+    "worker": {
+      "before_counts": {
+        "LOW": 71,
+        "HIGH": 60,
+        "MEDIUM": 96,
+        "CRITICAL": 1
+      },
+      "after_counts": {
+        "LOW": 65,
+        "HIGH": 48,
+        "MEDIUM": 81
+      },
+      "before_ch_occurrences": 61,
+      "after_ch_occurrences": 48
+    },
+    "frontend": {
+      "before_counts": {
+        "CRITICAL": 3,
+        "MEDIUM": 90,
+        "LOW": 40,
+        "HIGH": 61
+      },
+      "after_counts": {},
+      "before_ch_occurrences": 64,
+      "after_ch_occurrences": 0
+    }
+  },
+  "database_snapshot_verified_unchanged": true,
+  "suppressions_added": false,
+  "frozen_frontend_lockfile_findings": 0,
+  "hardware": {
+    "cpu": "Intel Core Ultra 5 225U",
+    "logical_cpus": 14,
+    "ram_gib": 7.2,
+    "gpu_used": false,
+    "kernel": "6.6.87.2-microsoft-standard-WSL2"
+  },
+  "offline_embedding_parity": {
+    "queries": 5,
+    "dimensions": 384,
+    "maximum_absolute_difference": 8.475035429000854e-08,
+    "minimum_cosine": 0.9999999999998836,
+    "model": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+    "weight_sha256": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db",
+    "offline": true,
+    "versions": {
+      "torch": "2.10.0+cpu",
+      "sentence-transformers": "5.6.0",
+      "transformers": "5.10.0",
+      "langchain": "0.3.30",
+      "langchain-core": "0.3.86",
+      "kafka-python": "2.3.2"
+    }
+  },
+  "unchanged_corpus_ingestion": {
+    "changed": 0,
+    "chunks_written": 0,
+    "files": 10,
+    "skipped": 10
+  },
+  "fault_recovery": {
+    "run": "20261108t015220z_fde9792c",
+    "results_path": "docs/faults/runs/20261108t015220z_fde9792c/results.json",
+    "cases": [
+      {
+        "case": "crash_before_db_commit",
+        "seconds": 34.514
+      },
+      {
+        "case": "crash_after_db_commit",
+        "seconds": 35.825
+      },
+      {
+        "case": "duplicates_and_rebalance",
+        "seconds": 50.129
+      },
+      {
+        "case": "broker_outage",
+        "seconds": 81.93
+      },
+      {
+        "case": "database_outage",
+        "seconds": 22.216
+      },
+      {
+        "case": "publisher_crash_after_kafka_ack",
+        "seconds": 111.055
+      },
+      {
+        "case": "unknown_member_id_recovery",
+        "seconds": 27.525
+      },
+      {
+        "case": "poison_retained",
+        "seconds": 12.478
+      }
+    ],
+    "valid_events": 10,
+    "diagnoses": 10,
+    "retrieval_snapshots": 50,
+    "duplicate_handlings": 7,
+    "quarantined": 1,
+    "committed_offset": 15,
+    "end_offset": 15,
+    "observed_data_loss": 0,
+    "exactly_once_delivery_claimed": false,
+    "adapter_note": "After the run, only the compatibility comment was updated to mention 2.3.2; the start-of-run source hash remains unchanged in conditions.json."
+  },
+  "actual_ollama": {
+    "model": "qwen3:0.6b",
+    "runtime": "0.6.8",
+    "generated_cases": 2,
+    "rejected_kafka_cases": 1,
+    "adversarial_rejections": 2,
+    "negative_cases": [
+      "unavailable model",
+      "one-second timeout"
+    ],
+    "semantic_grounding_certified": false,
+    "retrieval_only_restored": true,
+    "report": "ollama-verification.json"
+  },
+  "final_services": {
+    "alertmanager": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "api": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "frontend": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "grafana": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "kafka": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "postgres": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "prometheus": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "publisher": {
+      "state": "running",
+      "health": "not configured"
+    },
+    "worker": {
+      "state": "running",
+      "health": "healthy"
+    }
+  },
+  "prometheus_targets": [
+    {
+      "job": "incidentiq-alertmanager",
+      "scrape_url": "http://alertmanager:9093/metrics",
+      "health": "up"
+    },
+    {
+      "job": "incidentiq-api",
+      "scrape_url": "http://api:8080/actuator/prometheus",
+      "health": "up"
+    },
+    {
+      "job": "incidentiq-worker",
+      "scrape_url": "http://worker:8001/metrics",
+      "health": "up"
+    },
+    {
+      "job": "prometheus",
+      "scrape_url": "http://localhost:9090/metrics",
+      "health": "up"
+    }
+  ],
+  "all_prometheus_rules_healthy": true,
+  "simulation_endpoints_disabled": true,
+  "retained_original_volumes": [
+    {
+      "name": "incidentiq_alertmanager_data",
+      "created_at": "2026-11-06T01:58:52Z"
+    },
+    {
+      "name": "incidentiq_grafana_data",
+      "created_at": "2026-11-06T01:22:39Z"
+    },
+    {
+      "name": "incidentiq_kafka_data",
+      "created_at": "2026-11-06T00:00:34Z"
+    },
+    {
+      "name": "incidentiq_ollama_data",
+      "created_at": "2026-11-06T16:26:37Z"
+    },
+    {
+      "name": "incidentiq_postgres_data",
+      "created_at": "2026-11-06T00:00:34Z"
+    },
+    {
+      "name": "incidentiq_prometheus_data",
+      "created_at": "2026-11-06T01:22:39Z"
+    }
+  ],
+  "postgres_host_port": 55432,
+  "monitoring_urls": {
+    "grafana": "http://localhost:3001",
+    "prometheus": "http://localhost:9090",
+    "alertmanager": "http://localhost:9093"
+  },
+  "limitations": [
+    "Inventory/reachability review is not exploit certification.",
+    "Actual Ollama generation and guard checks do not prove general semantic entailment.",
+    "Remaining CH: two Spring MVC occurrences, one legacy LangChain loader, 47 Debian source-package occurrences.",
+    "Other Compose images/build stages/cloud deployment were not security-certified."
+  ],
+  "local_command_log_sha256": {
+    "incidentiq-8d-static.log": "b1a01a5250e344a208782bf212549502d3ad09d36fcb085ef75a6dc3c707a153",
+    "incidentiq-8d-parity-after.log": "d5ea35cbacb50a6faa43992b30d8c5e09fec7113c6fb02bacd1792387d4f2165",
+    "incidentiq-8d-fault-contracts-final.log": "c4df02a6d728ccca0799693e65d07f61910d4f7a48e299c53413f1c7da61c957",
+    "incidentiq-8d-frontend.log": "fd0f4020a93e6ef21b17f21e4d116ae2fb8beb2238bab5e060caf56366746609",
+    "incidentiq-8d-ollama.log": "7040de2120705e0a79f7c8bab58d8d164fa731e159099879298573c5b1f76e5c",
+    "incidentiq-8d-before-scan.log": "027febc54f71c172754106974549058c36674e81026b35cf61b82444748febf2",
+    "incidentiq-8d-rag.log": "4ac690e73af79401c2998a4017bb73ad49623286142d9e3cd8e66a5c49b65269",
+    "incidentiq-8d-infra-live.log": "13eaa3a01ecb97f2d3a7f2ebe532fa440d853b94bf873a1cad0cbde0b876ce61",
+    "incidentiq-8d-final-frontend-scan2.log": "7307a1f2ac408a1ba261402c383b7177e30575ecbb47ce52ab7ea783febd6e92",
+    "incidentiq-8d-frontend-start-fixed.log": "4501cba4a0924a26ea043a84a1502dcbc98e3ac7efbd1b46f510bbf112906827",
+    "incidentiq-8d-final-frontend-scan.log": "e331117674bd843476b723329a26c8d8fd46976ab584f236f547d2d118193f5c",
+    "incidentiq-8d-alert.log": "5f954bdd62e8568b51fef5776f275dd4e3073a0c075307f0a26a2477bde2903e",
+    "incidentiq-8d-browser.log": "6eaf5b540ae673f4a029cd57888880aeeccb39644c4d270e3d6bd59ad1e163be",
+    "incidentiq-8d-rag-final.log": "b798fb94e014000d85faa259b5583d2e1a7287cbfd0abd2ec2177ea3705818b8",
+    "incidentiq-8d-final-health.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "incidentiq-8d-maven-tree.log": "2814715205a3da5ea564d19369c51ffb7057dec83ce311e1a41b9699f7464a6b",
+    "incidentiq-8d-ollama-stop.log": "b11df03190dc9729a9ab1676f61a8fe0a2b7d81701eb09a4f41cff66b4d28db1",
+    "incidentiq-8d-resolve-final.log": "0d53d6ee1d0d277287458b27c7559b200872e3b5efa2db8f50296bff74dac939",
+    "incidentiq-8d-resolve.log": "5bfad31b85a6b5a6ef2eb8d34c5d9e390cf0b7314ce3b5ea96b9ec5f9e1d647c",
+    "incidentiq-8d-api-build.log": "380fac8df87a886005a3ca7d05e64ee15390b92105c2b342a4156ad6e194a234",
+    "incidentiq-8d-python.log": "8ff573df0b5b3afd238436753746be86ec4ab839ad3467bb8425e337df35a723",
+    "incidentiq-8d-security-tests.log": "2acc22af54fc302795e6506c3e05a510a55511d9debb427948fccef7e3290a83",
+    "incidentiq-8d-ingest-unchanged.log": "1edd89910419c17a59fc651ef5ac8063e5edc7a6ab1c1bc70d854f0a39f535c5",
+    "incidentiq-8d-triage.log": "ff9542cdcd0aaf01c9f8d1fc7d7607fda89583a383600555748f5c4311d6f07c",
+    "incidentiq-8d-parity-before.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "incidentiq-8d-api-http.log": "f56b29a70739d585e8c88c213317707ad2b13ff6a2c3c0f0d662345197a03c79",
+    "incidentiq-8d-worker-build.log": "5f92fe73d7b7c399937dbd1345595edde5c8a489d5dc9cabdbe9ef6f9bacd480",
+    "incidentiq-8d-event.log": "e7457db86994e2a1f62234aee996996252995a743091a5b24d51a349d9a80568",
+    "incidentiq-8d-java.log": "5799d3a91189390baa22b5377a36206701296a881d6b46aefa8c63219090c11e",
+    "incidentiq-8d-frontend-lock-scan.log": "39351f7622a1fd18ee7b66af7a91886ee69d7512471446394ffed3f78c1139b0",
+    "incidentiq-8d-frontend-build.log": "a98d9806aa8cc2e72141e31ca6004886a01aa0912ff491f6450687393d090cda",
+    "incidentiq-8d-runtime-nginx.log": "dc0a02a7a30df78453cbdcfac6ea1463380437bd2c58f015dd89340a910b40f7",
+    "incidentiq-8d-faults.log": "87a03c9fbe82b3ebe3dcfa7ef3d73907d6f2119e38a8029c9d1e29ffa7a60a4e",
+    "incidentiq-8d-runtime-java.log": "477d64a6b08c9a9dd143deae108edf7929a93b40434d87285d41addc8fba509f",
+    "incidentiq-8d-final-comparison.log": "f7f1d3b7aefbb568137139ca5e8b323e0044c033a64d4f382c43d9f56038b30e",
+    "incidentiq-8d-monitoring.log": "edd395474e5f12a71f9aa27c16cbbb36640b88825b716fe43d8e8280201a665d",
+    "incidentiq-8d-ollama-startup-failed.log": "20eae9e6217a017bd325f75ba022bca7442013f7d47b87c380eeab11c704f685",
+    "incidentiq-8d-live-start.log": "b0415ab96f02b1cda82cff540c6f42c5b95dda5df8c1b578a1ee2c75bcacb4ae",
+    "incidentiq-8d-after-scan.log": "7a620ae8964c98f55d421be78b49b642a9b1834b3a76aaab3d2ffe8f9542b74f",
+    "incidentiq-8d-frontend-rebuild2.log": "2cd899ed536d41a1e17dfd6764f1f5e9372475457a5e8ebf4f4803c05b4f0c5c",
+    "incidentiq-8d-frontend-rebuild.log": "ab2a3b719a9c8f8ea5ba26131b60f67ef6288df12b19edd19f1e0b6799502f74"
+  },
+  "live_scanned_image_ids": {
+    "api": "sha256:9a72f8f35cd1a8a9ac31a91ed4871e42d0c06a19499bec56e3efec5380a99480",
+    "publisher": "sha256:9a72f8f35cd1a8a9ac31a91ed4871e42d0c06a19499bec56e3efec5380a99480",
+    "worker": "sha256:644e112c3c529e91277762d74c47f2184f783d6cf17b9b41b172823bcb8795c7",
+    "frontend": "sha256:6eb4e4d4dff63394632a78da911e1f7d6e94471c58a32c37e5e0e44a16d4e5e8"
+  },
+  "credential_configuration_check": {
+    "source_files": 286,
+    "images": [
+      {
+        "image": "incidentiq-security-api:after",
+        "user": "incidentiq",
+        "baked_credential_check": "passed"
+      },
+      {
+        "image": "incidentiq-security-worker:after",
+        "user": "worker",
+        "baked_credential_check": "passed"
+      },
+      {
+        "image": "incidentiq-security-frontend:after",
+        "user": null,
+        "baked_credential_check": "passed"
+      }
+    ],
+    "note": "Pattern checks are not a guarantee that all secrets are detected."
+  }
+}

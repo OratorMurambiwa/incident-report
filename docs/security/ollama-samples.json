@@ -1,0 +1,71 @@
+{
+  "actual_model": "qwen3:0.6b",
+  "samples": [
+    {
+      "case": "database",
+      "incident_id": "cec2811d-6293-4a9b-bf0b-810861002c95",
+      "mode": "GENERATED",
+      "citedRunbooks": [
+        "database-failures.md"
+      ],
+      "likelyCauses": [
+        {
+          "text": "Connection exhaustion due to increased connection concurrency from a deployment",
+          "sources": [
+            "database-failures.md"
+          ]
+        }
+      ],
+      "investigationSteps": [
+        {
+          "text": "Check PostgreSQL logs and Docker compose configuration",
+          "sources": [
+            "database-failures.md"
+          ]
+        }
+      ],
+      "suggestedRemediation": [
+        {
+          "text": "Restore container/network availability before changing connection limits",
+          "sources": [
+            "database-failures.md"
+          ]
+        }
+      ]
+    },
+    {
+      "case": "memory",
+      "incident_id": "4deca98d-8742-43c8-b435-42ed62200ff6",
+      "mode": "GENERATED",
+      "citedRunbooks": [
+        "memory-exhaustion.md"
+      ],
+      "likelyCauses": [
+        {
+          "text": "Memory exhaustion and OOMKilled restarts due to increased container memory usage and heap pressure.",
+          "sources": [
+            "memory-exhaustion.md"
+          ]
+        }
+      ],
+      "investigationSteps": [
+        {
+          "text": "Check container termination reasons, memory limits, and restart history to identify the cause.",
+          "sources": [
+            "memory-exhaustion.md"
+          ]
+        }
+      ],
+      "suggestedRemediation": [
+        {
+          "text": "Pause a confirmed memory-heavy job, reduce its batch size, and roll back the triggering release.",
+          "sources": [
+            "memory-exhaustion.md"
+          ]
+        }
+      ]
+    }
+  ],
+  "semantic_grounding_certified": false,
+  "review": "Observed fields cite retrieved runbooks. The database remediation is general and is not a proven root-cause fix. Human review remains required; no suggestion was executed."
+}

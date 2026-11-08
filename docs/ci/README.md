@@ -65,3 +65,7 @@ Only JUnit/security JSON artifacts are published by the pipeline. No Docker imag
 A future separately authorized implementation needs protected environment approvals, reviewed fork/branch permissions, scoped OIDC identity/service connections, private AKS runner connectivity, immutable ACR image digests and provenance, reviewed Terraform state/plan, Key Vault/CSI checks, CVE enforcement/waivers, migrations before workers, retrieval-only smoke checks and rollback/data-retention procedures. It must follow docs/azure/README.md and never reuse Compose data or port 55432. Nothing in this step authorizes those cloud operations.
 
 References: [Azure stages](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/stages), [cache](https://learn.microsoft.com/en-us/azure/devops/pipelines/release/caching), [test reporting](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/publish-test-results-v2), [official schema](https://github.com/microsoft/azure-pipelines-vscode), [Trivy vulnerability scanning](https://trivy.dev/docs/latest/guide/scanner/vulnerability/).
+
+## Subsequent security remediation
+
+The inventory and verification in this directory preserve the Step 8C baseline. See [Step 8D](../security/README.md) for the newer same-database container comparison, complete critical/high triage and verified dependency updates. Do not reinterpret the historical counts as current findings.

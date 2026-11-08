@@ -1,0 +1,20 @@
+{
+  "version": "0.69.3",
+  "archive_sha256": "1816b632dfe529869c740c0913e36bd1629cb7688bd5634f4a858c1d57c88b75",
+  "binary_sha256": "8266084a71d2e6a2333bc2c69b91c93c26dee9ef39ac2587ace2df54cc9b746b",
+  "archive_binary_match": true,
+  "database_metadata": {
+    "db": {
+      "Version": 2,
+      "NextUpdate": "2026-11-08T18:32:58.034005498Z",
+      "UpdatedAt": "2026-11-07T18:32:58.034005789Z",
+      "DownloadedAt": "2026-11-07T23:40:23.091219521Z"
+    },
+    "java-db": {
+      "Version": 1,
+      "NextUpdate": "2026-11-10T01:07:52.428813188Z",
+      "UpdatedAt": "2026-11-07T01:07:52.428813308Z",
+      "DownloadedAt": "2026-11-07T23:43:06.070177719Z"
+    }
+  }
+}

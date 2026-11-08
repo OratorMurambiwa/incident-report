@@ -22,3 +22,6 @@ python3 -m unittest discover -s "$root/ci/tests" -v
 python3 -m unittest discover -s "$root/faults" -p 'test_*.py' -v
 python3 -m unittest discover -s "$root/benchmarks" -p 'test_*.py' -v
 python3 -m unittest discover -s "$root/scripts" -p 'test_alert_smoke.py' -v
+
+# Security comparison guards use synthetic reports only; no scanner DB/download needed.
+python3 -m unittest discover -s "$root/security" -p 'test_*.py' -v

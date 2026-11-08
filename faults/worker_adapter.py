@@ -38,7 +38,7 @@ def gate(event: dict, boundary: str) -> None:
     if not claim_gate(config,event,boundary):
         return
     if config.get('expire_membership'):
-        # Pinned kafka-python 2.2.15 private test seam. Disable real heartbeats,
+        # Private test seam verified with kafka-python 2.2.15 and 2.3.2. Disable heartbeats,
         # retaining the actual member/generation, so the broker expires membership.
         consumer_instance._coordinator._heartbeat_thread.disable()
     (CONTROL/(config['case']+'.ready')).write_text(json.dumps({'boundary':boundary,'event_id':event['eventId']}))
