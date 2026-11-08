@@ -283,3 +283,9 @@ Kustomize base/local overlay covers API, publisher, worker, frontend, PostgreSQL
 `infra/terraform/azure` provides modular resource-group/network, ACR, private AKS, managed identities and private Key Vault infrastructure. The Azure-only Kustomize overlay reuses the application base with ACR/CSI secret references. No secret values, kubeconfig or client credentials are managed as outputs.
 
 **Static verification only: no Azure authentication, plan/apply, cloud resources or image push.** Run `python3 scripts/verify-terraform-azure.py` and `./scripts/verify-azure-kustomize.sh` after the documented isolated tool setup. Existing Compose data, volumes and port 55432 are unchanged. This future design is billable and not production HA; see [architecture, setup and costs](docs/azure/README.md) and [actual checks/untested limits](docs/azure/VERIFICATION.md).
+
+## Azure DevOps CI (Step 8C)
+
+`azure-pipelines.yml` defines Java/JUnit, isolated worker tests/dependency checks, React/TypeScript/build, Terraform/Kubernetes static checks, and Docker builds/security reports. Versioned tools, package/provider/scanner caches and test XML reporting are configured. CI PostgreSQL uses a separate temporary Docker project with no host ports or existing data volumes.
+
+Release is disabled by default and deliberately fails closed if enabled; no Azure credentials, image publishing or deployment is implemented. CVE inventory is explicitly advisory; detected source/baked credentials, config errors and scanner failures block CI. See [setup and local equivalents](docs/ci/README.md) and [actual verification/limitations](docs/ci/VERIFICATION.md).

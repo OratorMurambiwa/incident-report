@@ -1,0 +1,140 @@
+{
+  "scanner": "Trivy 0.69.3",
+  "policy": "Advisory CVE baseline; credentials/config/scanner errors block; release hard-blocked.",
+  "finding_counts_are_occurrences_not_unique_cves": true,
+  "reports": {
+    "incidentiq-ci-api": {
+      "created_at": "2026-11-07T17:51:04.255264138-06:00",
+      "image_id": "sha256:e54f760f96666a29680b8d6667d8d41a7b061a4ffc2285c5529e0bc0913da854",
+      "severity_counts": {
+        "HIGH": 12,
+        "MEDIUM": 41,
+        "LOW": 17,
+        "CRITICAL": 7
+      },
+      "critical_findings": [
+        {
+          "VulnerabilityID": "CVE-2026-55276",
+          "PkgName": "org.apache.tomcat.embed:tomcat-embed-core",
+          "InstalledVersion": "10.1.55",
+          "FixedVersion": "11.0.23, 10.1.56, 9.0.119",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-55276"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-65182",
+          "PkgName": "org.apache.tomcat.embed:tomcat-embed-core",
+          "InstalledVersion": "10.1.55",
+          "FixedVersion": "11.0.25, 10.1.58, 9.0.121",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-65182"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-65637",
+          "PkgName": "org.apache.tomcat.embed:tomcat-embed-core",
+          "InstalledVersion": "10.1.55",
+          "FixedVersion": "11.0.25, 10.1.59, 9.0.121",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-65637"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-65905",
+          "PkgName": "org.apache.tomcat.embed:tomcat-embed-core",
+          "InstalledVersion": "10.1.55",
+          "FixedVersion": "11.0.25, 10.1.58, 9.0.121",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-65905"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-68525",
+          "PkgName": "org.apache.tomcat.embed:tomcat-embed-core",
+          "InstalledVersion": "10.1.55",
+          "FixedVersion": "11.0.25, 10.1.58, 9.0.121",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-68525"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-47884",
+          "PkgName": "org.springframework:spring-webmvc",
+          "InstalledVersion": "6.2.19",
+          "FixedVersion": "7.0.9",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-47884"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-47890",
+          "PkgName": "org.springframework:spring-webmvc",
+          "InstalledVersion": "6.2.19",
+          "FixedVersion": "7.0.9",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-47890"
+        }
+      ]
+    },
+    "incidentiq-ci-worker": {
+      "created_at": "2026-11-07T17:52:06.861557592-06:00",
+      "image_id": "sha256:2e26a18e0a48054f3956867f7592a2d479de847dc049a66a962d56fca1dde7bb",
+      "severity_counts": {
+        "LOW": 71,
+        "HIGH": 60,
+        "MEDIUM": 96,
+        "CRITICAL": 1
+      },
+      "critical_findings": [
+        {
+          "VulnerabilityID": "CVE-2026-68770",
+          "PkgName": "sentence-transformers",
+          "InstalledVersion": "3.4.1",
+          "FixedVersion": "5.6.0",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-68770"
+        }
+      ]
+    },
+    "incidentiq-ci-frontend": {
+      "created_at": "2026-11-07T17:52:12.488610741-06:00",
+      "image_id": "sha256:11c9b0e936c8bbf798a7ee01d228519e7b4bd39a4355024d1032a1918af2cc8a",
+      "severity_counts": {
+        "CRITICAL": 3,
+        "MEDIUM": 90,
+        "LOW": 40,
+        "HIGH": 61
+      },
+      "critical_findings": [
+        {
+          "VulnerabilityID": "CVE-2026-111497",
+          "PkgName": "brotli-libs",
+          "InstalledVersion": "1.1.0-r2",
+          "FixedVersion": "1.1.1-r0",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-111497"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-31789",
+          "PkgName": "libcrypto3",
+          "InstalledVersion": "3.3.5-r0",
+          "FixedVersion": "3.3.7-r0",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-31789"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-31789",
+          "PkgName": "libssl3",
+          "InstalledVersion": "3.3.5-r0",
+          "FixedVersion": "3.3.7-r0",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-31789"
+        }
+      ]
+    },
+    "frontend-lockfile": {
+      "created_at": "2026-11-07T17:54:13.336196194-06:00",
+      "image_id": null,
+      "severity_counts": {},
+      "critical_findings": []
+    }
+  },
+  "databases": {
+    "vulnerability": {
+      "Version": 2,
+      "NextUpdate": "2026-11-08T18:32:58.034005498Z",
+      "UpdatedAt": "2026-11-07T18:32:58.034005789Z",
+      "DownloadedAt": "2026-11-07T23:40:23.091219521Z"
+    },
+    "java-index": {
+      "Version": 1,
+      "NextUpdate": "2026-11-10T01:07:52.428813188Z",
+      "UpdatedAt": "2026-11-07T01:07:52.428813308Z",
+      "DownloadedAt": "2026-11-07T23:43:06.070177719Z"
+    }
+  }
+}

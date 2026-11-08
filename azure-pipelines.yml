@@ -1,0 +1,257 @@
+# Default CI never authenticates to Azure, publishes images or deploys.
+name: incidentiq-$(Date:yyyyMMdd).$(Rev:r)
+trigger:
+  batch: 'true'
+  branches:
+    include:
+    - main
+pr:
+  branches:
+    include:
+    - main
+parameters:
+- name: enableRelease
+  displayName: Show future release gate (intentionally cannot deploy)
+  type: boolean
+  default: false
+pool:
+  vmImage: ubuntu-24.04
+stages:
+- stage: Java
+  dependsOn: []
+  jobs:
+  - job: Java
+    timeoutInMinutes: '60'
+    workspace:
+      clean: all
+    steps:
+    - checkout: self
+      clean: 'true'
+      persistCredentials: 'false'
+      fetchDepth: '1'
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: 3.12.11
+        addToPath: true
+      displayName: Select Python 3.12.11 for CI tooling
+    - task: Cache@2
+      inputs:
+        key: '"java-deps-v1" | "$(Agent.OS)" | api/pom.xml'
+        path: $(Pipeline.Workspace)/incidentiq-cache/maven
+      displayName: Cache java dependencies
+    - bash: 'set -euo pipefail
+
+        ./ci/bootstrap.sh basic'
+      displayName: Verify pinned Compose
+    - bash: 'set -euo pipefail
+
+        ./ci/test.sh java'
+      displayName: Run isolated java build and tests
+      env:
+        CI_CACHE_DIR: $(Pipeline.Workspace)/incidentiq-cache
+        DOCKER_CONFIG: $(Build.SourcesDirectory)/.incidentiq-backups/ci/docker
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: JUnit
+        testResultsFiles: .incidentiq-backups/ci/reports/java/*.xml
+        searchFolder: $(Build.SourcesDirectory)
+        failTaskOnFailedTests: true
+        failTaskOnMissingResultsFile: true
+      displayName: Publish java test results even on failure
+- stage: Python
+  dependsOn: []
+  jobs:
+  - job: Python
+    timeoutInMinutes: '60'
+    workspace:
+      clean: all
+    steps:
+    - checkout: self
+      clean: 'true'
+      persistCredentials: 'false'
+      fetchDepth: '1'
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: 3.12.11
+        addToPath: true
+      displayName: Select Python 3.12.11 for CI tooling
+    - task: Cache@2
+      inputs:
+        key: '"python-deps-v1" | "$(Agent.OS)" | api/pom.xml'
+        path: $(Pipeline.Workspace)/incidentiq-cache/maven
+      displayName: Cache python dependencies
+    - bash: 'set -euo pipefail
+
+        ./ci/bootstrap.sh basic'
+      displayName: Verify pinned Compose
+    - bash: 'set -euo pipefail
+
+        ./ci/test.sh python'
+      displayName: Run isolated python build and tests
+      env:
+        CI_CACHE_DIR: $(Pipeline.Workspace)/incidentiq-cache
+        DOCKER_CONFIG: $(Build.SourcesDirectory)/.incidentiq-backups/ci/docker
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: JUnit
+        testResultsFiles: .incidentiq-backups/ci/reports/java/*.xml
+        searchFolder: $(Build.SourcesDirectory)
+        failTaskOnFailedTests: true
+        failTaskOnMissingResultsFile: true
+      displayName: Publish java test results even on failure
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: JUnit
+        testResultsFiles: .incidentiq-backups/ci/reports/python/*.xml
+        searchFolder: $(Build.SourcesDirectory)
+        failTaskOnFailedTests: true
+        failTaskOnMissingResultsFile: true
+      displayName: Publish python test results even on failure
+- stage: React
+  dependsOn: []
+  jobs:
+  - job: React
+    timeoutInMinutes: '60'
+    workspace:
+      clean: all
+    steps:
+    - checkout: self
+      clean: 'true'
+      persistCredentials: 'false'
+      fetchDepth: '1'
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: 3.12.11
+        addToPath: true
+      displayName: Select Python 3.12.11 for CI tooling
+    - task: Cache@2
+      inputs:
+        key: '"frontend-deps-v1" | "$(Agent.OS)" | frontend/package-lock.json'
+        path: $(Pipeline.Workspace)/incidentiq-cache/npm
+      displayName: Cache frontend dependencies
+    - bash: 'set -euo pipefail
+
+        ./ci/bootstrap.sh basic'
+      displayName: Verify pinned Compose
+    - bash: 'set -euo pipefail
+
+        ./ci/test.sh frontend'
+      displayName: Run isolated frontend build and tests
+      env:
+        CI_CACHE_DIR: $(Pipeline.Workspace)/incidentiq-cache
+        DOCKER_CONFIG: $(Build.SourcesDirectory)/.incidentiq-backups/ci/docker
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: JUnit
+        testResultsFiles: .incidentiq-backups/ci/reports/frontend/*.xml
+        searchFolder: $(Build.SourcesDirectory)
+        failTaskOnFailedTests: true
+        failTaskOnMissingResultsFile: true
+      displayName: Publish frontend test results even on failure
+- stage: Infrastructure
+  dependsOn: []
+  jobs:
+  - job: StaticInfrastructure
+    timeoutInMinutes: '60'
+    workspace:
+      clean: all
+    steps:
+    - checkout: self
+      clean: 'true'
+      persistCredentials: 'false'
+      fetchDepth: '1'
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: 3.12.11
+        addToPath: true
+      displayName: Select Python 3.12.11 for CI tooling
+    - task: Cache@2
+      displayName: Cache locked Terraform provider software only
+      inputs:
+        key: '"terraform-providers-v1" | "$(Agent.OS)" | infra/terraform/azure/.terraform.lock.hcl'
+        path: $(Build.SourcesDirectory)/infra/terraform/azure/.terraform/providers
+    - bash: 'set -euo pipefail
+
+        ./ci/bootstrap.sh infra'
+      displayName: Install checksum-verified static tools
+    - bash: 'set -euo pipefail
+
+        ./ci/infra.sh'
+      displayName: Validate Terraform and Kubernetes without credentials
+      env:
+        CI_CACHE_DIR: $(Pipeline.Workspace)/incidentiq-cache
+        DOCKER_CONFIG: $(Build.SourcesDirectory)/.incidentiq-backups/ci/docker
+- stage: DockerSecurity
+  dependsOn:
+  - Java
+  - Python
+  - React
+  - Infrastructure
+  jobs:
+  - job: ImagesAndSecurity
+    timeoutInMinutes: '90'
+    workspace:
+      clean: all
+    steps:
+    - checkout: self
+      clean: 'true'
+      persistCredentials: 'false'
+      fetchDepth: '1'
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: 3.12.11
+        addToPath: true
+      displayName: Select Python 3.12.11 for CI tooling
+    - task: Cache@2
+      inputs:
+        key: '"trivy-db-v1" | "$(Agent.OS)" | ci/tool-versions.env'
+        path: $(Pipeline.Workspace)/incidentiq-cache/trivy
+      displayName: Cache scanner databases
+    - bash: 'set -euo pipefail
+
+        ./ci/bootstrap.sh security'
+      displayName: Verify pinned scanner
+    - bash: 'set -euo pipefail
+
+        ./ci/images.sh'
+      displayName: Build images, block credentials/config errors and inventory CVEs
+      env:
+        CI_CACHE_DIR: $(Pipeline.Workspace)/incidentiq-cache
+        DOCKER_CONFIG: $(Build.SourcesDirectory)/.incidentiq-backups/ci/docker
+    - bash: 'set -euo pipefail
+
+        ./ci/locks.sh'
+      displayName: Inventory frontend lockfile dependencies omitted from runtime image
+      env:
+        CI_CACHE_DIR: $(Pipeline.Workspace)/incidentiq-cache
+        DOCKER_CONFIG: $(Build.SourcesDirectory)/.incidentiq-backups/ci/docker
+    - task: PublishPipelineArtifact@1
+      condition: succeededOrFailed()
+      inputs:
+        targetPath: $(Build.SourcesDirectory)/.incidentiq-backups/ci/reports/security
+        artifact: security-reports
+      displayName: Publish security-reports
+- stage: FutureRelease
+  displayName: Future release design (disabled; no Azure access)
+  dependsOn:
+  - DockerSecurity
+  condition: and(succeeded(), eq('${{ parameters.enableRelease }}', 'true'), eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+    eq(variables['Build.Reason'], 'Manual'))
+  jobs:
+  - job: ReleaseNotImplemented
+    steps:
+    - checkout: none
+    - bash: 'set -euo pipefail
+
+        echo ''Future design: approved OIDC service connections, protected environment approvals, immutable ACR digests, private
+        AKS access and verified smoke/rollback.''
+
+        echo ''##vso[task.logissue type=error]Release is intentionally not implemented. No credentials, image publishing or
+        deployment are permitted by this pipeline.''
+
+        exit 1'
+      displayName: Fail closed; consult docs/ci/README.md

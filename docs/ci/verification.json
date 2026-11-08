@@ -1,0 +1,131 @@
+{
+  "timestamp_utc": "2026-11-07T23:57:12.852102+00:00",
+  "application_commit": "bf5ee9a25d1baa0d2f2029562f9d253b8e69944c",
+  "azure_devops_server_run": false,
+  "azure_credentials_used": false,
+  "images_published": false,
+  "deployment_executed": false,
+  "java_tests": 62,
+  "python_seed_java_tests": 10,
+  "python_tests": 77,
+  "python_dependency_validation": "pip check passed",
+  "react_tests": 7,
+  "frontend_typescript_and_build": "passed",
+  "terraform_fmt_init_backend_false_validate": "passed",
+  "azure_hcl_tests": 10,
+  "local_kubernetes_tests": 9,
+  "pipeline_schema_policy_tests": 10,
+  "helper_tests": 19,
+  "local_kubernetes_schemas": 17,
+  "azure_template_schemas": 19,
+  "azure_generated_example_schemas": 19,
+  "schema_errors_or_skips": 0,
+  "official_pipeline_schema_commit": "9e40e814abd20917f273dd587497086f0476a563",
+  "official_pipeline_schema_sha256": "f00a9630f6550204148634d9a13f634b5750a225559886effe09a751482f0459",
+  "schema_scalar_coercion": "Azure language-service semantics; native booleans enforced independently",
+  "release_default": false,
+  "release_script_expected_exit": 1,
+  "host_python": "3.12.3",
+  "docker_compose_ci": "2.39.2",
+  "trivy_version": "0.69.3",
+  "cve_inventory_policy": "advisory, release hard-blocked, not a zero-vulnerability claim",
+  "security_findings": {
+    "incidentiq-ci-api": {
+      "HIGH": 12,
+      "MEDIUM": 41,
+      "LOW": 17,
+      "CRITICAL": 7
+    },
+    "incidentiq-ci-worker": {
+      "LOW": 71,
+      "HIGH": 60,
+      "MEDIUM": 96,
+      "CRITICAL": 1
+    },
+    "incidentiq-ci-frontend": {
+      "CRITICAL": 3,
+      "MEDIUM": 90,
+      "LOW": 40,
+      "HIGH": 61
+    },
+    "frontend-lockfile": {}
+  },
+  "runtime_image_ids": {
+    "incidentiq-ci-api:verification": "sha256:e54f760f96666a29680b8d6667d8d41a7b061a4ffc2285c5529e0bc0913da854",
+    "incidentiq-ci-worker:verification": "sha256:2e26a18e0a48054f3956867f7592a2d479de847dc049a66a962d56fca1dde7bb",
+    "incidentiq-ci-frontend:verification": "sha256:11c9b0e936c8bbf798a7ee01d228519e7b4bd39a4355024d1032a1918af2cc8a"
+  },
+  "ci_containers_remaining": 0,
+  "production_data_used_for_ci": false,
+  "postgres_host_port": 55432,
+  "compose_services": [
+    {
+      "service": "alertmanager",
+      "health": "healthy",
+      "state": "running"
+    },
+    {
+      "service": "api",
+      "health": "healthy",
+      "state": "running"
+    },
+    {
+      "service": "frontend",
+      "health": "healthy",
+      "state": "running"
+    },
+    {
+      "service": "grafana",
+      "health": "healthy",
+      "state": "running"
+    },
+    {
+      "service": "kafka",
+      "health": "healthy",
+      "state": "running"
+    },
+    {
+      "service": "postgres",
+      "health": "healthy",
+      "state": "running"
+    },
+    {
+      "service": "prometheus",
+      "health": "healthy",
+      "state": "running"
+    },
+    {
+      "service": "publisher",
+      "health": "",
+      "state": "running"
+    },
+    {
+      "service": "worker",
+      "health": "healthy",
+      "state": "running"
+    }
+  ],
+  "volumes_created_at": {
+    "postgres_data": "2026-11-06T00:00:34Z",
+    "kafka_data": "2026-11-06T00:00:34Z",
+    "prometheus_data": "2026-11-06T01:22:39Z",
+    "grafana_data": "2026-11-06T01:22:39Z",
+    "alertmanager_data": "2026-11-06T01:58:52Z",
+    "ollama_data": "2026-11-06T16:26:37Z"
+  },
+  "source_sha256": {
+    "azure-pipelines.yml": "677ef466547371745a9aba6806dde5a1ebbb3e8930a25205ee971e28d30387bb",
+    "ci/bootstrap.sh": "863b9aaf7755f21c80d583a8a9570f9fe90ad0ce1f4b720467785899169c7d2b",
+    "ci/compose.yaml": "4945802e15d4ee7544bc3065de93a1522ddc8a22ac3e86eb4ddb1d98b51ed701",
+    "ci/images.sh": "7eb8c7c1505897c854c090e2884fac01c4de55526a020115538f89db532f1804",
+    "ci/infra.sh": "414c89cdf411d76714ba3d146968287011c3e8c483a552121713a51a0bd20fd0",
+    "ci/locks.sh": "493a9446f83e1c44013c44d979d6225da592f255ef2328ea2c82df49119000ee",
+    "ci/requirements.txt": "5adefda38869e178481f96f0ff1758d13d89d692df40262db1d57188620e60fe",
+    "ci/security.py": "531edb7f439a070d5dae076f88cea599a91a39cacfcc761c696d0bee24612835",
+    "ci/test.sh": "2e8789e19c19cb186c926aef0813351a6df7505e267dc748b00ca3d2d28dd1df",
+    "ci/tests/test_pipeline.py": "c2d957313eebd946c035516e31c38acd1fa9310964689caa256999a34f0bc7a1",
+    "ci/tool-versions.env": "3883f1c89d8c7a022f39c4d0be1b52b0d40dc761076a129a299ea01d44efd5dc",
+    "ci/validate-pipeline.py": "a6ff2d22c56ed39010d7e49186e4ead75d9152a96dadd0374b9707e9050b8553",
+    "scripts/test-worker.sh": "8c18d8f7905b24d8901ec9cb9b8da1c09bdc62b1406a2208c5909af8629cdfa4"
+  }
+}
