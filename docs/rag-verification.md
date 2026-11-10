@@ -1,4 +1,4 @@
-> RAG commit d82d561 was published and verified on origin/main. Current monitoring/runtime regression results: [monitoring-verification.md](monitoring-verification.md).
+> Historical milestone snapshot: capability/version statements and counts below describe that run. See the [current overview](../README.md) and [latest application/security regression](security/VERIFICATION.md) for subsequent implementation and verification.
 
 # Structured RAG diagnosis verification — 2026-11-05 (America/Chicago)
 

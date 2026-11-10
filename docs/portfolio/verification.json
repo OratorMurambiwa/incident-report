@@ -1,0 +1,744 @@
+{
+  "verified_at_utc": "2026-11-10T04:12:09.868578+00:00",
+  "baseline_commit": "a4d5025a91d09bd6806c97ca36c95d49d4d83f65",
+  "reviewed_reports": {
+    "docs/api-verification.md": {
+      "sha256": "1e7eaf5aa1135df27eacaf3c90d23318fba0554b7c841ee376fc548a0c865bd7",
+      "bytes": 5131
+    },
+    "docs/automatic-detection-verification.md": {
+      "sha256": "b00d8caffff4e3313c8755fa36b001a67346b262a78506c0c83178b27e920994",
+      "bytes": 6727
+    },
+    "docs/azure/VERIFICATION.md": {
+      "sha256": "197c565b19e3813ae1a5e6e929524c56b9bdd2bb33cad333d00c5c5ce5ce1022",
+      "bytes": 7022
+    },
+    "docs/azure/kustomize-config.example.json": {
+      "sha256": "c5cb9f2d7a0f94f5407c700526d6de347e4c7164fcde5a8d2ed436de17679827",
+      "bytes": 224
+    },
+    "docs/azure/verification.json": {
+      "sha256": "eceaf4ee25f856ef3c4e1992731ef5f3689ed6db4573a3b7d2b9a5d2496615c7",
+      "bytes": 8102
+    },
+    "docs/benchmarks/RESULTS.md": {
+      "sha256": "da2d961c2ded5b9035047508d5d2fc4a6d0f0ccdade43a5d66447dd4967c70ec",
+      "bytes": 7568
+    },
+    "docs/benchmarks/runs/20261107t181450z_740b24bd/conditions.json": {
+      "sha256": "88c0fd6e9dfb5961a99de2d035ee965b78060a0d2d26788024612aba5f5ed599",
+      "bytes": 2097
+    },
+    "docs/benchmarks/runs/20261107t181450z_740b24bd/read.json": {
+      "sha256": "57ffa8d8bac30dd348c6bf6b6d44f8657be10a4e71352107b6e61e2561776cee",
+      "bytes": 4605
+    },
+    "docs/benchmarks/runs/20261107t181450z_740b24bd/status.json": {
+      "sha256": "24191dda14efc60c1b70da4c122174c8c79c2898a1bec63c1610538080cbded3",
+      "bytes": 270
+    },
+    "docs/benchmarks/runs/20261107t181450z_740b24bd/warmup.json": {
+      "sha256": "8e4369a737018b83959ef19b060d65060d6aebec58ab2bd9030e3225d6f84ca4",
+      "bytes": 4630
+    },
+    "docs/benchmarks/runs/20261107t181450z_740b24bd/write.json": {
+      "sha256": "54fb251718db7ccf6e2cb00709bad254225b33a513b2ff4ce6f81f9921076031",
+      "bytes": 4629
+    },
+    "docs/benchmarks/runs/20261107t181836z_e97e5b4b/async.json": {
+      "sha256": "abbbb66f95f60856bbeb91065b7555dd01a230441123016ddea9f10a2786296d",
+      "bytes": 2064
+    },
+    "docs/benchmarks/runs/20261107t181836z_e97e5b4b/conditions.json": {
+      "sha256": "4fbee39e742db2a7a19cf5219e98a7ce42abf444635de0823c61a9526d8fea24",
+      "bytes": 2883
+    },
+    "docs/benchmarks/runs/20261107t181836z_e97e5b4b/enqueue.json": {
+      "sha256": "3b0b486510a30c8447755fc754b29c416194f6248cdd2e786d248a3b542a72dd",
+      "bytes": 4663
+    },
+    "docs/benchmarks/runs/20261107t181836z_e97e5b4b/read.json": {
+      "sha256": "8cb4a78136a8977aa988072ddff4e643e9363aae487084f1251059e3a6528044",
+      "bytes": 4603
+    },
+    "docs/benchmarks/runs/20261107t181836z_e97e5b4b/status.json": {
+      "sha256": "4ab13edcc7792edfdb090bf2ca10d5d2ab291cdd8abbbe86360d8d19cd157bb9",
+      "bytes": 106
+    },
+    "docs/benchmarks/runs/20261107t181836z_e97e5b4b/summary.json": {
+      "sha256": "71d564ece62caaf481664668d4cb8ac5a028baec72e5f070e8d299b4ec4fd1b1",
+      "bytes": 803
+    },
+    "docs/benchmarks/runs/20261107t181836z_e97e5b4b/warmup.json": {
+      "sha256": "27bb9884e2b5cf3f86873d525461fbd9b9aa98607f284d5d7c04462a1f10d772",
+      "bytes": 4677
+    },
+    "docs/benchmarks/runs/20261107t181836z_e97e5b4b/write.json": {
+      "sha256": "6b40db63d36119a3711154b4b157bac35d33ea4f9764abc455409e5346a6f192",
+      "bytes": 4583
+    },
+    "docs/ci/VERIFICATION.md": {
+      "sha256": "e2052ff778d8f3174d82c490921cdb96067202d3efdf9a25463a140b85e2ef39",
+      "bytes": 8786
+    },
+    "docs/ci/security-inventory.json": {
+      "sha256": "498f508df59e6da69d69394d9e33d5352cabf191d024a679688284b4a56ad0a3",
+      "bytes": 4907
+    },
+    "docs/ci/verification.json": {
+      "sha256": "51620f826a46a4c0baf69d3357b9a2c888fff25d29ec3e07998b2ed4ba98056c",
+      "bytes": 4562
+    },
+    "docs/dashboard-verification.md": {
+      "sha256": "d075c3d5c80c754a8d3c8e12098326b56fa2b91fd6553bab846e66b8bb30674e",
+      "bytes": 6887
+    },
+    "docs/environment.md": {
+      "sha256": "25c0286fc75d4de631bb5cd43f59fd8d3933bc7b7d32ce8251ac2961b88d9236",
+      "bytes": 4200
+    },
+    "docs/event-verification.md": {
+      "sha256": "83f5aed158d0a8e42e0424ef52161fcd0491c21cc229e5468b63e64c0c65d705",
+      "bytes": 7135
+    },
+    "docs/faults/RESULTS.md": {
+      "sha256": "56c94483434a7557173ad05b23bb62531b9d08edaabbe9ba11a5e693ef3f9f82",
+      "bytes": 13515
+    },
+    "docs/faults/regressions.json": {
+      "sha256": "888c16fc2b2b91b010625a4dbc0ae8767ff417aaafaf170c95a323aa693b115d",
+      "bytes": 9465
+    },
+    "docs/faults/runs/20261107t184738z_8d63aac4/conditions.json": {
+      "sha256": "36b3a3fed48e92f7363621672335aa86b9d1d3a92919e71ca1e0d191f5ab64c2",
+      "bytes": 1221
+    },
+    "docs/faults/runs/20261107t184738z_8d63aac4/results.json": {
+      "sha256": "fa9f3dc756ff0d18481bd23d42770c35c9ff96e14a44ddc6b5a4396f21c10e22",
+      "bytes": 323
+    },
+    "docs/faults/runs/20261107t185003z_d94dc47c/conditions.json": {
+      "sha256": "aee56a4d2511b734a13b742bd0c5c4a4a185ae75d90f0040e4fd1fcc45f76dc1",
+      "bytes": 1221
+    },
+    "docs/faults/runs/20261107t185003z_d94dc47c/results.json": {
+      "sha256": "48247e1df501095848276d1e0c226d88c887b97a6a3ca737d00e42f75397425c",
+      "bytes": 7035
+    },
+    "docs/faults/runs/20261107t190041z_909be1ac/conditions.json": {
+      "sha256": "ac5da3a1090cc3066ff2ce8b5de3b092fbb28995a3610b04c290dcdee61e28bb",
+      "bytes": 1667
+    },
+    "docs/faults/runs/20261107t190041z_909be1ac/results.json": {
+      "sha256": "6de93aeb518e890e2f22014479d5f24af19d8cb12a2c6f83243b9246d4e3aa8f",
+      "bytes": 15279
+    },
+    "docs/faults/runs/20261108t015220z_fde9792c/conditions.json": {
+      "sha256": "7f1ea2f919de206ebac3fee6ebd0d936a07acfc269b038107e0328abe0ff110a",
+      "bytes": 1667
+    },
+    "docs/faults/runs/20261108t015220z_fde9792c/results.json": {
+      "sha256": "b96e41cabed7a40cf363873fdb6411775ceb6bd0b85a23a3fa6dc1d9393f4edf",
+      "bytes": 15281
+    },
+    "docs/images/capture.json": {
+      "sha256": "fbab17284f9e9b0d895972f36280b5cf029a408464f662efdcb3b9b6514f5576",
+      "bytes": 595
+    },
+    "docs/kubernetes/VERIFICATION.md": {
+      "sha256": "8455bcfcbc0d55ffde4591ad8f09a7750ba0e1706f4fb3ff63cca375cb5bf2aa",
+      "bytes": 6599
+    },
+    "docs/kubernetes/preflight.json": {
+      "sha256": "527efd83900813365e583d170a1ebc4ba468c3cdb6582b0ceffb749475bb4140",
+      "bytes": 195
+    },
+    "docs/kubernetes/verification.json": {
+      "sha256": "186d56ce80176613d8bc0e68ddba64dbee4c8e06a68586003cf2c9fc700370c6",
+      "bytes": 11399
+    },
+    "docs/monitoring-verification.md": {
+      "sha256": "0bc7090b19633c01768236a9375ecac67d1651ee71f478c662edeb242afd119f",
+      "bytes": 9577
+    },
+    "docs/ollama-verification.md": {
+      "sha256": "553632576a5c60aa1fbbf82d7e3e1da261ffb558b6edc5ac6d88b2732cc2f2ab",
+      "bytes": 11617
+    },
+    "docs/rag-verification.md": {
+      "sha256": "c061b0128cfb299f2599155d4753e05d8312c05baa3f188d18ea2f0aba54fe65",
+      "bytes": 10177
+    },
+    "docs/retrieval-verification.md": {
+      "sha256": "9c29eca762519de8feb08062b457a6f9d65cecc154dfa67c3f26e9cc7b9e780a",
+      "bytes": 8211
+    },
+    "docs/security/VERIFICATION.md": {
+      "sha256": "b5bbb53600e2bdd9d5947b7c937030db2cb6d16c7deb1dd453ce6e0fcb7f69f4",
+      "bytes": 13013
+    },
+    "docs/security/database-snapshot.json": {
+      "sha256": "1a72b652d3d114be9455410843e3be0dc70a1d271e530765f5c6c420896e1306",
+      "bytes": 534
+    },
+    "docs/security/embedding-parity.json": {
+      "sha256": "e9ad588bf6c46343a265b09a62836151272c60a13ef06df3cfa0f31d346595b6",
+      "bytes": 556
+    },
+    "docs/security/exposure.json": {
+      "sha256": "dbe2478b5879fd57cb19d032db6a25153a03919a197517c42f0575f2e2f1bf4a",
+      "bytes": 730
+    },
+    "docs/security/images.json": {
+      "sha256": "3258bd2c911ef9177107d4dc6d350922e5dda9f8a562b659f0ea70e7a37d0cee",
+      "bytes": 2906
+    },
+    "docs/security/ollama-samples.json": {
+      "sha256": "264adaa1093a6125dcf95876cfd23932073f0a02637bea9f8c45cf613c3d2c7f",
+      "bytes": 2054
+    },
+    "docs/security/ollama-verification.json": {
+      "sha256": "45a563f88ac74e0eb720c9fbebd8fb4dfe7dd24ba08fa5a573b7948904c55213",
+      "bytes": 4525
+    },
+    "docs/security/python-dependencies.json": {
+      "sha256": "36dfef8284ee60f8c328bf1eb74bd47ceb48198f558df868034bc0aa1233d170",
+      "bytes": 53608
+    },
+    "docs/security/scanner.json": {
+      "sha256": "18a199886493f2ff244cb594b5c100b0fcc09666c936ba2f26cb476fed8985f4",
+      "bytes": 669
+    },
+    "docs/security/triage.json": {
+      "sha256": "8c53354ecefa022842f0c24a77500e1fd116ea0173c51deb2675c8ce42cf1a06",
+      "bytes": 213694
+    },
+    "docs/security/verification.json": {
+      "sha256": "6896eed9ef58aa8ca13ac2664f061afa55dd70b0712832c13224e6e503fed344",
+      "bytes": 34386
+    }
+  },
+  "offline_documentation_checks": {
+    "relative_links_checked": 92,
+    "links": [
+      {
+        "document": "README.md",
+        "target": "docs/images/dashboard.png"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/images/capture.json"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/portfolio/VERIFICATION.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/architecture.md"
+      },
+      {
+        "document": "README.md",
+        "target": "api/pom.xml"
+      },
+      {
+        "document": "README.md",
+        "target": "worker/requirements.txt"
+      },
+      {
+        "document": "README.md",
+        "target": "worker/requirements.lock"
+      },
+      {
+        "document": "README.md",
+        "target": "frontend/package-lock.json"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/api-verification.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/security/VERIFICATION.md"
+      },
+      {
+        "document": "README.md",
+        "target": "compose.ollama.yaml"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/ollama-verification.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/security/VERIFICATION.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/benchmarks/RESULTS.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/benchmarks/README.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/security/VERIFICATION.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/faults/README.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/security/VERIFICATION.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/security/verification.json"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/api-verification.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/event-verification.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/retrieval-verification.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/rag-verification.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/dashboard-verification.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/monitoring-verification.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/automatic-detection-verification.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/ollama-verification.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/portfolio/VERIFICATION.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/security/TRIAGE.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/security/README.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/kubernetes/README.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/kubernetes/VERIFICATION.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/azure/README.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/azure/VERIFICATION.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/ci/README.md"
+      },
+      {
+        "document": "README.md",
+        "target": "docs/ci/VERIFICATION.md"
+      },
+      {
+        "document": "README.md",
+        "target": "AGENTS.md"
+      },
+      {
+        "document": "docs/api-verification.md",
+        "target": "../README.md"
+      },
+      {
+        "document": "docs/api-verification.md",
+        "target": "security/VERIFICATION.md"
+      },
+      {
+        "document": "docs/architecture.md",
+        "target": "../README.md#architecture"
+      },
+      {
+        "document": "docs/architecture.md",
+        "target": "security/VERIFICATION.md"
+      },
+      {
+        "document": "docs/architecture.md",
+        "target": "event-verification.md"
+      },
+      {
+        "document": "docs/architecture.md",
+        "target": "retrieval-verification.md"
+      },
+      {
+        "document": "docs/architecture.md",
+        "target": "ollama-verification.md"
+      },
+      {
+        "document": "docs/automatic-detection-verification.md",
+        "target": "../README.md"
+      },
+      {
+        "document": "docs/automatic-detection-verification.md",
+        "target": "security/VERIFICATION.md"
+      },
+      {
+        "document": "docs/azure/VERIFICATION.md",
+        "target": "verification.json"
+      },
+      {
+        "document": "docs/azure/VERIFICATION.md",
+        "target": "README.md"
+      },
+      {
+        "document": "docs/benchmarks/RESULTS.md",
+        "target": "runs/20261107t181836z_e97e5b4b/summary.json"
+      },
+      {
+        "document": "docs/benchmarks/RESULTS.md",
+        "target": "runs/20261107t181836z_e97e5b4b/conditions.json"
+      },
+      {
+        "document": "docs/benchmarks/RESULTS.md",
+        "target": "runs/20261107t181836z_e97e5b4b/status.json"
+      },
+      {
+        "document": "docs/benchmarks/RESULTS.md",
+        "target": "runs/20261107t181836z_e97e5b4b/warmup.json"
+      },
+      {
+        "document": "docs/benchmarks/RESULTS.md",
+        "target": "runs/20261107t181836z_e97e5b4b/read.json"
+      },
+      {
+        "document": "docs/benchmarks/RESULTS.md",
+        "target": "runs/20261107t181836z_e97e5b4b/write.json"
+      },
+      {
+        "document": "docs/benchmarks/RESULTS.md",
+        "target": "runs/20261107t181836z_e97e5b4b/enqueue.json"
+      },
+      {
+        "document": "docs/benchmarks/RESULTS.md",
+        "target": "runs/20261107t181836z_e97e5b4b/async.json"
+      },
+      {
+        "document": "docs/benchmarks/RESULTS.md",
+        "target": "runs/20261107t181450z_740b24bd/status.json"
+      },
+      {
+        "document": "docs/benchmarks/RESULTS.md",
+        "target": "README.md"
+      },
+      {
+        "document": "docs/ci/VERIFICATION.md",
+        "target": "README.md"
+      },
+      {
+        "document": "docs/ci/VERIFICATION.md",
+        "target": "security-inventory.json"
+      },
+      {
+        "document": "docs/dashboard-verification.md",
+        "target": "../README.md"
+      },
+      {
+        "document": "docs/dashboard-verification.md",
+        "target": "security/VERIFICATION.md"
+      },
+      {
+        "document": "docs/environment.md",
+        "target": "../README.md"
+      },
+      {
+        "document": "docs/environment.md",
+        "target": "security/VERIFICATION.md"
+      },
+      {
+        "document": "docs/event-verification.md",
+        "target": "../README.md"
+      },
+      {
+        "document": "docs/event-verification.md",
+        "target": "security/VERIFICATION.md"
+      },
+      {
+        "document": "docs/faults/RESULTS.md",
+        "target": "runs/20261107t190041z_909be1ac/conditions.json"
+      },
+      {
+        "document": "docs/faults/RESULTS.md",
+        "target": "runs/20261107t190041z_909be1ac/results.json"
+      },
+      {
+        "document": "docs/faults/RESULTS.md",
+        "target": "README.md"
+      },
+      {
+        "document": "docs/faults/RESULTS.md",
+        "target": "runs/20261107t184738z_8d63aac4/results.json"
+      },
+      {
+        "document": "docs/faults/RESULTS.md",
+        "target": "runs/20261107t185003z_d94dc47c/results.json"
+      },
+      {
+        "document": "docs/faults/RESULTS.md",
+        "target": "regressions.json"
+      },
+      {
+        "document": "docs/kubernetes/VERIFICATION.md",
+        "target": "verification.json"
+      },
+      {
+        "document": "docs/kubernetes/VERIFICATION.md",
+        "target": "README.md"
+      },
+      {
+        "document": "docs/monitoring-verification.md",
+        "target": "../README.md"
+      },
+      {
+        "document": "docs/monitoring-verification.md",
+        "target": "security/VERIFICATION.md"
+      },
+      {
+        "document": "docs/ollama-verification.md",
+        "target": "../README.md"
+      },
+      {
+        "document": "docs/ollama-verification.md",
+        "target": "security/VERIFICATION.md"
+      },
+      {
+        "document": "docs/portfolio/VERIFICATION.md",
+        "target": "../../README.md"
+      },
+      {
+        "document": "docs/portfolio/VERIFICATION.md",
+        "target": "verification.json"
+      },
+      {
+        "document": "docs/portfolio/VERIFICATION.md",
+        "target": "../images/dashboard.png"
+      },
+      {
+        "document": "docs/portfolio/VERIFICATION.md",
+        "target": "../images/capture.json"
+      },
+      {
+        "document": "docs/portfolio/VERIFICATION.md",
+        "target": "capture-dashboard.py"
+      },
+      {
+        "document": "docs/rag-verification.md",
+        "target": "../README.md"
+      },
+      {
+        "document": "docs/rag-verification.md",
+        "target": "security/VERIFICATION.md"
+      },
+      {
+        "document": "docs/retrieval-verification.md",
+        "target": "../README.md"
+      },
+      {
+        "document": "docs/retrieval-verification.md",
+        "target": "security/VERIFICATION.md"
+      },
+      {
+        "document": "docs/security/VERIFICATION.md",
+        "target": "../faults/runs/20261108t015220z_fde9792c/conditions.json"
+      },
+      {
+        "document": "docs/security/VERIFICATION.md",
+        "target": "../faults/runs/20261108t015220z_fde9792c/results.json"
+      },
+      {
+        "document": "docs/security/VERIFICATION.md",
+        "target": "ollama-verification.json"
+      },
+      {
+        "document": "docs/security/VERIFICATION.md",
+        "target": "ollama-samples.json"
+      },
+      {
+        "document": "docs/security/VERIFICATION.md",
+        "target": "README.md"
+      }
+    ],
+    "screenshot_dimensions": [
+      1360,
+      1724
+    ],
+    "screenshot_hash_verified": true,
+    "benchmarks_match_recorded_results": true,
+    "fault_results_match_recorded_run": true,
+    "security_occurrences": 50,
+    "distinct_remaining_cves": 14,
+    "limitation": "Offline relative-link and evidence checks; live URLs and Mermaid rendering are checked separately."
+  },
+  "mermaid": {
+    "parser": "mermaid 11.12.0",
+    "parsed_and_rendered": true,
+    "diagram_type": "flowchart-v2",
+    "nodes": 13,
+    "limitation": "Local parser/browser validation, not GitHub server-side rendering."
+  },
+  "live_readme_urls": [
+    {
+      "url": "http://localhost:3001/d/incidentiq-overview",
+      "http_status": 200
+    },
+    {
+      "url": "http://localhost:5173",
+      "http_status": 200
+    },
+    {
+      "url": "http://localhost:8080/actuator/health",
+      "http_status": 200
+    },
+    {
+      "url": "http://localhost:9090",
+      "http_status": 200
+    },
+    {
+      "url": "http://localhost:9093",
+      "http_status": 200
+    }
+  ],
+  "screenshot_capture": {
+    "captured_at_utc": "2026-11-10T03:56:26.084229+00:00",
+    "incident_id": "e665538a-ef18-45b8-8791-2ec3fb3bf2e5",
+    "service": "portfolio-demo-39bed48c",
+    "submission_status": 201,
+    "diagnosis_status": 200,
+    "mode": "RETRIEVAL_ONLY",
+    "evidence_chunks": 5,
+    "cited_runbooks": [
+      "database-failures.md"
+    ],
+    "browser_errors": [],
+    "mocked_responses": false,
+    "synthetic_input_only": true,
+    "redaction": "Synthetic incident UUID masked during browser screenshot; no other visual editing.",
+    "screenshot_sha256": "0bce07ffedd49b5a48a7b2a101c1db15e1dfacd11a56cead71becc20d2786d42"
+  },
+  "fresh_browser_regression": {
+    "checks_passed": 14,
+    "checks": [
+      "loading state while list response is held in browser test",
+      "real incident list via nginx API proxy",
+      "monitoring links",
+      "required-field validation and keyboard focus",
+      "manual submission persisted, literal untrusted text rendered safely",
+      "real POST \u2192 outbox \u2192 Kafka \u2192 worker \u2192 five evidence chunks \u2192 GET diagnosis",
+      "combined server-side severity, status, service filters",
+      "empty filtered result",
+      "pagination",
+      "periodic refresh discovers a real externally created incident",
+      "UI-only simulated API error and retry recovery",
+      "UI-only generated-mode fixture, citations and human-review notice",
+      "mobile layout and direct incident URL",
+      "real missing-incident error state"
+    ],
+    "incident_id": "468dc00a-b52e-4669-a1c3-77c368a64ab8",
+    "actual_mode": "RETRIEVAL_ONLY",
+    "browser_errors": []
+  },
+  "compose_configuration_validated": [
+    "base/observability",
+    "base + optional Ollama"
+  ],
+  "image_builds_completed": true,
+  "worker_build_tests": {
+    "passed": 59,
+    "skipped": 18,
+    "database_tests_enabled": false
+  },
+  "cached_build_layers": "Java/frontend test layers may be cached; no fresh complete Java/Python suite is claimed.",
+  "startup_check": "Docker Compose dry run only; no empty-volume installation or service recreation.",
+  "build_artifacts": {
+    "api": {
+      "built_image_id": "sha256:8659efb4f0b7d0353aa7350ef9ed59f9e4ddd8d1380f21b594608649cbdb4a9f",
+      "retained_tag": "incidentiq-api:portfolio-check",
+      "restored_local_image_id": "sha256:9a72f8f35cd1a8a9ac31a91ed4871e42d0c06a19499bec56e3efec5380a99480"
+    },
+    "worker": {
+      "built_image_id": "sha256:3de32ac9681efc2fe49a3d0d24a40cc5feeb5f6f4a396cc17688f9d51c35ee15",
+      "retained_tag": "incidentiq-worker:portfolio-check",
+      "restored_local_image_id": "sha256:644e112c3c529e91277762d74c47f2184f783d6cf17b9b41b172823bcb8795c7"
+    },
+    "frontend": {
+      "built_image_id": "sha256:a15ba6328cf861d3beb54b6f5e63f73dc3f06591c46a096b1142de9a66ae3955",
+      "retained_tag": "incidentiq-frontend:portfolio-check",
+      "restored_local_image_id": "sha256:6eb4e4d4dff63394632a78da911e1f7d6e94471c58a32c37e5e0e44a16d4e5e8"
+    }
+  },
+  "existing_env_preserved": true,
+  "unchanged_historical_report_bodies": 9,
+  "unchanged_application_infra_test_sources": 197,
+  "original_running_containers_unchanged": 9,
+  "original_volumes_retained": {
+    "incidentiq_postgres_data": "2026-11-06T00:00:34Z",
+    "incidentiq_kafka_data": "2026-11-06T00:00:34Z",
+    "incidentiq_prometheus_data": "2026-11-06T01:22:39Z",
+    "incidentiq_grafana_data": "2026-11-06T01:22:39Z",
+    "incidentiq_alertmanager_data": "2026-11-06T01:58:52Z",
+    "incidentiq_ollama_data": "2026-11-06T16:26:37Z"
+  },
+  "postgres_host_port": 55432,
+  "worker_provider": "none",
+  "default_simulation_endpoints_http": 404,
+  "limitations": [
+    "Security counts refer to the Nov 8 frozen-snapshot comparison, not a new scan.",
+    "Benchmarks identify an earlier dependency baseline.",
+    "Browser generated-mode fixture is not actual model inference.",
+    "AI recommendations still require human review."
+  ],
+  "local_log_sha256": {
+    "incidentiq-step9-links-error.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "incidentiq-step9-links.json": "93428e1181345bd8b49581a7b29315a5db9472cc3cfa7347f0950a446278f9dd",
+    "incidentiq-step9-mermaid.json": "14a578e99a7a0c53f03c486bb5129ebc3be72c70b24ebd99b1f64a47980f8fc1",
+    "incidentiq-step9-build.log": "e67b0c51006cf371fdeee7b5ad844029882a093504f30a23edbafe19fd6ee53e",
+    "incidentiq-step9-live-links.json": "54dcea1f59bd2c66390ac1feaa7ab5eaf07f172a804ffeea565b4f9253d6ceb5",
+    "incidentiq-step9-mermaid-error.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "incidentiq-step9-preservation-before.json": "4acdfab018738720d71001df0d59b7d7f350194ffb1bc18dfbfe8793667e5401",
+    "incidentiq-step9-startup-plan.log": "076d2e96345c868d5f2c3a9de651a4e4e7db3fb94f312f307010fd619b3cb59e",
+    "incidentiq-step9-build-preservation.json": "6f0435bd1bd0d06bbb9a4ce250a5f95a6c18d393b5968f09049b2a668abff6aa",
+    "incidentiq-step9-browser.log": "fb4424122f76f53eac32bcb2c3e55b267474b15d67a3f2b4e1a2eb0527daba0f"
+  },
+  "not_executed_for_this_milestone": [
+    "full Java/Python DB suites",
+    "k6 benchmarks",
+    "distributed fault injection",
+    "actual Ollama generation",
+    "Kubernetes deployment",
+    "Terraform apply",
+    "Azure DevOps organization pipeline"
+  ]
+}

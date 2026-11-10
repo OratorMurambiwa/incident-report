@@ -1,295 +1,184 @@
 # IncidentIQ
 
-Local incident monitoring platform with a working Java 21 REST API and PostgreSQL persistence. Incident creation now flows through a transactional outbox and Kafka to a Python worker that records RECEIVED. The worker now retrieves local runbook context with LangChain and pgvector. Optional local Ollama RAG diagnosis generation is implemented; default mode is explicitly retrieval-only. The React/TypeScript dashboard provides live incident filtering, submission and diagnosis evidence. No paid or hosted AI service is configured.
+**Local incident monitoring with evidence-backed investigation.** IncidentIQ turns manual reports and monitoring alerts into durable incidents, retrieves relevant runbooks, and optionally generates cited diagnoses with a local language model. It connects detection, asynchronous processing and an incident dashboard without a hosted AI service.
 
-## Run locally with Docker
+The default is **retrieval-only**: original runbook excerpts are clearly distinguished from AI-generated analysis. **AI recommendations require human review. No remediation commands are executed.**
 
-Docker with Compose is sufficient to build, test and run the API. Host Java and Maven are optional.
+![Actual IncidentIQ React dashboard showing a synthetic database incident, retrieval-only labeling and five cited runbook chunks](docs/images/dashboard.png)
 
-```bash
-# Only on first setup; preserve an existing .env:
-[ -f .env ] || cp .env.example .env
-docker compose config --quiet
-docker compose up -d --build --wait
-docker compose ps -a
+*Actual React dashboard captured from running Docker Compose services on November 9, 2026 (America/Chicago; timestamps in the image are UTC). One new synthetic incident was submitted through the UI and processed by the real pipeline; no responses were mocked. The synthetic UUID is masked, and no existing incident list or credentials are shown. [Capture provenance](docs/images/capture.json) · [Portfolio verification](docs/portfolio/VERIFICATION.md).*
+
+## What it implements
+
+- **Incident workflow:** validated Spring Boot REST API, server-side filters/pagination, manual reporting, periodic refresh, loading/error states and accessible React controls.
+- **Durable delivery:** incident + transactional outbox commit together; a separate publisher retries Kafka delivery. The worker deduplicates event IDs and commits offsets only after durable processing or quarantine.
+- **Real local retrieval:** ten Markdown runbooks, idempotent ingestion, 384-dimensional MiniLM embeddings and pgvector cosine search. Five retrieved chunks are stored as immutable evidence snapshots with filenames and similarity scores.
+- **Optional RAG generation:** LangChain + local Ollama produce structured likely causes, investigation steps, remediation suggestions and validated citations. Invalid outputs, missing evidence and unavailable models fail closed; there is no silent hosted-provider fallback.
+- **Automatic detection:** Prometheus HTTP 500, p95 latency and availability alerts reach Alertmanager and the incident API. Fingerprints deduplicate active alerts; resolved notifications update incident state. Internal processing routes are excluded from error/latency rules to avoid recursive alerts.
+- **Observability:** Actuator/Micrometer and Python metrics, bounded labels, persistent Prometheus/Grafana storage and a provisioned 16-panel dashboard.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    UI["React / TypeScript dashboard"] -->|"Create and query incidents"| API["Spring Boot REST API"]
+    PROM["Prometheus"] -->|"Scrape HTTP and JVM metrics"| API
+    PROM -->|"Scrape processing and retrieval metrics"| WORKER["Python RAG worker / LangChain"]
+    GRAFANA["Grafana dashboards"] -->|"Query metrics"| PROM
+    PROM -->|"Firing and resolved alerts"| AM["Alertmanager"]
+    AM -->|"Fingerprint-deduplicated webhook"| API
+    API -->|"Atomic incident and outbox transaction"| DB[("PostgreSQL: incidents, outbox, diagnoses, receipts")]
+    PUB["Outbox publisher / Spring Kafka"] -->|"Read pending rows and persist retry state"| DB
+    PUB -->|"Acknowledged JSON events"| KAFKA["Kafka KRaft: incident.created"]
+    KAFKA -->|"At-least-once delivery"| WORKER
+    BOOKS["Markdown runbooks"] --> INGEST["Ingestion / local MiniLM embeddings"]
+    INGEST --> VECTOR[("pgvector runbook chunks in PostgreSQL")]
+    WORKER -->|"MiniLM query embedding and top-five retrieval"| VECTOR
+    WORKER -.->|"Optional structured generation"| OLLAMA["Local Ollama"]
+    WORKER -->|"Atomic receipt, snapshots, diagnosis and status"| DB
+    API -->|"Stored diagnosis and evidence"| UI
 ```
 
-`compose.yaml` is the canonical Compose file. It starts API, a separate outbox publisher (the same Java image in non-web mode), the Python worker, PostgreSQL/pgvector, Kafka KRaft and the idempotent topic initializer. A one-shot runbook-ingest service indexes the mounted Markdown corpus after migrations; the worker waits for it to succeed. PostgreSQL remains published at `127.0.0.1:55432`; the API connects through `postgres:5432` and uses `kafka:29092`. API: `http://localhost:8080` (`API_PORT` is configurable). Kafka: `localhost:9092`. Containers retain their existing named volumes. Topic initialization normally finishes with exit 0.
+The API owns Flyway migrations; the publisher and worker use internal Docker networking. `incident.created` is the implemented event path. The initialized `incidents.raw` and `incidents.analyzed` topics are legacy/reserved, not additional implemented processing stages. PostgreSQL and pgvector share one database service. See [transaction boundaries and delivery guarantees](docs/architecture.md).
+
+### Technology stack
+
+| Area | Technologies |
+|---|---|
+| API / publisher | Java 21, Spring Boot 3.5.16, Spring Web, JPA, Jakarta Validation, Flyway, Spring Kafka |
+| Persistence / events | PostgreSQL 16, pgvector 0.8.7, Kafka 3.9.1 in single-node KRaft mode |
+| Retrieval / optional AI | Python 3.12, LangChain 0.3.30, sentence-transformers 5.6.0, CPU Torch 2.10.0, all-MiniLM-L6-v2; optional Ollama |
+| Dashboard | React 19, TypeScript, Vite 6, nginx |
+| Operations / verification | Docker Compose, Prometheus, Grafana, Alertmanager, JUnit, pytest, Playwright, k6, Trivy |
+| Future infrastructure | Kubernetes/Kustomize, modular Terraform for Azure, Azure DevOps YAML — **static validation only** |
+
+Exact dependency pins and the actual resolved locks are in [api/pom.xml](api/pom.xml), [worker requirements](worker/requirements.txt), [worker lock](worker/requirements.lock) and [frontend lock](frontend/package-lock.json).
+
+## Run locally
+
+Use a WSL/Linux shell with Docker Engine or Docker Desktop's WSL integration, Docker Compose and Bash. Java, Maven, Node and application Python packages are built inside Docker; **no host Java or Maven is required**. Python 3 is needed only for the optional host verification helpers. The first build downloads public images, packages and the pinned MiniLM weights; application data and inference remain local.
+
+From the repository root:
 
 ```bash
-# Optional monitoring:
+# Preserve an existing configuration. On a new checkout, create local settings:
+test -f .env || cp .env.example .env
+# Review .env locally; keep LLM_PROVIDER=none for the default demo.
+docker compose --profile observability config --quiet
+# Explicitly build shared images before publisher/ingestion startup:
+docker compose --profile observability build api worker frontend
 docker compose --profile observability up -d --wait
-# Inspect:
-docker compose logs --tail=100 api postgres kafka
-curl http://localhost:8080/actuator/health
-# Stop, preserving persistent data:
-docker compose --profile observability down
+docker compose --profile observability ps -a
 ```
 
-Adding `--volumes` to `down` permanently deletes data. Do not do that for migrations. Credentials in .env.example are local development defaults. Images and Maven artifacts need initial downloads; execution and data remain local.
+Keep `.env` ignored. Its example credentials are local-development placeholders; retain existing credentials when reusing initialized data. Editing a password in `.env` does not rotate an existing PostgreSQL/Grafana volume's credentials. `kafka-init` and `runbook-ingest` are one-shot services: a successful exit is expected. Builds can take several minutes on a small CPU machine.
 
-## REST API
+| Service | Local address |
+|---|---|
+| React dashboard | [localhost:5173](http://localhost:5173) |
+| Spring Boot API / health | [localhost:8080/actuator/health](http://localhost:8080/actuator/health) |
+| Grafana | [localhost:3001/d/incidentiq-overview](http://localhost:3001/d/incidentiq-overview) — admin password from your ignored `.env` |
+| Prometheus | [localhost:9090](http://localhost:9090) |
+| Alertmanager | [localhost:9093](http://localhost:9093) |
+| PostgreSQL / Kafka | `127.0.0.1:55432` / `127.0.0.1:9092` |
+
+Ports above are the defaults and bind to loopback. Containers use `postgres:5432`, `kafka:29092` and the nginx `/api` proxy rather than host ports. Stop while retaining containers and volumes with `docker compose --profile observability stop`. Do not delete persistent volumes to troubleshoot startup.
+
+### Try the demo
+
+1. Open the dashboard and select **Report incident**. Use service `portfolio-demo`, severity `HIGH`, title `Database connection pool exhausted`, and describe PostgreSQL rejecting connections with `too many clients` / `SQLSTATE 08006`.
+2. Open the incident. It starts `PENDING`, then normally becomes `RECEIVED`. Inspect the five stored chunks, source filenames and similarity scores. **RETRIEVAL_ONLY means no language model was used**; similarity is relevance, not confidence.
+3. Open Grafana and Prometheus to inspect actual API/worker activity. Alertmanager can be empty when nothing is firing; metrics and alert thresholds are intended for this local demo.
+4. Optionally run the existing alert smoke helper below. It temporarily enables development-only failure/latency simulators and stops/restarts the worker, then restores the default configuration. It creates and retains synthetic incidents/quarantine evidence; it does not delete data.
 
 ```bash
-curl -i -X POST http://localhost:8080/api/incidents \
-  -H 'Content-Type: application/json' \
-  -d '{"service":"billing","title":"Elevated timeouts","description":"Requests exceed 5 seconds","severity":"HIGH"}'
-curl 'http://localhost:8080/api/incidents?page=0&size=20'
-curl http://localhost:8080/api/incidents/REPLACE_WITH_UUID
-curl http://localhost:8080/api/incidents/REPLACE_WITH_UUID/diagnosis
+# Optional: real failure -> Prometheus -> Alertmanager -> outbox/Kafka -> diagnosis
+python3 scripts/smoke-auto-detection.py --skip-build
 ```
 
-- `POST /api/incidents`: 201, Location header and full incident DTO including UUID, PENDING status and UTC timestamps.
-- `GET /api/incidents`: 200 with `content`, `page`, `size`, `totalElements`, `totalPages`. Page starts at 0; size defaults to 20 and must be 1–100. Ordered newest first, with UUID as a stable tie breaker.
-- `GET /api/incidents/{id}`: 200 with incident; 404 if missing.
-- `GET /api/incidents/{id}/diagnosis`: 200 with diagnosis UUID, incidentId, summary, recommendations and timestamps. Returns 404 when the incident is missing or its diagnosis is not yet available. The worker persists retrieval-only or Ollama-generated diagnoses asynchronously; no public diagnosis write endpoint exists.
+For direct HTTP use, the API supports `POST /api/incidents`, paginated `GET /api/incidents`, `GET /api/incidents/{id}` and `GET /api/incidents/{id}/diagnosis`. Creation returns HTTP 201; diagnosis lookup can return 404 while asynchronous processing is pending. [API evidence](docs/api-verification.md) · [Current end-to-end regression](docs/security/VERIFICATION.md).
 
-Creation requires nonblank `service` (max 100), `title` (max 200), `description` (max 10000), and severity `LOW`, `MEDIUM`, `HIGH` or `CRITICAL`. Strings are trimmed. Status is server-owned; client-supplied status and unknown properties are rejected. Stored status values are PENDING, RECEIVED, ANALYZING, DIAGNOSED, RESOLVED and FAILED. Creation returns PENDING. The worker sets RECEIVED for retrieval-only results or DIAGNOSED for a generated diagnosis; DIAGNOSED does not mean RESOLVED. Invalid JSON, enum values, UUIDs or pagination produce 400. Errors use Problem Detail JSON; field-validation errors include an `errors` map. Database constraint conflicts produce 409, unexpected failures produce a generic 500.
+### Optional local Ollama
 
-## Persistence and migrations
+Ollama is **not required** for the default demo. The explicit [Compose override](compose.ollama.yaml) runs a CPU-only local service with a separate model volume and private Docker DNS. Model downloads are explicit, never automatic. Follow [setup and actual-model verification](docs/ollama-verification.md); restore the base worker afterward to keep `LLM_PROVIDER=none`.
 
-Flyway owns schema `incidentiq_api`. V1 creates UUID-keyed incidents and diagnoses with UTC timestamps, nonblank/length/enum constraints, timestamp ordering, a foreign key and a unique incident_id (one diagnosis per incident). Hibernate validates the schema; it does not create or alter tables. New changes require new migrations, never edits to an already applied migration.
+Real `qwen3:0.6b` generation was tested. In the latest security regression, database and memory incidents produced stored generated diagnoses in **53.159 s / 30.226 s** end to end; the database case needed one timeout/retry. A Kafka answer was rejected and durably quarantined rather than accepted as safe advice. Missing-model, timeout, invented-citation and prohibited-offset tests passed. These are sampled transport/guard checks, **not proof of general semantic grounding**. [Latest measured results and limitations](docs/security/VERIFICATION.md).
 
-A separate schema avoids baselining or altering the pre-existing public.runbook_chunks table. Existing pgvector initialization and Kafka settings are preserved. Flyway V2 adds the transactional outbox, worker receipts, durable failed-event storage and RECEIVED status. V3 permits NULL failed-event payloads to retain Kafka tombstones. V1 is unchanged. New incidents and their outbox events commit together; existing incidents are not backfilled.
+## Measured performance and recovery
 
-## Build and tests without host Java/Maven
+### Retrieval-only benchmark — November 7, 2026
+
+Dockerized k6 1.3.0 on WSL: Intel Core Ultra 5 225U, 14 logical CPUs, approximately **7.2 GiB RAM**. The async worker was capped at **one CPU / 1024 MiB**. This is one bounded local trial on the **earlier `f8912f0` application baseline**, before the security dependency updates; it was not rerun for this documentation milestone. Ollama was excluded.
+
+| Workload | Observed throughput | Average latency | p95 | p99 | Failures |
+|---|---:|---:|---:|---:|---:|
+| API reads: 4 VUs, 20 s, 1,371 requests | 65.80 requests/s | 7.36 ms | 14.53 ms | 40.53 ms | 0% |
+| API creates: 2 VUs, 40 requests | 17.02 requests/s | 15.85 ms | 21.35 ms | 22.28 ms | 0% |
+| Separate Kafka/retrieval batch: 60 events | 6.19 events/s | 2,730.88 ms | 5,204.01 ms | 5,369.19 ms | 0 / 60 |
+
+HTTP throughputs include think time; publisher/worker were stopped during API measurements. Async latency measures broker append to observed committed diagnosis, including queueing, embeddings/vector retrieval and polling delay; it excludes HTTP submission. The batch drained in 9.6974 s with 60 diagnoses/300 snapshots. Small samples, warm corpus, one host/broker/partition, resource quotas and a fixed incident shape limit the result. **These are not maximum-capacity, production-SLO or Ollama-throughput claims.** [Raw measurements and conditions](docs/benchmarks/RESULTS.md) · [Reproduce and retain/clean up test data safely](docs/benchmarks/README.md).
+
+### Fault recovery — latest security regression, November 8, 2026 UTC
+
+Eight scenarios ran in a private Docker project with separate PostgreSQL/Kafka storage, database, topic and consumer group. Retrieval-only mode and real local embeddings were used.
+
+| Injected condition | Observed case interval |
+|---|---:|
+| Worker killed before DB commit / after DB commit | 34.514 s / 35.825 s |
+| Duplicate events plus consumer join/leave | 50.129 s |
+| Kafka unavailable / PostgreSQL unavailable | 81.930 s / 22.216 s |
+| Publisher killed after Kafka acknowledgement | 111.055 s |
+| Stale consumer membership / malformed event retained | 27.525 s / 12.478 s |
+
+Final accounting: **10 valid events, 10 diagnoses, 50 immutable snapshots, seven duplicate handlings, one durably quarantined poison event, committed/end offsets 15/15, zero observed valid-event loss in this sample**. Publisher recovery deliberately produced Kafka replay. `UnknownMemberIdError`/`CommitFailedError` caused a fail-closed restart and safe deduplication; the original naturally occurring benchmark trigger remains unresolved.
+
+Intervals include case-specific startup/rejoin/retry/observation work, not a uniform recovery SLA. One partition cannot demonstrate parallel processing or multi-broker failover; long outages, disk/WAL loss and Ollama-under-fault behavior were not verified. **Delivery is at least once, not exactly once.** [Latest complete observations](docs/security/VERIFICATION.md) · [Fault methodology and earlier runs](docs/faults/README.md).
+
+## Testing and evidence
+
+Latest complete application regression, **November 8, 2026 UTC**: **64 Java tests, 77 Python tests, seven frontend tests, 14 browser checks, 55 infrastructure/security helper tests and eight real fault scenarios passed**. Additional checks covered 12 real HTTP requests, 16 Grafana panels, all three actual alert flows and the separate actual Ollama positive/negative cases. Ordinary image builds skip database-specific cases; the explicit full suites use real PostgreSQL and MiniLM. LLM unit mocks and UI-only fixtures are distinguished from actual model runs in the reports. These historical counts are not a claim that every suite ran again for the portfolio edit.
+
+Reproduce the isolated Java/Python/frontend stages serially on a small host:
 
 ```bash
-docker build --progress=plain -t incidentiq-api:local ./api
-./scripts/test-api.sh
-./scripts/verify-infra.sh
-# Optional real HTTP smoke checks (Python 3 standard library; creates a synthetic incident):
-python3 scripts/verify-api.py
-```
-
-The multi-stage Dockerfile runs `mvn verify` with Maven 3.9.11 and Java 21, then packages a non-root Java 21 JRE image. Build-time tests cover controllers and service logic; PostgreSQL integration tests are explicitly skipped during an ordinary image build because no database is available inside that build.
-
-`test-api.sh` starts PostgreSQL, creates/reuses the isolated `incidentiq_api_test` database, builds the Maven stage and runs all JUnit tests against real PostgreSQL over Docker networking. Integration test transactions roll back. It checks persistence, diagnosis retrieval, enum constraints, foreign keys and one-diagnosis uniqueness. It retains the test database, without changing application rows. Do not point integration tests at the application database.
-
-`verify-infra.sh` checks PostgreSQL TCP/password access inside its container, pgvector arithmetic, both application topics and an isolated Kafka produce/consume round trip. The temporary topic is deleted afterward. `docs/api-verification.md` records the latest actual build, test and HTTP results.
-
-## Project layout and optional host development
-
-- `api/`: Spring Web, Data JPA, Validation, Flyway, repositories, DTOs, services and controllers.
-- `worker/`: Python 3.12 / Kafka receipt consumer, PostgreSQL idempotency and metrics (local sentence-transformers retrieval; optional local Ollama RAG diagnoses).
-- `frontend/`: React 19 / TypeScript / Vite dashboard connected through the nginx API proxy.
-- `runbooks/`: Markdown sources for future local retrieval.
-- `infra/`: database bootstrap and monitoring configuration.
-- `scripts/`: environment checks and repeatable testing/startup commands.
-- `docs/`: architecture and verification evidence.
-
-For optional host API development, install Java 21/Maven and export the database variables from .env, then `cd api && mvn spring-boot:run`. Stop the Compose API first to free port 8080. Run the worker through Compose so the pinned CPU packages and model files are available. For the frontend: Node 22.12+ and npm, then `cd frontend && npm ci && npm run dev`. No host Python/Node is needed for the Dockerized dashboard, API or tests.
-
-Optional Prometheus runs at localhost:9090 and Grafana at localhost:3001 (admin/password from .env). API metrics are exposed at /actuator/prometheus. Both application scrapes use internal Docker addresses, independent of API_PORT. A 16-panel dashboard is provisioned. Optional local Ollama diagnosis generation is implemented but live model inference was not available in this verification environment. Local embedding inference and runbook retrieval are implemented.
-
-## Event delivery and worker
-
-`POST /api/incidents` inserts an `incident.created` event into `incidentiq_api.outbox_events` in the same transaction as the incident. JSON contains schemaVersion=1, eventId, incidentId, service, title, description, severity and an ISO-8601 timestamp. Kafka keys are incident UUIDs. The separate publisher uses Spring Kafka with acks=all and producer idempotence, marks published_at only after acknowledgement and retries unsent rows with persisted exponential backoff (2–256 seconds). Delivery is at least once; a crash after acknowledgement can cause a duplicate.
-
-The Python worker validates the contract, inserts a processed_events receipt keyed by eventId, and stores retrieval snapshots plus a diagnosis in one PostgreSQL transaction. Its resulting status is RECEIVED for retrieval-only or DIAGNOSED for generated analysis. Replayed IDs with the same payload do not change status or timestamps. IDs reused with different payloads are rejected. Advanced statuses never regress. Kafka auto-commit is disabled; only the current partition's offset is committed after durable handling.
-
-Processing failures receive up to three attempts. Malformed/conflicting events and exhausted processing failures are retained in failed_events before acknowledging their offsets. Original bytes (or NULL for a tombstone), source coordinates and safe error metadata remain available for investigation and explicit replay. A quarantine database failure or offset-commit failure terminates the worker; Docker restarts it, and the uncommitted record is safe to redeliver. A quarantined event has not been successfully processed: monitor the table and worker quarantine counter. No event is automatically discarded or deleted.
-
-```bash
-# Java tests, original 26 plus outbox cases, using an isolated PostgreSQL database:
-./scripts/test-api.sh
-# Python unit and real PostgreSQL tests, after test-api.sh creates/migrates that database:
-./scripts/test-worker.sh
-# Real HTTP → outbox → Kafka → worker, duplicate and malformed-message verification:
-python3 scripts/verify-event-flow.py
-docker compose logs --tail=100 publisher worker
-```
-
-Verification retains synthetic incidents and a malformed-message failure record. See [event-delivery.md](docs/event-delivery.md) for the contract, retries and operations, and [event-verification.md](docs/event-verification.md) for executed results. RECEIVED denotes retrieval-only processing; only GENERATED diagnoses use Ollama, with status DIAGNOSED.
-
-## Local runbook retrieval
-
-Ten detailed Markdown guides in runbooks/ are split by headings, then into at most 180-token chunks with 30-token overlap. Headings are retained in chunk text and the complete embedding input is checked against the model context window. The current corpus produces 60 chunks. LangChain Documents, text splitters, an Embeddings adapter and a BaseRetriever provide the retrieval path; PostgreSQL pgvector performs exact cosine-distance search.
-
-The worker image pins sentence-transformers 5.6.0, transformers 5.10.0, CPU-only torch 2.10.0+cpu and the remaining direct dependencies. requirements.lock was generated from the resolved Docker environment and constrains transitive versions. Model revision c9745ed1d9f207416be6d2e6f8de32d1f16199bf of sentence-transformers/all-MiniLM-L6-v2 is downloaded at build time and smoke-tested. Model loading and embeddings are offline at runtime; no hosted inference, API key or paid service is used. Model and package downloads need internet at build time.
-
-```bash
-docker compose up -d --build --wait
-# Repeat safely; unchanged documents produce no writes:
-docker compose exec worker python ingest.py /runbooks
-# Real query returns five chunks with filenames, text and similarity scores:
-docker compose exec worker python retrieval.py "Kafka consumer lag and committed offsets stopped advancing"
-./scripts/test-api.sh
-./scripts/test-worker.sh
-python3 scripts/verify-event-flow.py
-```
-
-Flyway V4 adds incidentiq_api.runbook_documents, runbook_chunks and incident_retrievals. Existing public.runbook_chunks is preserved as a legacy table and is not the new retriever's corpus. Content/config fingerprints and deterministic UUIDs make ingestion idempotent. Updates replace a changed file's chunks in one transaction; existing retrieved content snapshots remain intact. Files removed from disk are not automatically purged from the database.
-
-For each newly processed event, the worker retrieves five nearest chunks using service/title/description. It saves rank, source filename, chunk UUID, content snapshot, cosine similarity, model/revision and retrieval time together with the receipt and RECEIVED status. A replay does not overwrite retrievals or regenerate embeddings. Retrieval failure rolls back receipt/status/context and enters the existing retry/quarantine path; no successful offset acknowledgement occurs before durable handling. Existing pre-retrieval receipts are not backfilled or reprocessed.
-
-Scores are cosine similarities, not calibrated confidence or proof that a runbook applies. Five chunks can come from the same source file. Long queries are subject to the model's 256-token window; service/title appear before the description. Optional Ollama diagnosis generation is described below. Retrieved evidence is returned with the existing diagnosis endpoint. Inspect snapshots directly in PostgreSQL:
-
-```sql
-SELECT rank, source, similarity, content
-FROM incidentiq_api.incident_retrievals
-WHERE incident_id = 'REPLACE_WITH_UUID' ORDER BY rank;
-```
-
-See [retrieval-verification.md](docs/retrieval-verification.md) for actual ingestion, relevance and end-to-end results. Model details: [official model card](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2); retriever interface: [LangChain BaseRetriever](https://reference.langchain.com/python/langchain-core/retrievers/BaseRetriever).
-
-## RAG diagnosis providers
-
-Default `LLM_PROVIDER=none` persists mode `RETRIEVAL_ONLY`, provider `none`, model `null`. Summary/recommendations explicitly say no language model was used. `likelyCauses`, `investigationSteps` and `suggestedRemediation` are empty; the five original excerpts appear only under `retrievedEvidence`, with chunkId/source/similarity. Retrieved content is not presented as AI-generated analysis.
-
-To use an already-running local Ollama server, edit the ignored `.env`:
-
-```dotenv
-LLM_PROVIDER=ollama
-OLLAMA_MODEL=your-installed-local-model
-OLLAMA_BASE_URL=http://host.docker.internal:11434
-OLLAMA_TIMEOUT_SECONDS=30
-```
-
-```bash
-# Existing dependencies must already be running. Recreate only the worker after .env changes:
-docker compose up -d --no-deps --force-recreate worker
-python3 scripts/verify-rag-flow.py --expect-mode GENERATED
-```
-
-The model must already be installed in Ollama; IncidentIQ never pulls it automatically. The server must be reachable from the container. Supported configured endpoint hosts are localhost, 127.0.0.1, ::1, host.docker.internal and ollama (a local Docker service name). Loopback inside a container refers to that container. HTTP proxies, redirects, credential-bearing URLs and nonlocal endpoint names are rejected/disabled. No hosted provider is supported. Request timeout is bounded to 1–30 seconds, with three worker attempts before durable quarantine.
-
-The LangChain LCEL chain uses ChatPromptTemplate → a local Ollama /api/chat adapter → PydanticOutputParser. The client requests JSON-schema output and strictly validates complete JSON before the parser, rejecting partial responses. Schema fields are summary, likely_causes, investigation_steps, suggested_remediation and uncertainty; each list item contains text and a nonempty sources array. Allowed filenames come only from the five retrieved chunks. Unknown citations, including invented Markdown filenames in prose, are rejected; the server derives citedRunbooks from validated item sources. The prompt treats incident/evidence text as untrusted data and does not expose tools or execute remediation. Generated suggestions require human review; syntactic citation checks do not prove that a hypothesis is correct.
-
-Flyway V5 extends the existing diagnoses table and labels pre-existing rows LEGACY without rewriting their original summary/recommendations. The existing GET /api/incidents/{id}/diagnosis now includes mode/provider/model/eventId, likelyCauses, investigationSteps, suggestedRemediation, citedRunbooks, retrievedEvidence and uncertainty, alongside the original fields.
-
-Receipt, five snapshots, diagnosis and incident status commit atomically. Duplicate event IDs return before retrieval/generation; no diagnosis is overwritten. A successful GENERATED result sets DIAGNOSED, never RESOLVED. Retrieval-only sets RECEIVED. Unavailable models, invalid outputs and missing evidence roll back new processing; after bounded retries, the original event is durably quarantined and a still-pending incident is marked FAILED. No silent retrieval-only fallback occurs. Kafka offsets advance only after the successful transaction or durable quarantine transaction. Manual unchanged replay after fixing configuration can recover FAILED incidents. Existing receipts are not backfilled or regenerated automatically.
-
-```bash
-# Restore/default safe mode by setting LLM_PROVIDER=none in .env and recreating the worker.
-./scripts/test-api.sh
-./scripts/test-worker.sh
-python3 scripts/verify-rag-flow.py --expect-mode RETRIEVAL_ONLY
-```
-
-Verified here: 34 Java tests, 68 Python tests, actual retrieval-only HTTP/Kafka/database diagnosis flow and duplicate preservation. Ollama client/generation paths used mocked responses and unavailable-model simulations. **At that milestone, actual Ollama generation was not tested**: no model was configured and the local endpoint was unreachable. See [rag-verification.md](docs/rag-verification.md) for commands and actual outputs.
-
-## Prometheus and Grafana observability
-
-```bash
-docker compose --profile observability up -d --build --wait
-python3 scripts/verify-monitoring.py
-```
-
-- Grafana dashboard: http://localhost:3001/d/incidentiq-overview (login `admin`, password from ignored `.env`).
-- Prometheus: http://localhost:9090 (targets at http://localhost:9090/targets).
-- API exporter: http://localhost:8080/actuator/prometheus.
-
-Prometheus scrapes `api:8080/actuator/prometheus` and `worker:8001/metrics` every five seconds over Docker networking. Grafana's Prometheus datasource and 16-panel **IncidentIQ · Local Operations** dashboard are provisioned from infra/grafana. Existing named volumes store Prometheus history and Grafana state; stopping services without `--volumes` preserves them. PostgreSQL remains published at 55432.
-
-The dashboard shows request traffic/counts, estimated HTTP p95 latency, separate 4xx/5xx error rates, JVM heap/nonheap memory, persisted incident totals/by-status counts, worker processing/retrieval latency and diagnosis outcomes. Actuator traffic is excluded from API traffic/error panels. API p95 uses histogram buckets rather than averaging percentiles.
-
-HTTP URI tags use MVC templates and a 32-value cap. Custom incident labels are restricted to the six status values; worker diagnosis labels are only outcome=success/failure and mode=retrieval_only/generated. No incident/event IDs, service names, filenames or model names become metric labels.
-
-Worker diagnosis successes increment after database commit, and duplicate events do not increment them. Valid workflows durably quarantined after failure increment failure counters; malformed/conflicting events remain in the separate quarantine counter. Processing duration covers retries and offset commit. Retrieval latency covers local query embeddings and vector search, including failed attempts. Counters reset on process restart; Prometheus rate calculations handle resets, and dashboard totals explicitly say 'since restart'. Persisted incident gauges read PostgreSQL and survive API restarts. Database outages produce NaN for those gauges, not a misleading zero.
-
-`verify-monitoring.py` creates synthetic HTTP success/error traffic and one valid Kafka event referencing a nonexistent synthetic incident to exercise failure metrics. It retains the incident/diagnosis and durable quarantine evidence. It verifies both targets, real metric samples, database count agreement, bounded labels, datasource health and numeric data for every dashboard panel. `--no-fixtures` avoids new fixtures but requires recent metric activity for latency checks.
-
-Full verification, including browser rendering, is documented in [monitoring-verification.md](docs/monitoring-verification.md). The optional browser capture helper runs in a temporary Playwright container; it adds no host/application dependency and saves screenshots under ignored .incidentiq-backups/monitoring.
-
-## Automatic incident detection
-
-Prometheus → Alertmanager → `POST /api/alerts/alertmanager` → transactional incident/outbox → Kafka → retrieval/RAG worker → stored diagnosis. Alertmanager is available at http://localhost:9093 with the observability profile. Fingerprints deduplicate active incidents across retries and API restarts. Resolved notifications mark the incident RESOLVED; a delayed worker preserves that status. A new occurrence after resolution creates a new incident. Webhook payloads are validated and retained as untrusted evidence.
-
-Rules detect HTTP 500 rates above 20% with at least three failures in one minute, p95 latency above 500ms with at least three requests, and unavailable API/worker/Alertmanager scrape targets. Error/latency conditions persist 15 seconds; unavailability persists 30 seconds. Internal monitoring, incident and webhook routes are excluded from error/latency alerts to prevent recursion. Thresholds and short repeat intervals are intended for local development.
-
-```bash
-docker compose --profile observability up -d --build --wait
-# Temporarily enables bounded dev simulators and restores the default API afterward:
-python3 scripts/smoke-auto-detection.py
-```
-
-Simulators return 404 by default. Explicit opt-in uses `docker compose -f compose.yaml -f compose.dev.yaml up -d --wait api`; GET `/api/dev/simulate/failure` returns 500 and GET `/api/dev/simulate/latency?delayMs=750` delays up to 2000ms. Both the dev profile and simulation flag are required; prod/production profiles disable them even with the flag. Restore default settings with `docker compose up -d --no-deps --wait api`.
-
-Availability alerts measure exporter reachability. An unavailable API cannot receive its own webhook until recovery; an unavailable Alertmanager cannot deliver until recovery. This single-host setup is not an external watchdog. See [actual verification results](docs/automatic-detection-verification.md).
-
-## React incident dashboard
-
-Open **http://localhost:5173** after starting Compose:
-
-```bash
-docker compose --profile observability up -d --build --wait
-# Optional real-browser verification (creates and retains synthetic incidents):
+bash ci/bootstrap.sh basic
+bash ci/test.sh java
+bash ci/test.sh python
+bash ci/test.sh frontend
+# Existing local services required; retains synthetic incidents:
 bash scripts/test-dashboard.sh
 ```
 
-The dashboard uses real API data: newest-first paginated incidents, severity/status filters, case-insensitive service search, manual incident reporting and shareable incident details. Click Apply service after entering a service substring; Clear filters resets all filters. Lists refresh every ten seconds, details and diagnoses every five seconds. Times display in the browser's local timezone. Loading, empty results, processing failures and request errors have explicit states and retry controls.
+| Evidence | What it establishes |
+|---|---|
+| [Latest verification](docs/security/VERIFICATION.md) / [structured results](docs/security/verification.json) | Security-update builds, full regressions, real retrieval, fault recovery and actual Ollama |
+| [API](docs/api-verification.md), [event delivery](docs/event-verification.md), [retrieval](docs/retrieval-verification.md), [RAG](docs/rag-verification.md) | Historical implementation milestones and transaction/offset behavior |
+| [React dashboard](docs/dashboard-verification.md), [monitoring](docs/monitoring-verification.md), [automatic alerts](docs/automatic-detection-verification.md) | Real browser, datasource and alert-webhook tests; older counts are milestone-specific |
+| [Ollama](docs/ollama-verification.md) | Initial grounding failure, narrow repair and sampled actual-model tests |
+| [Portfolio checks](docs/portfolio/VERIFICATION.md) | Screenshot provenance, README links, diagram and setup validation for this documentation milestone |
 
-Details show the incident description, diagnosis provenance, cited runbooks and expandable original evidence with similarity scores. RETRIEVAL_ONLY means no language model was used; excerpts are not generated advice. AI-generated results show cited likely causes, investigation steps and suggested remediation with a human-review notice. No commands are executed. Monitoring links open Grafana, Prometheus and Alertmanager in separate tabs; start the observability profile to use them.
+## Security status: 50 critical/high occurrences remain
 
-The multi-stage frontend Dockerfile runs Node tests, strict TypeScript checking and Vite build, then nginx serves static files and proxies /api over internal Docker networking. No host Node installation or CORS configuration is required. FRONTEND_PORT defaults to 5173; PostgreSQL stays at 55432. Keep .env ignored; no credentials are embedded in the browser bundle.
+The **November 8, 2026 UTC** comparison used Trivy **0.69.3** and the same frozen vulnerability/Java databases. It reduced critical/high finding occurrences **144 → 50 (65.3%)**, without suppression.
 
-Optional host development: `cd frontend && npm ci && npm run dev` (Node 22.12+). The Vite proxy targets localhost:8080; API_PROXY_TARGET can override it for local development. Run `npm test && npm run build` for frontend unit tests and compilation. See [verification evidence](docs/dashboard-verification.md).
+| Runtime image | Remaining critical | Remaining high |
+|---|---:|---:|
+| API / publisher | 2 | 0 |
+| Worker / ingestion | 0 | 48 |
+| Frontend | 0 | 0 |
+| **Total** | **2** | **48** |
 
-## Optional local CPU Ollama verification
+These **50 occurrences represent 14 distinct CVEs**, not 50 independently verified exploits. Two Spring MVC occurrences need a compatible public Spring/Boot migration; one legacy LangChain loader needs a coordinated major upgrade; 47 Debian source-package occurrences lack a Debian 13 fixed version in the frozen snapshot. Some affected features are not used by this application, but reachability review is **not proof of non-exploitability**. Medium/low findings remain too. Zero frontend findings in that snapshot is not a zero-vulnerability guarantee, and other service/build images were outside that comparison.
 
-Actual qwen3:0.6b generation was verified through React and stored diagnoses. Initial review found a contradicted Kafka offset prohibition; a fail-closed guard now rejects that advice, tested with real model output. Keep retrieval-only as the default and review every generated suggestion. These tests verify sampled fields and failure behavior, not general semantic correctness. See [actual findings and limitations](docs/ollama-verification.md).
+[Every critical/high row, fixed versions, duplicates and deferrals](docs/security/TRIAGE.md) · [Risk analysis and scanner/database provenance](docs/security/README.md). The scan is historical, not a current-date rescan or production security certification. Keep credentials out of Git and treat incident text, runbooks and model output as untrusted data.
 
-Retrieval-only (`LLM_PROVIDER=none`) remains the base configuration. The explicit `compose.ollama.yaml` override uses private Docker DNS `http://ollama:11434`; container localhost is not the host. It publishes no Ollama port and uses no paid/hosted model service. It is for x86-64 CPUs with AVX2/FMA/F16C support.
+## Infrastructure status — what was actually verified
 
-```bash
-# Build a small CPU runtime and the worker; no GPU toolkit/image downloads:
-docker compose -f compose.yaml -f compose.ollama.yaml build ollama worker
-docker compose -f compose.yaml -f compose.ollama.yaml up -d --no-deps --wait ollama
-# Explicit one-time model download, about 523 MB (never automatic):
-docker compose -f compose.yaml -f compose.ollama.yaml exec ollama ollama pull qwen3:0.6b
-docker build -t incidentiq-browser:local infra/browser
-# Requires the existing API/frontend/publisher/dependencies running, initially in none mode:
-python3 scripts/verify-local-ollama.py
-```
+| Environment | Verified | Not verified |
+|---|---|---|
+| **Docker Compose** | Actual API, Kafka/outbox, PostgreSQL/pgvector, ingestion/retrieval, React, alerts, metrics and optional local Ollama flows | Production HA, independent external watchdog, general AI correctness |
+| [Kubernetes / Kustomize](docs/kubernetes/README.md) | Rendering, schemas, cross-resource checks, probes and resource definitions; [17-resource local overlay validation](docs/kubernetes/VERIFICATION.md) | No cluster created or runtime smoke test; available RAM failed the conservative gate |
+| [Azure Terraform](docs/azure/README.md) | Modular resource group/network, ACR, private AKS, managed identities/Key Vault references; [fmt, init -backend=false and validate](docs/azure/VERIFICATION.md) | No Azure authentication, plan/apply, paid resources or deployment |
+| [Azure DevOps YAML](docs/ci/README.md) | Pipeline schema/policy checks and local build/test equivalents; [verification](docs/ci/VERIFICATION.md) | No organization pipeline execution, hosted task/cache/artifact verification, ACR publishing or AKS rollout; release remains disabled and fails closed |
 
-The verifier submits three real React incidents, checks generated diagnoses and persisted receipts/evidence, then exercises an actual adversarial model response, a missing model and a one-second timeout. It retains synthetic records and negative-case quarantine evidence. It restores the base worker in a finally block. Generated/error answers are never executed as commands. Browser captures and proof JSON stay in ignored .incidentiq-backups/ollama-verification.
-
-To opt in outside the verifier, start only the worker with `docker compose -f compose.yaml -f compose.ollama.yaml up -d --no-deps --wait worker` after the runtime and model are ready. Restore retrieval-only with `docker compose up -d --no-deps --wait worker`. Failed generation is durably quarantined, never silently relabeled retrieval-only; restoring the base configuration affects new events, not historical diagnoses. Stop the optional runtime with `docker compose -f compose.yaml -f compose.ollama.yaml stop ollama`; preserve ollama_data.
-
-The CPU image assembles a hash-pinned official Ollama 0.6.8 executable (11 MB compressed) and AVX2 libraries compiled from the matching pinned upstream source (8 MB compressed). This avoids the release image's large GPU library layer. A separate persistent volume caches the explicitly selected model. CPU resources are limited to four CPUs and 2500 MiB; requests use four threads, 8192 context tokens and at most 512 output tokens, with one cited item per category for this small model. The API/storage schema still supports earlier multi-item diagnoses. See [actual local generation verification](docs/ollama-verification.md).
-
-## Local performance benchmarks
-
-```bash
-docker pull grafana/k6:1.3.0
-python3 -m unittest discover -s benchmarks -p 'test_*.py' -v
-python3 scripts/benchmark.py run
-```
-
-Uses bounded Dockerized k6 workloads, a separate owned database and Kafka broker, and retrieval-only mode. Measures API request rate/average/p95/p99/error rate separately from a 60-event Kafka-to-committed-diagnosis batch. Existing incidents, main Kafka data, PostgreSQL port 55432 and Docker volumes are preserved. Benchmarks retain their isolated database and results; explicit guarded cleanup is documented.
-
-The measured local baseline observed 65.80 read requests/s, 17.02 incident creates/s and 6.19 asynchronously processed events/s, with zero failures under the recorded quotas/workloads. These are bounded offered-load measurements, not maximum capacity claims. See [actual results and hardware](docs/benchmarks/RESULTS.md) and [methodology/reproduction/cleanup](docs/benchmarks/README.md). Ollama is excluded and must be measured separately.
-
-## Distributed fault recovery
-
-```bash
-python3 -m unittest discover -s faults -p 'test_*.py' -v
-python3 scripts/faults.py run
-```
-
-Runs bounded real-container worker/publisher crashes, duplicates/rebalancing, broker/database outages, stale membership and poison-record checks in a private Docker project. Each run owns a PostgreSQL container/database, Kafka broker/topic/group and localhost:18081 API. Existing application images and local MiniLM weights are reused; retrieval-only is forced. Normal services, PostgreSQL port 55432 and existing volumes are preserved. The runner stops its private containers afterward and retains all test volumes/evidence.
-
-See [reproduction, boundaries and cleanup](docs/faults/README.md) and [actual recovery measurements](docs/faults/RESULTS.md). Delivery remains at least once; durable event-ID deduplication protected the tested database effects. No exactly-once Kafka guarantee is claimed.
-
-## Local Kubernetes manifests (Step 8A)
-
-Kustomize base/local overlay covers API, publisher, worker, frontend, PostgreSQL/pgvector, Kafka and runbook ingestion, with isolated PVCs, internal Services, external Secret references, resource bounds and dependency gates. Render with `kubectl kustomize infra/kubernetes/overlays/local`; validate with `./scripts/validate-kubernetes.sh` after the documented lightweight validator setup.
-
-**Kubernetes runtime deployment is unverified.** Current 7.2 GiB WSL resources failed the conservative available-memory gate; Compose remains running with its data and PostgreSQL port 55432 preserved. No local cluster or Azure resources were created. See [deployment and preservation instructions](docs/kubernetes/README.md) and [actual verification](docs/kubernetes/VERIFICATION.md).
-
-## Future Azure Terraform (Step 8B)
-
-`infra/terraform/azure` provides modular resource-group/network, ACR, private AKS, managed identities and private Key Vault infrastructure. The Azure-only Kustomize overlay reuses the application base with ACR/CSI secret references. No secret values, kubeconfig or client credentials are managed as outputs.
-
-**Static verification only: no Azure authentication, plan/apply, cloud resources or image push.** Run `python3 scripts/verify-terraform-azure.py` and `./scripts/verify-azure-kustomize.sh` after the documented isolated tool setup. Existing Compose data, volumes and port 55432 are unchanged. This future design is billable and not production HA; see [architecture, setup and costs](docs/azure/README.md) and [actual checks/untested limits](docs/azure/VERIFICATION.md).
-
-## Azure DevOps CI (Step 8C)
-
-`azure-pipelines.yml` defines Java/JUnit, isolated worker tests/dependency checks, React/TypeScript/build, Terraform/Kubernetes static checks, and Docker builds/security reports. Versioned tools, package/provider/scanner caches and test XML reporting are configured. CI PostgreSQL uses a separate temporary Docker project with no host ports or existing data volumes.
-
-Release is disabled by default and deliberately fails closed if enabled; no Azure credentials, image publishing or deployment is implemented. CVE inventory is explicitly advisory; detected source/baked credentials, config errors and scanner failures block CI. See [setup and local equivalents](docs/ci/README.md) and [actual verification/limitations](docs/ci/VERIFICATION.md).
-
-## Container security verification
-
-[Step 8D security triage](docs/security/README.md) records the frozen-snapshot before/after scans, all critical/high package occurrences, compatible updates, dependency provenance, remaining risks and real regression results. Findings are retained without suppression; the older Step 8C inventory is historical evidence. The default remains local retrieval-only mode, with the same MiniLM weights and preserved Compose data.
+The project is a local engineering portfolio, not a claimed cloud deployment. Existing volumes and PostgreSQL host port **55432** are preserved. [Agent/contributor guide](AGENTS.md).

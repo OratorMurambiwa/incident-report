@@ -1,3 +1,5 @@
+> Historical milestone snapshot: capability/version statements and counts below describe that run. See the [current overview](../README.md) and [latest application/security regression](security/VERIFICATION.md) for subsequent implementation and verification.
+
 # Automatic detection verification — Step 5B
 
 Executed locally on 2026-11-06 UTC (2026-11-05 America/Chicago). Docker Desktop through WSL; Java/Maven and Python dependencies run in containers. No remote model or paid service was used.

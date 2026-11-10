@@ -1,6 +1,4 @@
-> Current outbox/worker results: [event-verification.md](event-verification.md).
-
-> Historical infrastructure verification. For the implemented API and current test results, see [api-verification.md](api-verification.md).
+> Historical milestone snapshot: capability/version statements and counts below describe that run. See the [current overview](../README.md) and [latest application/security regression](security/VERIFICATION.md) for subsequent implementation and verification.
 
 # Environment and executed verification — 2026-11-05 (America/Chicago)
 

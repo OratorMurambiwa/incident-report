@@ -1,0 +1,17 @@
+{
+  "captured_at_utc": "2026-11-10T03:56:26.084229+00:00",
+  "incident_id": "e665538a-ef18-45b8-8791-2ec3fb3bf2e5",
+  "service": "portfolio-demo-39bed48c",
+  "submission_status": 201,
+  "diagnosis_status": 200,
+  "mode": "RETRIEVAL_ONLY",
+  "evidence_chunks": 5,
+  "cited_runbooks": [
+    "database-failures.md"
+  ],
+  "browser_errors": [],
+  "mocked_responses": false,
+  "synthetic_input_only": true,
+  "redaction": "Synthetic incident UUID masked during browser screenshot; no other visual editing.",
+  "screenshot_sha256": "0bce07ffedd49b5a48a7b2a101c1db15e1dfacd11a56cead71becc20d2786d42"
+}

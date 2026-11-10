@@ -1,3 +1,5 @@
+> Historical milestone snapshot: capability/version statements and counts below describe that run. See the [current overview](../README.md) and [latest application/security regression](security/VERIFICATION.md) for subsequent implementation and verification.
+
 # Local Ollama RAG verification — 2026-11-06 (America/Chicago)
 
 ## Hardware and model selection

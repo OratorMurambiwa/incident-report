@@ -6,7 +6,7 @@ Build a local AI-powered incident monitoring platform: ingest events, persist in
 
 ## Architecture
 
-Current flow: React dashboard → Spring Boot API → PostgreSQL incident + outbox → separate Spring Kafka publisher → `incident.created` → Python worker → pgvector top-five runbook context + durable receipt + diagnosis (RETRIEVAL_ONLY/RECEIVED or GENERATED/DIAGNOSED). Future flow extends React → API → Python worker → local generative diagnosis analysis → PostgreSQL and `incidents.analyzed` → API → React. Prometheus scrapes API/worker metrics; Grafana visualizes them. Treat DB/event dual writes with an outbox when implementing ingestion. Consumers must be idempotent, commit offsets after successful persistence, and support bounded retries/dead-letter handling.
+Current flow: React dashboard → Spring Boot API → PostgreSQL incident + outbox → separate Spring Kafka publisher → `incident.created` → Python worker → pgvector top-five runbook context + durable receipt + diagnosis (RETRIEVAL_ONLY/RECEIVED or GENERATED/DIAGNOSED). The initialized `incidents.raw` and `incidents.analyzed` topics are legacy/reserved; only `incident.created` is an implemented event-processing path. Prometheus scrapes API/worker metrics; Grafana visualizes them. Treat DB/event dual writes with an outbox when implementing ingestion. Consumers must be idempotent, commit offsets after successful persistence, and support bounded retries/dead-letter handling.
 
 ## Technologies and versions
 
@@ -188,3 +188,9 @@ Read docs/security/README.md and the full critical/high ledger before dependency
 Use security/scan.sh before|after with SECURITY_DB_CACHE pointing at a frozen vulnerability and Java database. security/triage.py --cache PATH verifies all four database file hashes and fails on unreviewed critical/high findings; run python3 -m unittest discover -s security -v. Preserve every occurrence and severity; never equate duplicate rows with independent exploits or call reachability review an exploit proof. Do not add ignore rules. Spring 6.2 fixes for the remaining findings require enterprise access; a public Spring 7/Boot 4 migration and LangChain 1 migration require separate compatibility verification. Debian source-level findings remain tracked even when the affected executable is absent.
 
 Sanitized inventory, dependency graphs, hashes and measurements under docs/security are intentional verification evidence. Keep raw scanner/test/browser/model outputs and advisory databases in ignored .incidentiq-backups or /tmp. Historical docs/ci inventory remains the original baseline, not the current remediation result. Normal Compose volumes and port 55432 must remain untouched.
+
+## Portfolio documentation
+
+README.md presents current capabilities and links milestone evidence. Keep historical report dates/counts intact; identify the tested image/baseline when citing benchmarks. Docker Compose has runtime verification; Kubernetes/Terraform/Azure DevOps remain statically checked, not deployed/executed in a cloud organization. Keep the 50 critical/high occurrence snapshot and AI human-review limits visible until a later measured scan supersedes them.
+
+The explicitly sanitized actual screenshot docs/images/dashboard.png and capture.json are intentional portfolio evidence, authorized for tracking. docs/portfolio/capture-dashboard.py creates only a new synthetic incident through the real UI, captures its detail view, masks its UUID, and never intercepts responses or saves sessions. Review pixels before publication. All other screenshots, browser traces, logs, models and environment files remain ignored. Documentation checks/reproduction are in docs/portfolio/VERIFICATION.md; do not rerun large suites or claim fresh benchmarks just for a prose edit.
